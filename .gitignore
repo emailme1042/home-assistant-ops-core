@@ -7,6 +7,9 @@ storage/
 deps/
 custom_components/__pycache__/
 
+# Sensitive configuration files
+ai-workspace/AI_WORKSPACE/SYSTEM_DATA/key_info-md/archieve or delete/ha_integrations.md
+
 # Python
 __pycache__/
 *.pyc
