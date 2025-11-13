@@ -1,0 +1,12 @@
+alias: "UX – Smart Dashboard Optimization Reminder"
+id: ux_smart_dashboard_optimization_reminder
+mode: single
+trigger:
+  - platform: time_pattern
+    hours: "/72"   # every 72 hours
+condition: []
+action:
+  - service: persistent_notification.create
+    data:
+      title: "Dashboard Optimization"
+      message: "Friendly reminder to run the dashboard optimization checklist."

@@ -1,0 +1,19 @@
+- alias: J Home
+  id: j_home
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      person_entity: person.jamie_dacombe
+      zone_entity: zone.home
+      notify_device: a27150ac7c71c248a1eaa74d2892a98b
+
+- alias: S Home
+  id: s_home
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      person_entity: person.sarah
+      zone_entity: zone.home
+      notify_device: a27150ac7c71c248a1eaa74d2892a98b
+
+

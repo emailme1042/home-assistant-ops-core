@@ -1,0 +1,71 @@
+# Temporarily disabled startup automations to reduce load during restart issues
+# - alias: Reload Automations After Startup
+#   id: reload_automations_after_startup
+#   trigger:
+#     - platform: homeassistant
+#       event: start
+#   action:
+#     - service: automation.reload
+#   mode: single
+
+# - alias: Send Home Assistant Startup Report
+#   id: send_home_assistant_startup_report
+#   trigger:
+#     - platform: homeassistant
+#       event: start
+#   action:
+#     - service: persistent_notification.create
+#       data:
+#         title: "✅ Home Assistant Started"
+#         message: >
+#           Home Assistant has restarted successfully at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}.
+#           **Entities Loaded:** {{ states | count }}
+#           **Automations Enabled:** {{ states.automation | selectattr('state','eq','on') | list | count }}
+#           **Scripts Loaded:** {{ states.script | count }}
+#           IP Address: {{ states('sensor.local_ip') if states('sensor.local_ip') else 'Unknown' }}
+#           Uptime Sensor: {{ states('sensor.uptime') if states('sensor.uptime') else 'Not available' }}
+#           Have a great day!
+
+# - alias: Log ESP Restart Reason
+#   id: log_esp_restart_reason
+#   trigger:
+#     - platform: homeassistant
+#       event: start
+#   action:
+#     - service: notify.persistent_notification
+#       data:
+#         message: "ESP restarted due to: {{ states('sensor.esp_restart_reason') }}"
+
+- alias: Alert if WSL Restart Marker Missing
+  id: alert_if_wsl_restart_marker_missing
+  description: Notify if /startup_marker is missing (sensor state is 'Missing')
+  trigger:
+    - platform: state
+      entity_id: sensor.wsl_startup_marker
+      to: "Missing"
+      for: "00:05:00"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "⚠️ WSL Startup Not Detected"
+        message: "The Flask startup script may not have run. Please run run_flask.sh manually."
+    - service: notify.mobile_app_yourdevice
+      data:
+        title: "🛑 JIT Plugin Not Auto-Launched"
+        message: "WSL Flask marker not found — check Flask server."
+  mode: single
+
+# - alias: Run YAML Validation & Log Result
+#   id: run_yaml_validation_and_log_result
+#   mode: single
+#   trigger:
+#     - platform: time_pattern
+#       minutes: "/5"
+#     - platform: homeassistant
+#       event: start
+#   action:
+#     # Log startup completion
+#     - service: shell_command.validate_yaml
+#     - service: input_boolean.turn_off
+#       target:
+#         entity_id: input_boolean.force_yaml_check

@@ -1,0 +1,14 @@
+gpt_session_active:
+  name: GPT Session Active
+  initial: false
+  icon: mdi:robot-outline
+
+dashboard_admin_nav:
+  name: Dashboard Admin Navigation
+  initial: false
+  icon: mdi:view-dashboard
+
+show_entity_search:
+  name: Show Entity Search
+  initial: false
+  icon: mdi:magnify

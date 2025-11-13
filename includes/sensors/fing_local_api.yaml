@@ -1,0 +1,31 @@
+# Fing Local API Integration
+# Requires Fing Desktop or Agent running locally
+# API Key obtained from Fing app settings (enable Local API)
+
+sensor:
+  - platform: rest
+    name: "Fing Network Devices"
+    resource: "http://192.168.1.200:49090/1/devices"
+    method: GET
+    params:
+      auth: !secret fing_api_key
+    scan_interval: 60
+    value_template: "{{ value_json.devices | length if value_json.devices else 0 }}"
+    json_attributes:
+      - devices
+      - networkId
+    json_attributes_path: "$.devices[*]"
+
+  - platform: rest
+    name: "Fing People"
+    resource: "http://192.168.1.200:49090/1/people"
+    method: GET
+    params:
+      auth: !secret fing_api_key
+    scan_interval: 300
+    value_template: "{{ value_json.people | length if value_json.people else 0 }}"
+    json_attributes:
+      - people
+      - networkId
+      - lastChangeTime
+    json_attributes_path: "$.people[*]"

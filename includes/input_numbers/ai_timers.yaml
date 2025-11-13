@@ -1,0 +1,24 @@
+ai_timer_morning:
+  name: Morning Duration
+  min: 0
+  max: 1440
+  step: 1
+  unit_of_measurement: "min"
+ai_timer_focus:
+  name: Focus Duration
+  min: 0
+  max: 1440
+  step: 1
+  unit_of_measurement: "min"
+ai_timer_evening:
+  name: Evening Duration
+  min: 0
+  max: 1440
+  step: 1
+  unit_of_measurement: "min"
+ai_timer_sleep:
+  name: Sleep Duration
+  min: 0
+  max: 1440
+  step: 1
+  unit_of_measurement: "min"

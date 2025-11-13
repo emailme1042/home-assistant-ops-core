@@ -1,0 +1,22 @@
+# VSCode Connection Tracking Input Entities
+# Store connection timestamps and disconnect counts
+
+vscode_last_connect:
+  name: "VSCode Last Connect Time"
+  has_date: true
+  has_time: true
+
+vscode_last_disconnect:
+  name: "VSCode Last Disconnect Time"  
+  has_date: true
+  has_time: true
+
+last_api_validation:
+  name: "Last API Validation"
+  has_date: true
+  has_time: true
+
+system_last_restart:
+  name: "System Last Restart"
+  has_date: true
+  has_time: true

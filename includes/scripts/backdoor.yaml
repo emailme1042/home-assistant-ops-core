@@ -1,0 +1,47 @@
+build_weather_advisory:
+  sequence:
+    - variables:
+        advisory: >
+          {% set hour = now().hour %}
+          {% set weekday = now().weekday() %}
+          {% set headlines = state_attr('sensor.bournemouth_echo_headlines', 'item') %}
+          
+          {% if hour < 12 %}
+            Good morning,
+          {% elif hour < 18 %}
+            Good afternoon,
+          {% else %}
+            Good evening,
+          {% endif %}
+
+          The current temperature is {{ state_attr('weather.forecast_home', 'temperature') }} degrees.
+          It’s {{ state_attr('weather.forecast_home', 'condition') }} outside.
+
+          {% if state_attr('weather.forecast_home', 'condition') in ['rainy', 'pouring', 'showers'] %}
+            You should grab an umbrella.
+          {% elif state_attr('weather.forecast_home', 'temperature') | float < 6 %}
+            You might want both a coat and an umbrella.
+          {% elif state_attr('weather.forecast_home', 'temperature') | float < 10 %}
+            It’s cold—wear a coat.
+          {% else %}
+            Enjoy your day!
+          {% endif %}
+
+          {% if weekday in [5, 6] %}
+            And hey, it’s the weekend—don’t do anything I wouldn’t do.
+          {% elif weekday == 0 %}
+            It’s Monday—brace yourself for the chaos.
+          {% elif weekday == 4 %}
+            It’s Friday—freedom is near!
+          {% endif %}
+
+          {% if headlines %}
+            Here's what's happening in Dorset: {{ headlines[0].title }}.
+          {% else %}
+            No fresh headlines from Dorset right now.
+          {% endif %}
+
+          By the way, check out local events like the London Open House Festival or the WellChild Awards happening this week.
+    - service: rest_command.trigger_voice_monkey_flow
+      data:
+        announcement: "{{ advisory }}"

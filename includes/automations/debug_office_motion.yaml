@@ -1,0 +1,21 @@
+- id: debug_office_motion_sensor
+  alias: "🔍 Debug - Office Motion Sensor Activity"
+  description: "Debug office motion sensor state changes to troubleshoot automation"
+  mode: restart
+  
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.office_motion
+  
+  action:
+    # Announce motion detection via TTS
+    - service: tts.google_say
+      target:
+        entity_id: media_player.office_speaker
+      data:
+        message: >
+          Office motion sensor changed from {{ trigger.from_state.state }} to {{ trigger.to_state.state }}.
+          Light office is currently {{ states('light.office') }}.
+    
+    # Log detailed information
+    # Removed logbook.log action

@@ -1,0 +1,46 @@
+---
+# MQTT configuration example and notes
+#
+# Preferred: Configure MQTT using the Home Assistant UI (Configuration -> Integrations -> MQTT).
+# The UI stores broker credentials in the integration config and avoids YAML/validation issues.
+#
+# If you need to keep MQTT in YAML (legacy or advanced setups) you can use this snippet
+# in `configuration.yaml` (place under top-level, not under `homeassistant:`). Store secrets
+# in `secrets.yaml` and reference them with `!secret` as shown.
+#
+# Example (uncomment and edit only if you understand YAML & your HA version supports YAML MQTT):
+#
+# mqtt:
+#   broker: !secret mqtt_broker    # e.g. 192.168.1.10
+#   username: !secret mqtt_user
+#   password: !secret mqtt_pass
+#   discovery: true
+#   discovery_prefix: homeassistant
+#
+# Quick notes:
+# - For Home Assistant OS/Supervised, prefer the Mosquitto broker add-on (Supervisor -> Add-on Store).
+# - If using the add-on, set listen host to 0.0.0.0 and credentials in add-on options, then add the
+#   MQTT integration via the UI and point to the broker host (usually "localhost").
+# - When using the UI-managed integration, do NOT duplicate the same settings in `configuration.yaml`.
+# MQTT example sensors and integration notes
+# This file is informational and modular. Copy relevant sections into your main config if you prefer.
+
+# Example: simple MQTT sensor (non-discovery)
+#  - platform: mqtt
+#    name: "MQTT Test Temperature"
+#    state_topic: "home/ha/test/temperature"
+#    unit_of_measurement: "°C"
+#    value_template: "{{ value | float }}"
+
+# Example: MQTT binary sensor
+# binary_sensor:
+#  - platform: mqtt
+#    name: "MQTT Test Door"
+#    state_topic: "home/ha/test/door"
+#    payload_on: "OPEN"
+#    payload_off: "CLOSED"
+
+# Notes:
+# - We added `mqtt:` to `configuration.yaml` which reads credentials from `secrets.yaml`.
+# - For discovery-capable devices leave discovery enabled; devices will appear automatically.
+# - If you prefer statestream/eventstream, configure the `mqtt_statestream` and `mqtt_eventstream` integrations.

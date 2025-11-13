@@ -1,0 +1,139 @@
+# Clone Room Template Script - Next-Level Room Duplication
+# Purpose: Rapidly duplicate room template for new areas with automatic customization
+# Usage: Call with area name to create personalized room template
+
+clone_room_template:
+  alias: "🏠 Clone Room Template"
+  
+  description: "Clone the room template for a new area with automatic customization"
+  fields:
+    new_area:
+      name: "New Room Area"
+      description: "Name of the new room area (e.g., 'kitchen', 'bedroom')"
+      required: true
+      selector:
+        text:
+    room_icon:
+      name: "Room Icon"
+      description: "MDI icon for the new room (e.g., 'mdi:chef-hat' for kitchen)"
+      required: false
+      default: "mdi:home"
+      selector:
+        text:
+    room_emoji:
+      name: "Room Emoji"
+      description: "Emoji for room title (e.g., '🍳' for kitchen)"
+      required: false
+      default: "🏠"
+      selector:
+        text:
+  sequence:
+    - alias: "Update Active Room Selection"
+      service: input_select.select_option
+      target:
+        entity_id: input_select.active_room_area
+      data:
+        option: "{{ new_area }}"
+    
+    - alias: "Generate Room Template File"
+      service: notify.persistent_notification
+      data:
+        title: "🏠 Room Template Cloned"
+        message: >
+          Room template for **{{ room_emoji }} {{ new_area | title }}** is ready!
+          
+          **Next Steps:**
+          1. Copy `/dashboards/users/room_template.yaml` to `{{ new_area }}_room.yaml`
+          2. Update title: `{{ room_emoji }} {{ new_area | title }}`
+          3. Update icon: `{{ room_icon }}`
+          4. Update area filter: `area: {{ new_area | title }}`
+          5. Update navigation path: `/users-media/{{ new_area }}-room`
+          
+          **Auto-generated settings:**
+          - Area: {{ new_area | title }}
+          - Icon: {{ room_icon }}
+          - Emoji: {{ room_emoji }}
+          - Path: /users-media/{{ new_area }}-room
+          
+          Template customized for {{ new_area }} room with {{ room_emoji }} {{ room_icon }}
+    
+    - alias: "Log Template Creation"
+      service: script.turn_on
+      target:
+        entity_id: script.log_ai_action
+      data:
+        variables:
+          action: "room_template_cloned"
+          details: "Created template for {{ new_area }} with {{ room_icon }}"
+          timestamp: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+customize_room_template:
+  alias: "🎨 Customize Room Template"
+  
+  description: "Customize the current room template with area-specific settings"
+  fields:
+    area_name:
+      name: "Area Name"
+      description: "Room area name to customize template for"
+      required: true
+      selector:
+        text:
+  sequence:
+    - alias: "Set Active Room"
+      service: input_select.select_option
+      target:
+        entity_id: input_select.active_room_area
+      data:
+        option: "{{ area_name }}"
+    
+    - alias: "Update Room Health Summary"
+      service: homeassistant.update_entity
+      target:
+        entity_id: sensor.room_health_summary
+    
+    - alias: "Notify Customization Complete"
+      service: notify.alexa_media_lounge_alexa
+      data:
+        message: "Room template customized for {{ area_name }}. Check the dashboard for room-specific controls."
+        data:
+          type: tts
+
+generate_room_automation:
+  alias: "🤖 Generate Room Automation"
+  
+  description: "Generate automation suggestions based on room devices"
+  fields:
+    room_area:
+      name: "Room Area"
+      description: "Room to generate automations for"
+      required: true
+      selector:
+        text:
+  sequence:
+    - alias: "Analyze Room Devices"
+      service: script.turn_on
+      target:
+        entity_id: script.log_ai_action
+      data:
+        variables:
+          action: "room_automation_analysis"
+          room: "{{ room_area }}"
+          devices: "{{ states | selectattr('attributes.area_id', 'equalto', room_area) | list | length }}"
+    
+    - alias: "Generate Suggestions"
+      service: notify.persistent_notification
+      data:
+        title: "🤖 Room Automation Suggestions"
+        message: >
+          **Automation Ideas for {{ room_area | title }}:**
+          
+          Device Count: {{ states | selectattr('attributes.area_id', 'equalto', room_area) | list | length }}
+          
+          **Available Automations:**
+          {{ state_attr('sensor.room_automation_suggestions', 'available_automations') }}
+          
+          **Complexity Level:** {{ state_attr('sensor.room_automation_suggestions', 'complexity_score') }}
+          
+          **Health Status:** {{ states('sensor.room_health_summary') }}
+          
+          Ready for next-level room automation implementation!

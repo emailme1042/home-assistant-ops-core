@@ -1,0 +1,16 @@
+template:
+  - sensor:
+      - name: "Automations Off Count"
+        state: "{{ expand('automation.*') | selectattr('state','equalto','off') | list | count }}"
+        icon: mdi:pause-circle
+        unit_of_measurement: "automations"
+
+      - name: "Automations Unavailable Count"
+        state: "{{ expand('automation.*') | selectattr('state','equalto','unavailable') | list | count }}"
+        icon: mdi:alert-circle
+        unit_of_measurement: "automations"
+
+      - name: "Automations Total Count"
+        state: "{{ expand('automation.*') | list | count }}"
+        icon: mdi:robot
+        unit_of_measurement: "automations"

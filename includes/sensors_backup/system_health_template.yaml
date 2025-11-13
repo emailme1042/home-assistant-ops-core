@@ -1,0 +1,48 @@
+
+# System Health Template Sensors
+# Purpose: Template sensors for dashboard health monitoring and diagnostics
+# Features: Real-time entity counting, availability tracking, system health metrics
+
+- platform: template
+  sensors:
+    ha_unavailable_entities:
+      friendly_name: "HA Unavailable Entities"
+      value_template: >
+        {{ states | selectattr('state','eq','unavailable') | list | length }}
+      icon_template: mdi:alert-circle-outline
+      attribute_templates:
+        unavailable_entities: >
+          {{ states | selectattr('state','eq','unavailable') | map(attribute='entity_id') | list }}
+
+    ha_total_entities:
+      friendly_name: "HA Total Entities"
+      value_template: >
+        {{ states | list | length }}
+      icon_template: mdi:database
+
+    ha_system_health_percentage:
+      friendly_name: "HA System Health Percentage"
+      value_template: >
+        {% set total = states | list | length %}
+        {% set unavailable = states | selectattr('state','eq','unavailable') | list | length %}
+        {{ (((total - unavailable) / total) * 100) | round(1) if total > 0 else 100 }}
+      unit_of_measurement: "%"
+      icon_template: mdi:heart-pulse
+
+    ha_total_automations:
+      friendly_name: "HA Total Automations"
+      value_template: >
+        {{ states.automation | list | length }}
+      icon_template: mdi:robot
+
+    ha_total_scripts:
+      friendly_name: "HA Total Scripts"
+      value_template: >
+        {{ states.script | list | length }}
+      icon_template: mdi:script-text
+
+    unavailable_entity_count:
+      friendly_name: "Unavailable Entity Count"
+      value_template: >
+        {{ states | selectattr('state','eq','unavailable') | list | length }}
+      icon_template: mdi:alert-decagram

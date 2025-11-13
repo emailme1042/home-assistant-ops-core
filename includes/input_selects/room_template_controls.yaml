@@ -1,0 +1,21 @@
+# Room Template Input Select - Active Room Area Tracking
+# Purpose: Track which room area is currently being managed via room template
+# Integration: Used by room_template_sensors.yaml for room tagging
+
+active_room_area:
+  name: "Active Room Area"
+  icon: mdi:home-map-marker
+  options:
+    - "lounge"
+    - "kitchen"  
+    - "bedroom"
+    - "office"
+    - "bathroom"
+    - "hallway"
+    - "garden"
+    - "garage"
+    - "dining_room"
+    - "living_room"
+    - "guest_room"
+    - "utility_room"
+  initial: "lounge"

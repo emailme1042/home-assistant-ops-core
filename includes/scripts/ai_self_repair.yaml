@@ -1,0 +1,75 @@
+# AI Self-Repair Script
+# Executes core configuration reload and system healing
+
+ai_self_repair:
+  alias: "AI Self Repair"
+  description: "Performs automated system repair sequence"
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "🔧 AI Self-Repair Started"
+        message: "Initiating automated repair sequence..."
+        notification_id: ai_repair_progress
+    
+    - service: homeassistant.reload_core_config
+      data: {}
+    
+    - delay:
+        seconds: 5
+    
+    - service: homeassistant.reload_config_entry
+      data: {}
+    
+    - delay:
+        seconds: 3
+    
+    - service: script.reload_all
+      data: {}
+    
+    - delay:
+        seconds: 5
+    
+    - service: persistent_notification.create
+      data:
+        title: "✅ AI Self-Repair Complete"
+        message: >
+          Repair sequence completed.
+          New Health Score: {{ states('sensor.ai_system_health_score') }}%
+          Status: {{ states('sensor.ai_diagnostic_status') }}
+        notification_id: ai_repair_complete
+
+ai_emergency_config_reload:
+  alias: "AI Emergency Config Reload"
+  description: "Emergency configuration reload for critical issues"
+  sequence:
+    - service: homeassistant.check_config
+      data: {}
+    
+    - delay:
+        seconds: 2
+    
+    - service: homeassistant.reload_all
+      data: {}
+    
+    - service: persistent_notification.create
+      data:
+        title: "🚨 Emergency Config Reload"
+        message: "Emergency configuration reload completed"
+        notification_id: ai_emergency_reload
+
+ai_openai_repair_request:
+  alias: "AI OpenAI Repair Request"
+  description: "Sends repair request to OpenAI bridge"
+  sequence:
+    - service: shell_command.openai_repair_bridge
+      data:
+        file_path: "{{ file_path | default('configuration.yaml') }}"
+        error_description: "{{ error_description | default('Configuration validation failed') }}"
+    
+    - service: persistent_notification.create
+      data:
+        title: "🧠 OpenAI Repair Requested"
+        message: >
+          OpenAI repair bridge called for: {{ file_path | default('configuration.yaml') }}
+          Error: {{ error_description | default('Configuration validation failed') }}
+        notification_id: ai_openai_repair

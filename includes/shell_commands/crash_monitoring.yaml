@@ -1,0 +1,14 @@
+log_crash_context: >
+  echo "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') — Dashboard: Unknown | Card: {{ states('sensor.last_card_loaded') }} | Automations: {{ expand('automation.*') | selectattr('state', 'equalto', 'on') | list | length }} | Frontend Errors: {{ states('input_number.frontend_errors') }} | Memory: {{ state_attr('sensor.ha_crash_sentinel', 'memory_usage') }} | CPU: {{ state_attr('sensor.ha_crash_sentinel', 'cpu_usage') }} | Vertical Layout: {{ states('sensor.vertical_layout_tracker') }}" >> /config/www/crash_trap_log.txt
+
+emergency_crash_log: >
+  echo "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') — 🚨 EMERGENCY LOG: Frontend errors spiked to {{ states('input_number.frontend_errors') }} — Card: {{ states('sensor.last_card_loaded') }} — Layout Status: {{ states('sensor.vertical_layout_tracker') }} — Risk: {{ state_attr('sensor.crash_context_summary', 'crash_risk_level') }} — Action: {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}" >> /config/www/crash_trap_log.txt
+
+view_crash_log: >
+  if (Test-Path '/config/www/crash_trap_log.txt') { Get-Content '/config/www/crash_trap_log.txt' | Select-Object -Last 10 } else { echo 'No crash log found' }
+
+clear_crash_log: >
+  if (Test-Path '/config/www/crash_trap_log.txt') { Remove-Item '/config/www/crash_trap_log.txt' -Force; echo 'Crash log cleared' } else { echo 'No crash log to clear' }
+
+archive_crash_log: >
+  if (Test-Path '/config/www/crash_trap_log.txt') { Copy-Item '/config/www/crash_trap_log.txt' "/config/www/crash_trap_log_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"; echo 'Crash log archived' } else { echo 'No crash log to archive' }

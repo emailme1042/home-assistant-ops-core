@@ -1,0 +1,285 @@
+# ================================================
+# CRASH DETECTION AUTOMATIONS
+# ================================================
+# Purpose: Automatically detect crashes, log events, update counters
+# Created: 2025-11-04 for comprehensive stability monitoring
+# Dependencies: Stability timeline sensors, input entities, notification services
+
+# Crash Detection via Frontend Unavailability
+- id: detect_frontend_crash
+  alias: "Detect Frontend Crash"
+  description: "Detects when HA frontend becomes unavailable and logs crash event"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.home_assistant_frontend_reachable
+      to: 'off'
+      for:
+        minutes: 2
+  condition:
+    - condition: template
+      value_template: >
+        {% set last = states.automation.detect_frontend_crash.attributes.last_triggered if states.automation.detect_frontend_crash.attributes.last_triggered is defined else 0 %}
+        {{ (as_timestamp(now()) - as_timestamp(last)) > 300 }}
+  action:
+    - service: input_number.increment
+      target:
+        entity_id: input_number.crash_counter_24h
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_crash_timestamp
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.last_crash_cause
+      data:
+        option: "Frontend Error"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.crash_detection_method
+      data:
+        value: "Frontend Unavailability Monitor"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.crash_cause_confidence
+      data:
+        option: "High"
+    - service: script.log_stability_event
+      data:
+        event_type: "Crash"
+        event_cause: "Frontend Error"
+        event_details: "Frontend became unavailable for 2+ minutes"
+    - service: persistent_notification.create
+      data:
+        title: "🚨 Frontend Crash Detected"
+        message: "HA Frontend unavailable since {{ now().strftime('%H:%M') }}. Crash logged to stability timeline."
+        notification_id: "frontend_crash_{{ now().strftime('%Y%m%d_%H%M') }}"
+
+# VSCode Action Logger - Tracks VSCode-triggered configuration changes
+- id: log_vscode_action
+  alias: "Log VSCode Action"
+  description: "Logs VSCode configuration changes for crash correlation"
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        service_data:
+          entity_id: "script.validate_configuration"
+    - platform: event
+      event_type: call_service
+      event_data:
+        service: "homeassistant.reload_config_entry"
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_vscode_action
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.last_vscode_action_description
+      data:
+        value: >
+          {% if trigger.event.event_data.service == 'homeassistant.reload_config_entry' %}
+            Configuration Reload
+          {% else %}
+            YAML Validation
+          {% endif %}
+    - service: script.log_stability_event
+      data:
+        event_type: "VSCode Action"
+        event_cause: "Configuration Change"
+        event_details: >
+          {% if trigger.event.event_data.service == 'homeassistant.reload_config_entry' %}
+            VSCode triggered configuration reload
+          {% else %}
+            VSCode triggered YAML validation
+          {% endif %}
+
+# Database Lock Detection
+- id: detect_database_lock
+  alias: "Detect Database Lock"
+  description: "Detects database lock errors in logs and logs crash event"
+  trigger:
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: "ERROR"
+  condition:
+    - condition: template
+      value_template: >
+        {{ 'database is locked' in trigger.event.data.message[0] | lower or
+           'sqlite' in trigger.event.data.message[0] | lower }}
+  action:
+    - service: input_number.increment
+      target:
+        entity_id: input_number.crash_counter_24h
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_crash_timestamp
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.last_crash_cause
+      data:
+        option: "Database Lock"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.crash_detection_method
+      data:
+        value: "Log Error Analysis"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.crash_cause_confidence
+      data:
+        option: "High"
+    - service: script.log_stability_event
+      data:
+        event_type: "Crash"
+        event_cause: "Database Lock"
+        event_details: "SQLite database lock detected in logs"
+
+# Integration Failure Detection
+- id: detect_integration_failure
+  alias: "Detect Integration Failure"
+  description: "Detects integration setup failures and logs events"
+  trigger:
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: "ERROR"
+  condition:
+    - condition: template
+      value_template: >
+        {{ 'setup failed' in trigger.event.data.message[0] | lower or
+           'integration failed' in trigger.event.data.message[0] | lower or
+           'could not set up' in trigger.event.data.message[0] | lower }}
+  action:
+    - service: input_number.increment
+      target:
+        entity_id: input_number.crash_counter_24h
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_crash_timestamp
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.last_crash_cause
+      data:
+        option: "Integration Failure"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.crash_detection_method
+      data:
+        value: "Integration Setup Monitor"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.crash_cause_confidence
+      data:
+        option: "Medium"
+    - service: script.log_stability_event
+      data:
+        event_type: "Warning"
+        event_cause: "Integration Failure"
+        event_details: "Integration setup failed - {{ trigger.event.data.message[0][:100] }}"
+
+# High Crash Frequency Alert
+- id: high_crash_frequency_alert
+  alias: "High Crash Frequency Alert"
+  description: "Alerts when crash frequency becomes concerning"
+  trigger:
+    - platform: numeric_state
+      entity_id: input_number.crash_counter_24h
+      above: 3
+    - platform: numeric_state
+      entity_id: input_number.crash_counter_24h
+      above: 6
+  action:
+    - service: persistent_notification.create
+      data:
+        title: >
+          {% if states('input_number.crash_counter_24h') | int > 6 %}
+            🔥 CRITICAL: High Crash Frequency
+          {% else %}
+            ⚠️ WARNING: Elevated Crash Rate
+          {% endif %}
+        message: >
+          {{ states('input_number.crash_counter_24h') }} crashes in 24h. 
+          Latest cause: {{ states('input_select.last_crash_cause') }}.
+          System stability: {{ states('sensor.system_stability_score') }}%.
+          Consider investigating recent changes.
+        notification_id: "high_crash_frequency"
+    - service: script.alexa_tts_announce
+      data:
+        message: >
+          {% if states('input_number.crash_counter_24h') | int > 6 %}
+            Critical system instability detected. {{ states('input_number.crash_counter_24h') }} crashes recorded.
+          {% else %}
+            Warning: Elevated crash rate detected. Please check system health.
+          {% endif %}
+    - service: script.log_stability_event
+      data:
+        event_type: "Alert"
+        event_cause: "High Crash Frequency"
+        event_details: "{{ states('input_number.crash_counter_24h') }} crashes in 24h - Investigation needed"
+
+# Daily Crash Counter Reset
+- id: daily_crash_counter_reset
+  alias: "Daily Crash Counter Reset"
+  description: "Resets 24h crash counter and archives daily stats"
+  trigger:
+    - platform: time
+      at: "00:00:00"
+  action:
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.previous_crash_count
+      data:
+        value: "{{ states('input_number.crash_counter_24h') | int(0) }}"
+    - service: script.log_stability_event
+      data:
+        event_type: "Summary"
+        event_cause: "Daily Reset"
+        event_details: "Previous 24h: {{ states('input_number.crash_counter_24h') }} crashes. Stability score: {{ states('sensor.system_stability_score') }}%"
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.crash_counter_24h
+      data:
+        value: 0
+    - service: input_number.increment
+      target:
+        entity_id: input_number.events_today_count
+
+# Configuration Change Detection (VSCode Correlation)
+- id: detect_configuration_change
+  alias: "Detect Configuration Change"
+  description: "Detects when configuration files are modified for crash correlation"
+  trigger:
+    - platform: event
+      event_type: folder_watcher
+      event_data:
+        event_type: "modified"
+        path: "/config"
+  condition:
+    - condition: template
+      value_template: >
+        {{ trigger.event.data.file.endswith('.yaml') or 
+           trigger.event.data.file.endswith('.yml') }}
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_vscode_action
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.last_vscode_action_description
+      data:
+        value: "File Modified: {{ trigger.event.data.file }}"
+    - service: script.log_stability_event
+      data:
+        event_type: "Configuration"
+        event_cause: "File Change"
+        event_details: "Modified: {{ trigger.event.data.file }}"

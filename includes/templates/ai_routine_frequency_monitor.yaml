@@ -1,0 +1,69 @@
+# AI Routine Frequency Monitoring Sensors
+# ========================================
+# Tracks execution frequency and rolling averages
+
+- sensor:
+    - name: "AI Routine Last 24h Count"
+      unique_id: ai_routine_last_24h_count
+      state: >
+        {{ states('input_number.ai_collection_count_today') | int(0) }}
+      icon: mdi:counter
+      unit_of_measurement: "runs"
+      
+    - name: "AI Routine Weekly Average"
+      unique_id: ai_routine_weekly_average
+      state: >
+        {{ states('input_number.ai_weekly_average') | float(0) | round(1) }}
+      icon: mdi:chart-line
+      unit_of_measurement: "runs/day"
+      
+    - name: "AI Routine Status"
+      unique_id: ai_routine_status
+      state: >
+        {% if is_state('input_boolean.ai_active_routine', 'on') %}
+          Active (Hourly)
+        {% else %}
+          Idle (6-Hour)
+        {% endif %}
+      icon: >
+        {% if is_state('input_boolean.ai_active_routine', 'on') %}
+          mdi:robot-excited
+        {% else %}
+          mdi:robot-mower
+        {% endif %}
+        
+    - name: "AI Routine Next Run"
+      unique_id: ai_routine_next_run
+      state: >
+        {% set now_hour = now().hour %}
+        {% if is_state('input_boolean.ai_active_routine', 'on') %}
+          {% set next_hour = (now_hour + 1) % 24 %}
+          {{ today_at() + timedelta(hours=next_hour) }}
+        {% else %}
+          {% set hours_since_6 = now_hour % 6 %}
+          {% set hours_to_next = 6 - hours_since_6 %}
+          {{ now() + timedelta(hours=hours_to_next) }}
+        {% endif %}
+      icon: mdi:clock-outline
+      device_class: timestamp
+      
+    - name: "AI Archive Log Summary"
+      unique_id: ai_archive_log_summary
+      state: >
+        {% set log = states('input_text.ai_archive_log') %}
+        {% set lines = log.split('\n') if log else [] %}
+        {{ lines | length - 1 }} days archived
+      icon: mdi:archive-outline
+      
+    - name: "AI Collection Efficiency"
+      unique_id: ai_collection_efficiency
+      state: >
+        {% set target = 24 if is_state('input_boolean.ai_active_routine', 'on') else 4 %}
+        {% set actual = states('input_number.ai_collection_count_today') | int(0) %}
+        {% if target > 0 %}
+          {{ ((actual / target) * 100) | round(1) }}
+        {% else %}
+          0
+        {% endif %}
+      icon: mdi:percent
+      unit_of_measurement: "%"

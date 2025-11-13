@@ -1,0 +1,38 @@
+# File Count Command Line Sensors
+# Provides live file counts for include directories
+
+- platform: command_line
+  name: automation_files_count
+  command: 'find /config/includes/automations -name "*.yaml" -type f | wc -l'
+  scan_interval: 300
+  value_template: "{{ value | int(0) }}"
+  
+- platform: command_line
+  name: script_files_count
+  command: 'find /config/includes/scripts -name "*.yaml" -type f | wc -l'
+  scan_interval: 300
+  value_template: "{{ value | int(0) }}"
+  
+- platform: command_line
+  name: sensor_files_count
+  command: 'find /config/includes/sensors -name "*.yaml" -type f | wc -l'
+  scan_interval: 300
+  value_template: "{{ value | int(0) }}"
+  
+- platform: command_line
+  name: template_files_count
+  command: 'find /config/includes/templates -name "*.yaml" -type f | wc -l'
+  scan_interval: 300
+  value_template: "{{ value | int(0) }}"
+  
+- platform: command_line
+  name: dashboard_files_count
+  command: 'find /config/dashboards -name "*.yaml" -type f | wc -l'
+  scan_interval: 300
+  value_template: "{{ value | int(0) }}"
+  
+- platform: command_line
+  name: total_yaml_files_count
+  command: 'find /config -name "*.yaml" -type f | grep -v ".storage" | wc -l'
+  scan_interval: 600
+  value_template: "{{ value | int(0) }}"

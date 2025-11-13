@@ -1,0 +1,9 @@
+---
+# Crash Detection Input Entities
+# Purpose: Store crash detection state and methods
+
+crash_detection_method:
+  name: "Crash Detection Method"
+  max: 100
+  initial: "System Startup"
+  icon: mdi:radar

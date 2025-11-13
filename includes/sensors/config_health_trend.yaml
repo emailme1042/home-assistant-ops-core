@@ -1,0 +1,30 @@
+---
+- platform: template
+  sensors:
+    config_health_trend:
+      friendly_name: "Config Health Trend"
+      unique_id: config_health_trend
+      value_template: >
+        {% set current = states('sensor.restart_safety_score') | int(0) %}
+        {% set previous = state_attr('sensor.config_health_trend', 'previous_score') | int(current) %}
+        {% set change = current - previous %}
+        {% if change > 5 %}Improving
+        {% elif change < -5 %}Declining
+        {% else %}Stable
+        {% endif %}
+      icon_template: >
+        {% set change = states('sensor.restart_safety_score') | int(0) - (state_attr('sensor.config_health_trend', 'previous_score') | int(states('sensor.restart_safety_score') | int(0))) %}
+        {% if change > 5 %}mdi:trending-up
+        {% elif change < -5 %}mdi:trending-down
+        {% else %}mdi:trending-neutral
+        {% endif %}
+      attribute_templates:
+        current_score: "{{ states('sensor.restart_safety_score') | int(0) }}"
+        previous_score: "{{ states('sensor.restart_safety_score') | int(0) }}"
+        change: "{{ states('sensor.restart_safety_score') | int(0) - (state_attr('sensor.config_health_trend', 'previous_score') | int(states('sensor.restart_safety_score') | int(0))) }}"
+        trend_emoji: >
+          {% set change = states('sensor.restart_safety_score') | int(0) - (state_attr('sensor.config_health_trend', 'previous_score') | int(states('sensor.restart_safety_score') | int(0))) %}
+          {% if change > 5 %}📈
+          {% elif change < -5 %}📉
+          {% else %}➡️
+          {% endif %}

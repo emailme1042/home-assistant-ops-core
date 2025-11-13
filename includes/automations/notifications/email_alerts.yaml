@@ -1,0 +1,19 @@
+- id: save_latest_email_content
+  alias: Save Latest Email Content to Files
+  mode: single
+  trigger:
+    - platform: event
+      event_type: email_received
+  action:
+    - service: shell_command.save_email_subject
+      data:
+        subject: >
+          {{ trigger.event.data.subject | default('No subject') if trigger is defined else 'No trigger' }}
+    - service: shell_command.save_email_body
+      data:
+        body: >
+          {{ trigger.event.data.text | default('No body') if trigger is defined else 'No trigger' }}
+    - service: shell_command.save_email_from
+      data:
+        from: >
+          {{ trigger.event.data.from | default('Unknown sender') if trigger is defined else 'No trigger' }}

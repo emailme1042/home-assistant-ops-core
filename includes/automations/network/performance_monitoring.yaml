@@ -1,0 +1,62 @@
+# Network Speed Monitoring & Alerts
+# Created: 2025-10-28 | Multi-AI Collaboration Project
+# Purpose: Dedicated SpeedTest monitoring with bandwidth alerts
+
+alias: Network Speed Monitor
+description: Monitor internet speed and alert on performance issues
+trigger:
+  - platform: state
+    entity_id: sensor.speedtest_download
+    for:
+      minutes: 2
+  - platform: time_pattern
+    # Check every 6 hours
+    hours: "/6"
+condition:
+  - condition: numeric_state
+    entity_id: sensor.speedtest_download
+    below: 80  # Alert if download speed below 80 Mbps
+action:
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.speedtest_download
+            below: 50  # Critical threshold
+        sequence:
+          - service: notify.alexa_media_kitchen_alexa
+            data:
+              message: "Critical: Internet speed is {{ states('sensor.speedtest_download') }} Mbps. Expected over 80 Mbps."
+              data:
+                type: tts
+          - service: persistent_notification.create
+            data:
+              title: "Network Performance Alert"
+              message: "Download speed: {{ states('sensor.speedtest_download') }} Mbps (Critical)"
+              notification_id: network_speed_critical
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.speedtest_download
+            below: 80
+            above: 50
+        sequence:
+          - service: persistent_notification.create
+            data:
+              title: "Network Performance Warning"
+              message: "Download speed: {{ states('sensor.speedtest_download') }} Mbps (Below normal)"
+              notification_id: network_speed_warning
+  # Log performance data
+  # Removed logbook.log action
+    data:
+      name: "Network Speed Monitor"
+      message: "Speed test result: Download {{ states('sensor.speedtest_download') }} Mbps, Upload {{ states('sensor.speedtest_upload') }} Mbps, Ping {{ states('sensor.speedtest_ping') }} ms"
+      entity_id: sensor.speedtest_download
+
+mode: single
+max_exceeded: silent
+
+# Tags for multi-AI tracking
+tags:
+  - network_monitoring
+  - multi_ai_project
+  - session_2025_10_28
+  - speedtest_automation

@@ -1,0 +1,16 @@
+automation:
+  - alias: "Zigbee Button - Downstairs Off + Hall Light (DISABLED)"
+    id: zigbee_button_downstairs_off_hall_light_disabled
+    description: "DISABLED - Was causing runaway triggers without button press"
+    trigger:
+      # DISABLED - Broken trigger causing automatic execution
+      - platform: template
+        value_template: "{{ false }}"  # Never triggers
+    condition:
+      - condition: template
+        value_template: "{{ false }}"  # Never executes
+    action:
+      # DISABLED - No actions will execute
+      - service: persistent_notification.create
+        data:
+          message: "This automation is disabled due to broken triggers"

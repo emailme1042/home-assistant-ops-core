@@ -1,0 +1,21 @@
+# MQTT Diagnostic Shell Commands
+
+# Run MQTT discovery monitoring
+run_mqtt_discovery_monitor: >
+  python3 /config/ai_workspace/Scripts/mqtt_discovery_monitor.py \
+  {{ states('input_text.mqtt_host')|default('localhost') }} \
+  {{ states('input_text.mqtt_port')|default('1883') }} \
+  {{ states('input_text.mqtt_user')|default('mqtt_user') }} \
+  {{ states('input_text.mqtt_pass')|default('mqtt_pass') }}
+
+# Test MQTT connection
+test_mqtt_connection: >
+  python3 /config/ai_workspace/Scripts/mqtt_test.py \
+  --host {{ states('input_text.mqtt_host')|default('localhost') }} \
+  --port {{ states('input_text.mqtt_port')|default('1883') }} \
+  --user {{ states('input_text.mqtt_user')|default('mqtt_user') }} \
+  --password {{ states('input_text.mqtt_pass')|default('mqtt_pass') }}
+
+# Cleanup MQTT entities
+run_cleanup_mqtt: >
+  python3 /config/ai_workspace/Scripts/cleanup_mqtt.py

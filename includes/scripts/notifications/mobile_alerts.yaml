@@ -1,0 +1,46 @@
+mobile_alexa_announce:
+  alias: Mobile Alexa Announce
+  description: Send TTS to both Alexa and mobile device
+  fields:
+    message:
+      description: Message to announce
+      example: "Test message from Home Assistant"
+  sequence:
+    # Send to Alexa lounge (downstairs)
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "{{ message }}"
+        data:
+          type: tts
+    
+    # Send notification to mobile device (if available)
+    - service: notify.mobile_app_jds_iphone
+      data:
+        title: "🏠 Home Assistant Alert"
+        message: "{{ message }}"
+        data:
+          push:
+            sound: default
+          actions:
+            - action: "ACKNOWLEDGE"
+              title: "OK"
+
+# Alternative: Send to all Alexa devices if you have multiple
+announce_all_alexas:
+  alias: Announce to All Alexa Devices
+  description: Send TTS to all Alexa devices
+  fields:
+    message:
+      description: Message to announce
+      example: "Test message from Home Assistant"
+  sequence:
+    - service: notify.alexa_media
+      data:
+        message: "{{ message }}"
+        data:
+          type: announce
+        target:
+          - media_player.lounge_alexa
+          # Add more Alexa devices here if you have them
+          # - media_player.bedroom_alexa
+          # - media_player.kitchen_alexa

@@ -1,0 +1,64 @@
+- id: office_light_on_motion_detected
+  alias: "💡 Office Light - Turn On When Motion Detected"
+  description: "Turn on office light when motion is detected in the office"
+  mode: single
+  max_exceeded: silent
+  
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.office_motion
+      from: "off"
+      to: "on"
+  
+  condition:
+    # Only turn on if light is currently off
+    - condition: state
+      entity_id: light.office
+      state: "off"
+  
+  action:
+    # Turn on office light
+    - service: light.turn_on
+      target:
+        entity_id: light.office
+      data:
+        brightness_pct: 80
+    
+    # Optional: Log the action
+    - service: logbook.log
+      data:
+        name: "Office Motion Automation"
+        message: "Office light turned on - motion detected"
+        entity_id: binary_sensor.office_motion
+
+- id: office_light_off_no_motion
+  alias: "💡 Office Light - Turn Off After No Motion"
+  description: "Turn off office light after no motion for 10 minutes"
+  mode: restart
+  
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.office_motion
+      from: "on"
+      to: "off"
+      for:
+        minutes: 10
+  
+  condition:
+    # Only turn off if light is currently on
+    - condition: state
+      entity_id: light.office
+      state: "on"
+  
+  action:
+    # Turn off office light
+    - service: light.turn_off
+      target:
+        entity_id: light.office
+    
+    # Log the action
+    - service: logbook.log
+      data:
+        name: "Office Motion Automation"
+        message: "Office light turned off - no motion for 10 minutes"
+        entity_id: binary_sensor.office_motion

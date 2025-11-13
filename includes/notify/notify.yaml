@@ -1,0 +1,11 @@
+# - platform: smtp
+#   name: notify_email
+#   server: smtp.gmail.com
+#   port: 587
+#   encryption: starttls
+#   sender: !secret smtp_sender
+#   username: !secret smtp_user
+#   password: !secret smtp_pass
+#   recipient:
+#     - !secret smtp_recipient
+#   sender_name: "Home Assistant"

@@ -1,0 +1,177 @@
+# AI-Powered Dashboard Audit Template Sensors
+# Intelligent monitoring and optimization recommendation system
+# Provides real-time insights and actionable recommendations
+
+template:
+  - sensor:
+      # Real-time optimization recommendations
+      - name: "Dashboard Optimization Tip"
+        state: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set ai_workspace = states('sensor.dashboard_complexity_score_ai_workspace') | int(0) %}
+          {% set recovery = states('sensor.dashboard_complexity_score_recovery') | int(0) %}
+          {% set system_overview = states('sensor.dashboard_complexity_score_system_overview') | int(0) %}
+          {% set avg_complexity = ((ai_workspace + recovery + system_overview) / 3) | round(0) %}
+          
+          {% if errors > 10 %}
+            🚨 HIGH ERROR RATE: {{ errors }} errors detected. Check dashboard complexity immediately.
+          {% elif errors > 5 %}
+            ⚠️ MODERATE ERRORS: {{ errors }} errors. Monitor dashboard performance closely.
+          {% elif ai_workspace > 150 %}
+            🔥 AI WORKSPACE OVERLOADED: Score {{ ai_workspace }}. Consider simplifying views.
+          {% elif system_overview > 150 %}
+            ⚡ SYSTEM OVERVIEW COMPLEX: Score {{ system_overview }}. Split into focused dashboards.
+          {% elif avg_complexity > 100 %}
+            📊 AVERAGE COMPLEXITY HIGH: {{ avg_complexity }}. Review dashboard optimization.
+          {% elif errors == 0 and avg_complexity < 75 %}
+            🏆 EXCELLENT: System optimally configured. No action needed.
+          {% else %}
+            ✅ HEALTHY: System performing well within normal parameters.
+          {% endif %}
+        icon: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if errors > 5 %}
+            mdi:alert-circle
+          {% else %}
+            mdi:lightbulb-on-outline
+          {% endif %}
+        attributes:
+          error_count: "{{ states('input_number.frontend_errors') }}"
+          ai_workspace_score: "{{ states('sensor.dashboard_complexity_score_ai_workspace') }}"
+          recovery_score: "{{ states('sensor.dashboard_complexity_score_recovery') }}"
+          system_overview_score: "{{ states('sensor.dashboard_complexity_score_system_overview') }}"
+
+      # Weekly audit summary sensor
+      - name: "Weekly Audit Summary"
+        state: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set ai_score = states('sensor.dashboard_complexity_score_ai_workspace') | int(0) %}
+          {% set high_complexity_count = 0 %}
+          {% if ai_score > 150 %}{% set high_complexity_count = high_complexity_count + 1 %}{% endif %}
+          {% if states('sensor.dashboard_complexity_score_recovery') | int(0) > 150 %}{% set high_complexity_count = high_complexity_count + 1 %}{% endif %}
+          {% if states('sensor.dashboard_complexity_score_system_overview') | int(0) > 150 %}{% set high_complexity_count = high_complexity_count + 1 %}{% endif %}
+          
+          {% if errors > 10 or high_complexity_count > 2 %}
+            🚨 CRITICAL: System requires immediate optimization
+          {% elif errors > 5 or high_complexity_count > 1 %}
+            ⚠️ ATTENTION: Multiple dashboards need review
+          {% elif errors > 2 or ai_score > 100 %}
+            📊 MONITORING: Some optimization opportunities exist
+          {% else %}
+            🏆 EXCELLENT: System optimally configured
+          {% endif %}
+        icon: mdi:calendar-check
+        attributes:
+          grade: >-
+            {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_recovery') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_system_overview') | int(0)) %}
+            {% set avg_score = total_score / 3 %}
+            {% if avg_score < 50 %}A+ (Excellent)
+            {% elif avg_score < 100 %}A (Good)
+            {% elif avg_score < 150 %}B (Fair)
+            {% elif avg_score < 200 %}C (Needs Attention)
+            {% else %}D (Critical)
+            {% endif %}
+          recommendation_count: >-
+            {% set errors = states('input_number.frontend_errors') | int %}
+            {% set recommendations = 0 %}
+            {% if errors > 5 %}{% set recommendations = recommendations + 1 %}{% endif %}
+            {% if states('sensor.dashboard_complexity_score_ai_workspace') | int > 150 %}{% set recommendations = recommendations + 1 %}{% endif %}
+            {% if states('sensor.dashboard_complexity_score_system_overview') | int > 150 %}{% set recommendations = recommendations + 1 %}{% endif %}
+            {{ recommendations }}
+
+      # Dashboard health trend analyzer
+      - name: "Dashboard Health Trend"
+        state: >-
+          {% set current_errors = states('input_number.frontend_errors') | int %}
+          {% set current_avg = ((states('sensor.dashboard_complexity_score_ai_workspace') | int) +
+                               (states('sensor.dashboard_complexity_score_recovery') | int) +
+                               (states('sensor.dashboard_complexity_score_system_overview') | int)) / 3 %}
+          
+          {% if current_errors == 0 and current_avg < 75 %}
+            Improving
+          {% elif current_errors < 3 and current_avg < 100 %}
+            Stable
+          {% elif current_errors < 8 and current_avg < 150 %}
+            Declining
+          {% else %}
+            Critical
+          {% endif %}
+        icon: >-
+          {% set trend = states('sensor.dashboard_health_trend') %}
+          {% if trend == 'Improving' %}
+            mdi:trending-up
+          {% elif trend == 'Stable' %}
+            mdi:trending-neutral
+          {% elif trend == 'Declining' %}
+            mdi:trending-down
+          {% else %}
+            mdi:alert-circle
+          {% endif %}
+
+      # AI-powered performance grade
+      - name: "Dashboard Performance Grade"
+        state: >-
+          {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int) +
+                              (states('sensor.dashboard_complexity_score_recovery') | int) +
+                              (states('sensor.dashboard_complexity_score_system_overview') | int) %}
+          {% set avg_score = total_score / 3 %}
+          {% set errors = states('input_number.frontend_errors') | int %}
+          
+          {% if errors == 0 and avg_score < 50 %}
+            A+
+          {% elif errors < 3 and avg_score < 75 %}
+            A
+          {% elif errors < 5 and avg_score < 100 %}
+            B+
+          {% elif errors < 8 and avg_score < 125 %}
+            B
+          {% elif errors < 12 and avg_score < 150 %}
+            C+
+          {% elif errors < 15 and avg_score < 175 %}
+            C
+          {% else %}
+            D
+          {% endif %}
+        icon: mdi:school-outline
+        attributes:
+          numeric_grade: >-
+            {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int) +
+                                (states('sensor.dashboard_complexity_score_recovery') | int) +
+                                (states('sensor.dashboard_complexity_score_system_overview') | int) %}
+            {% set avg_score = total_score / 3 %}
+            {% set errors = states('input_number.frontend_errors') | int %}
+            {% set grade = 100 - (avg_score / 2) - (errors * 3) %}
+            {{ [grade, 0] | max | round(0) }}
+          
+      # Audit log freshness monitor  
+      - name: "Dashboard Audit Freshness"
+        state: >-
+          {% set audit_file = '/config/AI_WORKSPACE/dashboard_health_audit.log' %}
+          {% if states('sensor.file_last_modified_dashboard_health_audit_log') %}
+            {% set last_audit = states('sensor.file_last_modified_dashboard_health_audit_log') %}
+            {% set hours_since = ((as_timestamp(now()) - as_timestamp(last_audit)) / 3600) | round(1) %}
+            {% if hours_since < 2 %}
+              Fresh
+            {% elif hours_since < 6 %}
+              Recent  
+            {% elif hours_since < 24 %}
+              Aging
+            {% else %}
+              Stale
+            {% endif %}
+          {% else %}
+            Unknown
+          {% endif %}
+        icon: >-
+          {% set freshness = states('sensor.dashboard_audit_freshness') %}
+          {% if freshness == 'Fresh' %}
+            mdi:check-circle
+          {% elif freshness == 'Recent' %}
+            mdi:clock-check
+          {% elif freshness == 'Aging' %}
+            mdi:clock-alert
+          {% else %}
+            mdi:alert-circle
+          {% endif %}

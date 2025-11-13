@@ -1,0 +1,46 @@
+# ================================================
+# STABILITY TIMELINE SUPPORT ENTITIES
+# ================================================
+# Purpose: Input entities for crash tracking, VSCode correlation, timeline logging
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+# Crash Counters
+crash_counter_24h:
+  name: "Crash Counter (24h)"
+  min: 0
+  max: 100
+  step: 1
+  initial: 0
+  icon: mdi:counter
+
+previous_crash_count:
+  name: "Previous Crash Count"
+  min: 0
+  max: 100
+  step: 1
+  initial: 0
+  icon: mdi:history
+
+timeline_event_count:
+  name: "Timeline Event Count"
+  min: 0
+  max: 1000
+  step: 1
+  initial: 0
+  icon: mdi:timeline-clock
+
+events_today_count:
+  name: "Events Today Count"
+  min: 0
+  max: 100
+  step: 1
+  initial: 0
+  icon: mdi:calendar-today
+
+events_week_count:
+  name: "Events Week Count"
+  min: 0
+  max: 500
+  step: 1
+  initial: 0
+  icon: mdi:calendar-week

@@ -1,0 +1,12 @@
+zigbee_repair_protocol:
+  alias: Zigbee Repair Protocol
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/bridge/request/device_remove
+        payload: "{{ device_id }}"
+    - delay: '00:00:10'
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/bridge/request/device_join
+        payload: "{{ device_id }}"

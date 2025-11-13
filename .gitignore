@@ -1,0 +1,34 @@
+﻿# Home Assistant
+secrets.yaml
+*.db
+*.db-shm
+*.db-wal
+storage/
+deps/
+custom_components/__pycache__/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local development
+.vscode/
+.idea/

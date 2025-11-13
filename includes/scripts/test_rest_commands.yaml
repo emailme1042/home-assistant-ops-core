@@ -1,0 +1,43 @@
+test_rest_commands:
+  alias: "Test All REST Commands"
+  sequence:
+    - service: rest_command.gpt_chatgpt_query
+      data:
+        prompt: "Test GPT"
+    - service: rest_command.gpt_create_backup
+      data:
+        label: "Test Backup"
+    - service: rest_command.gpt_reload_automations
+    - service: rest_command.gpt_reload_scripts
+    - service: rest_command.gpt_set_input_text
+      data:
+        entity_id: input_text.test
+        value: "Test Value"
+    - service: rest_command.gpt_get_entity_state
+      data:
+        entity_id: input_text.chatgpt_prompt
+    - service: rest_command.ask_openai
+      data:
+        prompt: "Hello GPT"
+    - service: rest_command.jit_plugin_call
+      data:
+        endpoint: "ping"
+        payload: "{}"
+    - service: rest_command.jit_get_file_contents
+      data:
+        path: "python_scripts/jit_plugin.py"
+    - service: rest_command.jit_list_folder
+      data:
+        path: "python_scripts"
+    - service: rest_command.run_nas_script
+      data:
+        prompt: "Test NAS"
+    - service: rest_command.jit_write_file
+      data:
+        path: "test.txt"
+        content: "Hello World"
+        confirm: true
+    - service: rest_command.jit_reload_ha
+    - service: rest_command.jit_run_script
+      data:
+        script_name: "test_helpers.yaml"

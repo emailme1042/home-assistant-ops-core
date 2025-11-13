@@ -1,0 +1,38 @@
+template:
+  - sensor:
+      - name: "HA Total Entities"
+        unique_id: ha_total_entities
+        state: "{{ states | count }}"
+        icon: mdi:counter
+
+      - name: "HA Unavailable Entities"
+        unique_id: ha_unavailable_entities
+        state: >
+          {{ states | selectattr('state', 'eq', 'unavailable') | list | count }}
+        icon: mdi:alert
+
+      - name: "HA Enabled Automations"
+        unique_id: ha_automation_count
+        state: >
+          {{ expand('automation.*') | selectattr('state', 'eq', 'on') | list | count }}
+        icon: mdi:robot
+
+      - name: "HA Loaded Scripts"
+        unique_id: ha_script_count
+        state: >
+          {{ states.script | list | count }}
+        icon: mdi:script-text
+
+      - name: "HA Entity Health Percent"
+        unique_id: ha_entity_health_percent
+        unit_of_measurement: "%"
+        state: >
+          {% set total = states | count %}
+          {% set unavailable = states | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {{ ((total - unavailable) / total * 100) | round(1) if total > 0 else 0 }}
+        icon: mdi:chart-arc
+
+      - name: "HA Uptime ISO"
+        unique_id: ha_uptime_iso
+        state: "{{ now().isoformat() }}"
+        icon: mdi:clock-time-eight

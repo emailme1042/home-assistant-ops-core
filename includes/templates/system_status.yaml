@@ -1,0 +1,55 @@
+# System Health Status Templates
+# Aggregate system health metrics into status indicators
+
+template:
+  - sensor:
+
+      - name: "System Health Status"
+        unique_id: system_health_status
+        state: >
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') | float(0) %}
+          {% set memory = states('sensor.home_assistant_core_memory_percent') | float(0) %}
+          {% set disk = states('sensor.home_assistant_host_disk_used') | float(0) %}
+          {% if cpu > 80 or memory > 80 or disk > 90 %}
+            CRITICAL
+          {% elif cpu > 60 or memory > 60 or disk > 80 %}
+            WARNING
+          {% else %}
+            HEALTHY
+          {% endif %}
+        attributes:
+          icon: mdi:heart-pulse
+          cpu_percent: "{{ states('sensor.home_assistant_core_cpu_percent') }}"
+          memory_percent: "{{ states('sensor.home_assistant_core_memory_percent') }}"
+          disk_percent: "{{ states('sensor.home_assistant_host_disk_used') }}"
+        
+      - name: "MQTT Watch Status"
+        unique_id: mqtt_watch_status
+        state: >
+          {% if is_state('binary_sensor.mqtt_connection', 'on') %}
+            CONNECTED
+          {% else %}
+            DISCONNECTED
+          {% endif %}
+        attributes:
+          icon: mdi:wifi-check
+          last_check: "{{ states.binary_sensor.mqtt_connection.last_changed }}"
+          
+      - name: "Network Latency"
+        unique_id: network_latency
+        unit_of_measurement: "ms"
+        state: >
+          {% if states('sensor.speedtest_ping') not in ['unknown', 'unavailable'] %}
+            {{ states('sensor.speedtest_ping') | int(0) }}
+          {% else %}
+            0
+          {% endif %}
+        attributes:
+          icon: mdi:speedometer
+
+      - name: "Aircraft Present"
+        unique_id: aircraft_present
+        state: >
+          {{ states('sensor.aircraft_count') | int(0) > 0 }}
+        attributes:
+          icon: mdi:airplane

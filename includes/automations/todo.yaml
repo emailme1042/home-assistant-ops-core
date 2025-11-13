@@ -1,0 +1,55 @@
+- alias: Add Task from Dashboard
+  id: add_task_from_dashboard
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.todo_task_1
+      from: ''
+      to: ''
+      for:
+        seconds: 1
+  action:
+    - service: python_script.add_todo
+      data:
+        task: "{{ states('input_text.new_todo_task') }}"
+        category: "{{ states('input_select.new_todo_category') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.new_todo_task
+      data:
+        value: ''
+
+- alias: Teddy Belt Level Up
+  id: teddy_belt_level_up
+  trigger:
+    - platform: state
+      entity_id: input_select.teddy_karate_belt
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+  action:
+    - service: browser_mod.notification
+      data:
+        message: "🥋 Teddy has leveled up to {{ states('input_select.teddy_karate_belt') }} belt!"
+        duration: 8000
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.kids_echo_dot
+      data:
+        media_content_type: announce
+        media_content_id: "🥋 Teddy has earned a new belt!"
+
+- alias: Add Karate Belt Badge
+  id: add_karate_belt_badge
+  trigger:
+    - platform: state
+      entity_id: input_select.teddy_karate_belt
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.teddy_badge_wall
+      data:
+        value: "{{ states('input_text.teddy_badge_wall') }} 🥋 {{ trigger.to_state.state }} Belt Earned!\n"

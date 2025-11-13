@@ -1,0 +1,19 @@
+- alias: "MQTT Connection Watchdog"
+  id: mqtt_watchdog_hourly
+  trigger:
+    - platform: time_pattern
+      minutes: 0  # Every hour at minute 0
+  condition: []
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/status_check"
+        payload: "watchdog_ping"
+    - delay: "00:00:10"
+    - condition: state
+      entity_id: binary_sensor.192_168_1_1
+      state: "off"
+    - service: persistent_notification.create
+      data:
+        title: "MQTT Connection Alert"
+        message: "⚠️ MQTT appears disconnected. Watchdog triggered."

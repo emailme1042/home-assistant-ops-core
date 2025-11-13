@@ -1,0 +1,4 @@
+xyz:
+  name: XYZ Test Entity
+  initial: false
+  icon: mdi:test-tube

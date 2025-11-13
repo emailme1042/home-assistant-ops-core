@@ -1,0 +1,40 @@
+---
+# Boiler Monitoring Dashboard Card Documentation
+# This is a markdown-formatted documentation file for the boiler monitoring system
+
+content: |
+  # 🔥 Boiler Monitoring Dashboard Card
+
+  ## Current Status
+  - **Status**: `{{ states('sensor.boiler_status_summary') }}`
+  - **Usage Type**: `{{ states('sensor.boiler_usage_type') }}`
+  - **Running**: `{{ states('input_boolean.boiler_running_status') }}`
+  - **Current Runtime**: `{{ states('sensor.boiler_current_runtime') }}`
+  - **Daily Runtime**: `{{ states('sensor.boiler_runtime_today') }}`
+  - **Heating Runtime**: `{{ states('sensor.boiler_heating_runtime_today') }}h`
+  - **Hot Water Runtime**: `{{ states('sensor.boiler_hot_water_runtime_today') }}h`
+  - **Cycles Today**: `{{ states('counter.boiler_cycles_today') }}`
+
+  ## Recent Activity
+  - **Last Started**: `{{ states('input_datetime.boiler_last_start') }}`
+  - **Last Stopped**: `{{ states('input_datetime.boiler_last_stop') }}`
+
+  ## System Status
+  - **Heating Demand**: `{{ states('binary_sensor.heating_demand_active') }}`
+  - **Hot Water Flow**: `{{ states('sensor.boiler_hot_water_flow') }} L/min`
+  - **Vibration Sensor**: `{{ states('binary_sensor.aqara_vibration_sensor_occupancy') }}`
+
+  ## Usage Instructions
+  The vibration sensor monitors your Ideal boiler activity. The system now distinguishes between:
+
+  1. **Heating**: When TRV valves open (radiator demand)
+  2. **Hot Water**: Instantaneous flow detected or short cycles without heating demand
+  3. **Unknown**: When usage type cannot be determined
+
+  **Sensor Placement Recommendations for Bellway Build:**
+  - **Current**: Vibration sensor on boiler casing ✅ (detects burner firing)
+  - **Recommended**: Flow sensor on hot water pipe (perfect hot water detection)
+  - **Optional**: TRV position sensors (better heating detection)
+  - **Optional**: Gas meter pulse sensor (accurate consumption tracking)
+
+  Check the **Logbook** for detailed boiler activity with usage type classification.

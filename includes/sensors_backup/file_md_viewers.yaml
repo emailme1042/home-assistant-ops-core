@@ -1,0 +1,12 @@
+- platform: file
+  name: file_session_recall_md
+  file_path: /config/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/SESSION_RECALL.md
+  scan_interval: 30
+- platform: file
+  name: file_entity_catalog_md
+  file_path: /config/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/entity_catalog.md
+  scan_interval: 30
+- platform: file
+  name: file_copilot_session_notes_merge_md
+  file_path: /config/AI_WORKSPACE/copilot_session_notes_merge.md
+  scan_interval: 30

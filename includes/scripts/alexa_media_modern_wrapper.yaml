@@ -1,0 +1,130 @@
+##
+# Modern Alexa Media TTS Service Wrapper
+# Provides backward compatibility for notify.alexa_media_* calls
+##
+
+alexa_tts_announce:
+  alias: "🔊 Alexa TTS Announcement"
+  description: "Modern TTS service wrapper for Alexa devices with fallback support"
+  fields:
+    message:
+      description: "The message to announce"
+      example: "Hello, this is a test announcement"
+      required: true
+      selector:
+        text:
+    target_device:
+      description: "Target Alexa device (lounge_alexa, kitchen_alexa, etc.)"
+      example: "lounge_alexa"
+      default: "lounge_alexa"
+      selector:
+        select:
+          options:
+            - "lounge_alexa"
+            - "kitchen_alexa"
+            - "bedroom_2"
+            - "teddy"
+            - "lounge_2"
+    volume:
+      description: "Volume level (0.0 to 1.0)"
+      example: 0.7
+      default: 0.7
+      selector:
+        number:
+          min: 0.0
+          max: 1.0
+          step: 0.1
+  sequence:
+    - choose:
+        # Try modern TTS service first
+        - conditions:
+            - condition: template
+              value_template: "{{ states('media_player.' + target_device) not in ['unavailable', 'unknown'] }}"
+          sequence:
+            - service: tts.speak
+              target:
+                entity_id: "media_player.{{ target_device }}"
+              data:
+                media_player_entity_id: "media_player.{{ target_device }}"
+                message: "{{ message }}"
+                options:
+                  volume_level: "{{ volume }}"
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.last_self_healing_action
+              data:
+                value: "✅ Alexa TTS: {{ target_device }} - {{ now().strftime('%H:%M') }}"
+      # Fallback to Google TTS
+      default:
+        - service: tts.google_translate_say
+          target:
+            entity_id: "media_player.{{ target_device }}"
+          data:
+            message: "{{ message }}"
+        - service: input_text.set_value
+          target:
+            entity_id: input_text.last_self_healing_action
+          data:
+            value: "🔄 Fallback TTS: {{ target_device }} - {{ now().strftime('%H:%M') }}"
+        - service: persistent_notification.create
+          data:
+            title: "🔄 TTS Fallback Used"
+            message: "Alexa device {{ target_device }} unavailable. Used Google TTS fallback."
+            notification_id: "tts_fallback_{{ target_device }}"
+
+alexa_media_migration:
+  alias: "🔧 Alexa Media Service Migration"
+  description: "Migrates legacy notify.alexa_media_* calls to modern TTS format"
+  fields:
+    legacy_service:
+      description: "Legacy notify service name (e.g., notify.alexa_media_lounge_alexa)"
+      example: "notify.alexa_media_lounge_alexa"
+      required: true
+      selector:
+        text:
+    message:
+      description: "The message to announce"
+      example: "Migration test message"
+      required: true
+      selector:
+        text:
+  sequence:
+    # Extract device name from legacy service
+    - variables:
+        device_name: "{{ legacy_service.replace('notify.alexa_media_', '') }}"
+    # Call modern TTS service
+    - service: script.alexa_tts_announce
+      data:
+        message: "{{ message }}"
+        target_device: "{{ device_name }}"
+        volume: 0.7
+    # Log migration
+    - service: logbook.log
+      data:
+        name: "Alexa Media Migration"
+        message: "Migrated {{ legacy_service }} → script.alexa_tts_announce for device {{ device_name }}"
+        entity_id: "script.alexa_media_migration"
+
+test_alexa_all_devices:
+  alias: "🔊 Test All Alexa Devices"
+  description: "Tests TTS on all available Alexa devices"
+  sequence:
+    - repeat:
+        count: 6
+        sequence:
+          - variables:
+              devices: ["lounge_alexa", "kitchen_alexa", "bedroom_2", "teddy", "lounge_2", "jamie_s_fire_tv"]
+              current_device: "{{ devices[repeat.index - 1] }}"
+          - condition: template
+            value_template: "{{ states('media_player.' + current_device) not in ['unavailable', 'unknown'] }}"
+          - service: script.alexa_tts_announce
+            data:
+              message: "Device {{ current_device | replace('_', ' ') | title }} - TTS test successful at {{ now().strftime('%H:%M') }}"
+              target_device: "{{ current_device }}"
+              volume: 0.5
+          - delay: "00:00:02"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.last_self_healing_action
+      data:
+        value: "✅ All Alexa devices tested - {{ now().strftime('%H:%M:%S') }}"

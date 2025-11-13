@@ -1,0 +1,101 @@
+# DISABLED FOR PERFORMANCE - Room template sensors causing high CPU load
+# - platform: template
+#   sensors:
+#     # room_template_tag:
+#       friendly_name: "Active Room Template"
+#       value_template: >
+#         {% set current_path = state_attr('sensor.current_dashboard_path', 'path') | default('unknown') %}
+#         {% if '/users-media/room-template' in current_path %}
+#           {{ states('input_select.active_room_area') | default('lounge') }}
+#         {% else %}
+#           none
+#         {% endif %}
+#       attribute_templates:
+#         last_accessed: >
+#           {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+#         template_version: "v2.0"
+#         next_level_features: true
+
+#     # room_health_summary:
+#       friendly_name: "Room Health Status"
+#       value_template: >
+#         {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#         {% if room != 'none' %}
+#           {% set battery_low = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*battery.*') | selectattr('state', 'lt', '20') | list | length %}
+#           {% set signal_weak = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*signal.*') | selectattr('state', 'lt', '50') | list | length %}
+#           {% set power_high = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*power.*') | selectattr('state', 'gt', '100') | list | length %}
+#           
+#           {% if battery_low > 0 or signal_weak > 0 %}
+#             ⚠️ Attention Needed
+#           {% elif power_high > 0 %}
+#             ⚡ High Power Usage
+#           {% else %}
+#             ✅ All Healthy
+#           {% endif %}
+#         {% else %}
+#           📊 No Room Active
+#         {% endif %}
+#       attribute_templates:
+#         device_count: >
+#           {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#           {{ states | selectattr('attributes.area_id', 'equalto', room) | list | length }}
+#         battery_alerts: >
+#           {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#           {% set low_battery = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*battery.*') | selectattr('state', 'lt', '20') | list %}
+#           {{ low_battery | map(attribute='entity_id') | list | join(', ') }}
+#         signal_alerts: >
+#           {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#           {% set weak_signal = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*signal.*') | selectattr('state', 'lt', '50') | list %}
+#           {{ weak_signal | map(attribute='entity_id') | list | join(', ') }}
+#         power_alerts: >
+#           {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#           {% set high_power = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*power.*') | selectattr('state', 'gt', '100') | list %}
+#           {{ high_power | map(attribute='entity_id') | list | join(', ') }}
+#         last_updated: >
+#           {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+
+#     # room_automation_suggestions:
+#       friendly_name: "Room Automation Ideas"
+#       value_template: >
+#         {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#         {% if room != 'none' %}
+#           {% set lights = states.light | selectattr('attributes.area_id', 'equalto', room) | list | length %}
+#           {% set motion = states.binary_sensor | selectattr('entity_id', 'match', '.*' + room + '.*motion.*') | list | length %}
+#           {% set temp = states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*temperature.*') | list | length %}
+#           
+#           {% if motion > 0 and lights > 0 %}
+#             💡 Motion-Based Lighting Ready
+#           {% elif temp > 0 %}
+#             🌡️ Climate Automation Possible
+#           {% else %}
+#             🤖 Basic Room Control Available
+#           {% endif %}
+#         {% else %}
+#           🎯 Select Room for Suggestions
+#         {% endif %}
+#       attribute_templates:
+#         available_automations: >
+#           {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#           {% set suggestions = [] %}
+#           {% if states.binary_sensor | selectattr('entity_id', 'match', '.*' + room + '.*motion.*') | list | length > 0 %}
+#             {% set suggestions = suggestions + ['Motion-triggered lighting'] %}
+#           {% endif %}
+#           {% if states.sensor | selectattr('entity_id', 'match', '.*' + room + '.*temperature.*') | list | length > 0 %}
+#             {% set suggestions = suggestions + ['Temperature-based climate control'] %}
+#           {% endif %}
+#           {% if states.media_player | selectattr('attributes.area_id', 'equalto', room) | list | length > 0 %}
+#             {% set suggestions = suggestions + ['Media automation scenes'] %}
+#           {% endif %}
+#           {{ suggestions | join(', ') }}
+#         complexity_score: >
+#           {% set room = states('sensor.room_template_tag') | default('lounge') %}
+#           {% set devices = states | selectattr('attributes.area_id', 'equalto', room) | list | length %}
+#           {% if devices > 20 %}
+#             Advanced
+#           {% elif devices > 10 %}
+#             Intermediate  
+#           {% elif devices > 0 %}
+#             Basic
+#           {% else %}
+#             Empty
+#           {% endif %}

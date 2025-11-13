@@ -1,0 +1,56 @@
+# Broadlink Button Test Service Calls
+
+# Use these in Developer Tools → Services to test button functionality
+
+# PRE-FIX TEST (should fail with tuple error)
+service: button.press
+target:
+  entity_id: button.office_blind_up
+
+---
+
+# POST-FIX TESTS (should work after via_device fix)
+
+# Test UP button
+service: button.press
+target:
+  entity_id: button.office_blind_up
+
+---
+
+# Test DOWN button  
+service: button.press
+target:
+  entity_id: button.office_blind_down
+
+---
+
+# Test STOP button
+service: button.press
+target:
+  entity_id: button.office_blind_stop
+
+---
+
+# Alternative entity names to try if above don't work:
+# switch.office_blind_up
+# switch.office_blind_down
+# switch.office_blind_stop
+# cover.office_blind (open_cover/close_cover/stop_cover services)
+
+# Test cover entity (if it exists)
+service: cover.open_cover
+target:
+  entity_id: cover.office_blind
+
+---
+
+service: cover.close_cover
+target:
+  entity_id: cover.office_blind
+
+---
+
+service: cover.stop_cover
+target:
+  entity_id: cover.office_blind

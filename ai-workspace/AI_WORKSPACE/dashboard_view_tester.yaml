@@ -1,0 +1,59 @@
+# Dashboard View Tester - Test AI Main views individually
+# Purpose: Isolate which view causes crash by testing one at a time
+# Usage: Replace !include line in main.yaml with individual views for testing
+
+title: AI View Tester
+views:
+  # Test only ONE of these at a time by uncommenting
+  
+  # View 1: AI Navigation (Known working)
+  # - !include ai_navigation_view.yaml
+  
+  # View 2: AI Workspace 
+  # - !include ai_workspace_view.yaml
+  
+  # View 3: AI System Insight
+  # - !include ai_system_insight.yaml
+  
+  # View 4: Messaging Matrix
+  # - !include messaging_matrix_view.yaml
+  
+  # View 5: Integration Health Matrix
+  # - !include integration_health_matrix_view.yaml
+  
+  # View 6: GPT Access Monitor (Known working)
+  # - !include gpt_access_monitor_view.yaml
+  
+  # View 7: VSCode Diagnostics
+  # - !include vscode_ha_diagnostics_view.yaml
+
+  # Safe fallback view for testing
+  - title: "🧪 View Tester"
+    icon: mdi:test-tube
+    cards:
+      - type: markdown
+        content: |
+          ## 🧪 AI Dashboard View Tester
+          
+          **Purpose:** Test individual AI Main views to isolate crash source
+          
+          **Status:** Ready for testing
+          
+          **Instructions:**
+          1. Edit `dashboards/ai/main.yaml`
+          2. Comment out all views except ONE you want to test
+          3. Reload Lovelace: Settings → Dashboards → ⋮ → Reload resources
+          4. Navigate to AI Main dashboard
+          5. If no crash = view is safe
+          6. If crash = problematic view identified
+          
+          **Test Order (recommended):**
+          1. ✅ ai_navigation_view.yaml (known working)
+          2. ❓ ai_workspace_view.yaml
+          3. ❓ ai_system_insight.yaml  
+          4. ❓ messaging_matrix_view.yaml
+          5. ❓ integration_health_matrix_view.yaml
+          6. ✅ gpt_access_monitor_view.yaml (known working)
+          7. ❓ vscode_ha_diagnostics_view.yaml
+          
+          **Current sensor.ha_sync_status:** {{ states('sensor.ha_sync_status') }}

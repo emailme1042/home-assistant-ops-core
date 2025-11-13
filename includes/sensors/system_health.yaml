@@ -1,0 +1,26 @@
+- platform: template
+  sensors:
+    last_restart_time:
+      friendly_name: "Last HA Restart"
+      value_template: "{{ as_timestamp(states('sensor.uptime')) | timestamp_custom('%Y-%m-%d %H:%M:%S') }}"
+      icon_template: "mdi:restart"
+      
+    reload_status:
+      friendly_name: "YAML Reload Status"
+      value_template: >
+        {% set last_reload = states('input_datetime.last_yaml_reload') %}
+        {% if last_reload == 'unknown' %}
+          Ready
+        {% else %}
+          Success {{ last_reload }}
+        {% endif %}
+      icon_template: "mdi:file-sync"
+      
+    system_health_summary:
+      friendly_name: "System Health Summary"
+      value_template: >
+        {% set entities = states | count %}
+        {% set automations = expand('automation.*') | count %}
+        {% set scripts = states.script | count %}
+        {{ entities }} entities, {{ automations }} automations, {{ scripts }} scripts
+      icon_template: "mdi:heart-pulse"

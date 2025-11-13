@@ -1,0 +1,85 @@
+template:
+  - sensor:
+      - name: "Context Snapshot Exists"
+        unique_id: context_snapshot_exists
+        state: >
+          {% set files = states('input_text.ai_file_preview') %}
+          {% if files and 'context' in files %}
+            1
+          {% else %}
+            0
+          {% endif %}
+        friendly_name: "Context Snapshot Exists"
+        unit_of_measurement: "bool"
+
+      - name: "Backup Snapshot Exists"
+        unique_id: backup_snapshot_exists
+        state: >
+          {% set backup_status = states('sensor.last_backup') %}
+          {% if backup_status and backup_status != 'unknown' %}
+            1
+          {% else %}
+            0
+          {% endif %}
+        friendly_name: "Backup Snapshot Exists"
+        unit_of_measurement: "bool"
+
+      - name: "GPT Context Snapshots"
+        unique_id: gpt_context_snapshots
+        state: >
+          {{ states('input_text.ai_file_preview') | length | default(0) | float }}
+        attributes:
+          files: >
+            {{ states('input_text.ai_file_preview') }}
+        friendly_name: "GPT Context Snapshots"
+        unit_of_measurement: "count"
+
+      - name: "GPT Last Context Update"
+        unique_id: gpt_last_context_update
+        icon: mdi:update
+        state: >
+          {{ now().strftime('%Y-%m-%d %H:%M') }}
+        friendly_name: "GPT Last Context Update"
+        unit_of_measurement: "timestamp"
+
+      - name: "Fix Sheet Last Checked"
+        unique_id: fix_sheet_last_checked
+        state: >
+          {{ as_timestamp(now()) | timestamp_custom('%Y-%m-%d %H:%M') }}
+        friendly_name: "Fix Sheet Last Checked"
+        unit_of_measurement: "timestamp"
+
+      - name: "YAML Validation Result"
+        unique_id: yaml_validation_result
+        state: >
+          {{ states('sensor.yaml_validation_status') | default(0) | float }}
+        friendly_name: "YAML Validation Result"
+        unit_of_measurement: "result"
+
+      - name: "Fix Sheet Last Updated"
+        unique_id: fix_sheet_last_updated
+        state: >
+          {{ as_timestamp(now()) | timestamp_custom('%Y-%m-%d %H:%M') }}
+        friendly_name: "Fix Sheet Last Updated"
+        unit_of_measurement: "timestamp"
+
+      - name: "Fix Sheet Summary"
+        unique_id: fix_sheet_summary
+        state: >
+          {{ states('sensor.validation_summary') | default(0) | float }}
+        friendly_name: "Fix Sheet Summary"
+        unit_of_measurement: "result"
+
+      - name: "Mount Audit Sync Status"
+        unique_id: mount_audit_sync_status
+        state: >
+          {{ 1 if states('input_boolean.ai_script_toggle_1') == 'on' else 0 }}
+        friendly_name: "Mount Audit Sync Status"
+        unit_of_measurement: "bool"
+
+  - binary_sensor:
+      - name: "smarti_internet"
+        unique_id: smarti_internet_connectivity
+        state: "{{ states('sensor.smarty_internet') not in ['unavailable', 'unknown'] }}"
+        device_class: connectivity
+        friendly_name: "Smarti Internet Connection"

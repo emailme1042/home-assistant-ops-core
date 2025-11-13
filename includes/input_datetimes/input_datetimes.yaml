@@ -1,0 +1,8 @@
+last_rain_detected:
+  name: Last Rain Detected
+  has_date: true
+  has_time: true
+teddy_last_training_date:
+  name: Last Karate Training
+  has_date: true
+  has_time: false

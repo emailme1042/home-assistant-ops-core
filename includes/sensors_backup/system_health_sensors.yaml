@@ -1,0 +1,32 @@
+---
+# Modern template sensor format - restart-safe and schema-compliant
+- platform: template
+  sensors:
+    ha_unknown_entities:
+      friendly_name: "HA Unknown Entities"
+      value_template: >
+        {{ states | selectattr('state','eq','unknown') | list | length | int(0) }}
+      icon_template: mdi:help-circle-outline
+      attribute_templates:
+        unknown_entities: >
+          {{ states | selectattr('state','eq','unknown') | map(attribute='entity_id') | list }}
+          
+    ha_system_uptime:
+      friendly_name: "HA System Uptime"
+      value_template: >
+        {% if states('sensor.uptime') != 'unavailable' %}
+          {{ states('sensor.uptime') }}
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: mdi:clock-outline
+      
+    ha_last_restart_time:
+      friendly_name: "HA Last Restart Time"
+      value_template: >
+        {% if states('sensor.uptime') != 'unavailable' %}
+          {{ (now() - timedelta(seconds=states('sensor.uptime')|int(0)*3600)) | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S') }}
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: mdi:restart

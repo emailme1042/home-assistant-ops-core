@@ -1,0 +1,94 @@
+# MQTT Sensor Age Tracking - System Health Monitoring
+# Purpose: Track age of MQTT messages to detect stale sensors
+# Features: Last message age calculation for critical MQTT sensors
+
+- platform: template
+  sensors:
+    mqtt_last_message_age_temperature_hall:
+      friendly_name: "MQTT Temperature Hall Message Age"
+      unit_of_measurement: "minutes"
+      icon_template: mdi:clock-outline
+      value_template: >
+        {% if states('sensor.hall_sensor_temperature') not in ['unavailable', 'unknown', 'none'] %}
+          {% set last_changed = states.sensor.hall_sensor_temperature.last_changed %}
+          {% if last_changed %}
+            {{ ((as_timestamp(now()) - as_timestamp(last_changed)) / 60) | round(0) }}
+          {% else %}
+            999
+          {% endif %}
+        {% else %}
+          999
+        {% endif %}
+      availability_template: "{{ states('sensor.hall_sensor_temperature') not in ['unavailable', 'unknown'] }}"
+
+    mqtt_last_message_age_door_front:
+      friendly_name: "MQTT Door Front Message Age"
+      unit_of_measurement: "minutes"  
+      icon_template: mdi:clock-outline
+      value_template: >
+        {% if states('binary_sensor.front_door_motion_3') not in ['unavailable', 'unknown', 'none'] %}
+          {% set last_changed = states.binary_sensor.front_door_motion_3.last_changed %}
+          {% if last_changed %}
+            {{ ((as_timestamp(now()) - as_timestamp(last_changed)) / 60) | round(0) }}
+          {% else %}
+            999
+          {% endif %}
+        {% else %}
+          999
+        {% endif %}
+      availability_template: "{{ states('binary_sensor.front_door_motion_3') not in ['unavailable', 'unknown'] }}"
+
+    mqtt_last_message_age_motion_lounge:
+      friendly_name: "MQTT Motion Lounge Message Age"
+      unit_of_measurement: "minutes"
+      icon_template: mdi:clock-outline
+      value_template: >
+        {% if states('binary_sensor.magic_areas_presence_tracking_lounge_area_state') not in ['unavailable', 'unknown', 'none'] %}
+          {% set last_changed = states.binary_sensor.magic_areas_presence_tracking_lounge_area_state.last_changed %}
+          {% if last_changed %}
+            {{ ((as_timestamp(now()) - as_timestamp(last_changed)) / 60) | round(0) }}
+          {% else %}
+            999
+          {% endif %}
+        {% else %}
+          999
+        {% endif %}
+      availability_template: "{{ states('binary_sensor.motion_lounge') not in ['unavailable', 'unknown'] }}"
+
+# MQTT Connection Health Monitor
+- platform: template
+  sensors:
+    mqtt_connection_health:
+      friendly_name: "MQTT Connection Health"
+      icon_template: >
+        {% set temp_age = states('sensor.mqtt_last_message_age_temperature_hall')|int(999) %}
+        {% set door_age = states('sensor.mqtt_last_message_age_door_front')|int(999) %}
+        {% set motion_age = states('sensor.mqtt_last_message_age_motion_lounge')|int(999) %}
+        {% if temp_age < 30 and door_age < 30 and motion_age < 30 %}
+          mdi:check-network
+        {% elif temp_age < 60 and door_age < 60 and motion_age < 60 %}
+          mdi:network
+        {% else %}
+          mdi:network-off
+        {% endif %}
+      value_template: >
+        {% set temp_age = states('sensor.mqtt_last_message_age_temperature_hall')|int(999) %}
+        {% set door_age = states('sensor.mqtt_last_message_age_door_front')|int(999) %}
+        {% set motion_age = states('sensor.mqtt_last_message_age_motion_lounge')|int(999) %}
+        {% set max_age = [temp_age, door_age, motion_age] | max %}
+        {% if max_age < 30 %}
+          Healthy
+        {% elif max_age < 60 %}
+          Warning
+        {% else %}
+          Stale
+        {% endif %}
+      attribute_templates:
+        temperature_hall_age: "{{ states('sensor.mqtt_last_message_age_temperature_hall')|int(999) }}"
+        door_front_age: "{{ states('sensor.mqtt_last_message_age_door_front')|int(999) }}"
+        motion_lounge_age: "{{ states('sensor.mqtt_last_message_age_motion_lounge')|int(999) }}"
+        oldest_message: >
+          {% set temp_age = states('sensor.mqtt_last_message_age_temperature_hall')|int(999) %}
+          {% set door_age = states('sensor.mqtt_last_message_age_door_front')|int(999) %}
+          {% set motion_age = states('sensor.mqtt_last_message_age_motion_lounge')|int(999) %}
+          {{ [temp_age, door_age, motion_age] | max }} minutes

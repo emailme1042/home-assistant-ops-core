@@ -1,0 +1,17 @@
+- id: 'ai_workspace_auto_preview'
+  alias: AI Workspace - Auto Preview
+  description: "When file preview selection changes, load file into preview textbox"
+  trigger:
+    - platform: state
+      entity_id: input_select.file_preview
+  condition: []
+  action:
+    - service: python_script.ai_load_preview
+      data:
+        filename: "{{ trigger.to_state.state }}"
+    - service: persistent_notification.create
+      data:
+        title: "AI Preview"
+        message: "Loaded preview for {{ trigger.to_state.state }}"
+        notification_id: ai_preview_loaded
+  mode: single

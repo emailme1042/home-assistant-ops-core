@@ -1,0 +1,35 @@
+# Test Switches for OpenAI and System Testing
+# These provide manual triggers for testing various integrations
+
+switch:
+  - platform: template
+    switches:
+      openai_voice_test:
+        friendly_name: "OpenAI Voice Test"
+        icon_template: mdi:microphone-message
+        value_template: "{{ is_state('input_boolean.test_voice_openai', 'on') }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.test_voice_openai
+          - service: automation.trigger
+            target:
+              entity_id: automation.voice_openai_simple_test
+        turn_off:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.test_voice_openai
+              
+      system_validation_toggle:
+        friendly_name: "System Validation Toggle"
+        icon_template: mdi:check-circle
+        value_template: "{{ is_state('input_boolean.run_validation_test', 'on') }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.run_validation_test
+          - service: shell_command.validate_yaml
+        turn_off:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.run_validation_test

@@ -1,0 +1,75 @@
+## JD Dev Board Dashboard Sensors
+
+- platform: template
+  sensors:
+    restart_safety_score:
+      friendly_name: "Restart Safety Score"
+      value_template: >
+        {% set base_score = 100 %}
+        {% set config_errors = states('sensor.yaml_validation_errors') | int(0) %}
+        {% set missing_integrations = states('sensor.missing_integrations_count') | int(0) %}
+        {% set disabled_automations = states('sensor.disabled_automations_count') | int(0) %}
+        {% set unavailable_entities = states('sensor.unavailable_entities_count') | int(0) %}
+        {% set critical_automations_down = ['automation.multi_agent_message_router', 'automation.onenote_file_watcher', 'automation.system_stability_monitor'] | select('is_state', 'off') | list | length %}
+        {% set penalty = (config_errors * 15) + (missing_integrations * 10) + (disabled_automations * 5) + (unavailable_entities * 0.1) + (critical_automations_down * 20) %}
+        {% set final_score = base_score - penalty %}
+        {{ [final_score, 0] | max | round(1) }}
+      unit_of_measurement: "%"
+      attribute_templates:
+        safety_level: >
+          {% set score = states('sensor.restart_safety_score') | int(0) %}
+          {% if score >= 90 %}Excellent
+          {% elif score >= 80 %}Good
+          {% elif score >= 70 %}Fair
+          {% elif score >= 60 %}Poor
+          {% elif score >= 40 %}Critical
+          {% else %}Emergency
+          {% endif %}
+        last_updated: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+    ai_agent_health:
+      friendly_name: "AI Agent Health"
+      value_template: >
+        {% set healthy = is_state('input_boolean.ai_sync_healthy', 'on') %}
+        {% if healthy %}Excellent{% else %}Needs Attention{% endif %}
+      icon_template: >
+        {% if is_state('input_boolean.ai_sync_healthy', 'on') %}mdi:robot-happy{% else %}mdi:robot-alert{% endif %}
+
+    system_health_summary:
+      friendly_name: "System Health Summary"
+      value_template: >
+        {% set entities = states | count %}
+        {% set automations = states.automation | count %}
+        {% set scripts = states.script | count %}
+        {{ entities }} entities, {{ automations }} automations, {{ scripts }} scripts
+      icon_template: "mdi:heart-pulse"
+
+    unavailable_entities_count:
+      friendly_name: "Unavailable Entities Count"
+      value_template: >
+        {{ states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length }}
+      icon_template: >
+        {% set count = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length %}
+        {% if count == 0 %}mdi:check-circle{% elif count < 50 %}mdi:alert-circle{% else %}mdi:alert-circle-outline{% endif %}
+
+- platform: file
+  name: file_session_recall_md
+  file_path: /config/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/SESSION_RECALL.md
+  scan_interval: 30
+
+- platform: file
+  name: file_entity_catalog_md
+  file_path: /config/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/entity_catalog.md
+  scan_interval: 30
+
+- platform: file
+  name: file_copilot_session_notes_merge_md
+  file_path: /config/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/copilot_session_notes_merge.md
+  scan_interval: 30
+
+- platform: file
+  name: ai_exec_log
+  file_path: /config/AI_WORKSPACE/ai_exec_log.md
+  value_template: >
+    {{ value }}
+  scan_interval: 60

@@ -1,0 +1,84 @@
+# GPT Access Monitoring Sensors
+# Purpose: Monitor remote GPT connectivity to Home Assistant
+# Dependencies: Nabu Casa cloud integration
+
+- platform: template
+  sensors:
+    gpt_access_health_score:
+      friendly_name: "GPT Access Health Score"
+      value_template: >
+        {% set remote_ui = states('binary_sensor.remote_ui') %}
+        {% set cloud_status = states('sensor.nabu_casa_status') %}
+        {% set last_seen = states('sensor.last_successful_gpt_request') %}
+        
+        {% if remote_ui == 'on' and cloud_status == 'connected' %}
+          {% if last_seen != 'unknown' and (as_timestamp(now()) - as_timestamp(last_seen)) < 3600 %}
+            100
+          {% elif last_seen != 'unknown' and (as_timestamp(now()) - as_timestamp(last_seen)) < 86400 %}
+            75
+          {% else %}
+            50
+          {% endif %}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: "%"
+      icon_template: >
+        {% set score = states('sensor.gpt_access_health_score') | int(0) %}
+        {% if score >= 90 %}
+          mdi:robot-happy
+        {% elif score >= 70 %}
+          mdi:robot-confused
+        {% elif score >= 50 %}
+          mdi:robot-angry
+        {% else %}
+          mdi:robot-dead
+        {% endif %}
+
+    nabu_casa_status:
+      friendly_name: "Nabu Casa Connection Status"
+      value_template: >
+        {% if is_state('binary_sensor.remote_ui', 'on') %}
+          connected
+        {% else %}
+          disconnected
+        {% endif %}
+      icon_template: >
+        {% if is_state('binary_sensor.remote_ui', 'on') %}
+          mdi:cloud-check
+        {% else %}
+          mdi:cloud-off
+        {% endif %}
+
+    last_successful_gpt_request:
+      friendly_name: "Last Successful GPT Request"
+      value_template: >
+        {{ states('input_datetime.last_gpt_success') | default('unknown') }}
+      icon_template: mdi:clock-check-outline
+
+    gpt_connection_quality:
+      friendly_name: "GPT Connection Quality"
+      value_template: >
+        {% set health = states('sensor.gpt_access_health_score') | int(0) %}
+        {% if health >= 90 %}
+          Excellent
+        {% elif health >= 70 %}
+          Good
+        {% elif health >= 50 %}
+          Fair
+        {% elif health >= 25 %}
+          Poor
+        {% else %}
+          Failed
+        {% endif %}
+      icon_template: >
+        {% set health = states('sensor.gpt_access_health_score') | int(0) %}
+        {% if health >= 90 %}
+          mdi:signal-cellular-3
+        {% elif health >= 70 %}
+          mdi:signal-cellular-2
+        {% elif health >= 50 %}
+          mdi:signal-cellular-1
+        {% else %}
+          mdi:signal-cellular-outline
+        {% endif %}

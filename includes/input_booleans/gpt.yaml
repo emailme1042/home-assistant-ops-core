@@ -1,0 +1,29 @@
+gpt_direct_send_trigger:
+  name: GPT Direct Send Trigger
+  initial: false
+  icon: mdi:send
+
+ai_script_toggle_1:
+  name: AI Script Toggle 1
+  initial: false
+  icon: mdi:robot
+
+ai_script_toggle_2:
+  name: AI Script Toggle 2
+  initial: false
+  icon: mdi:robot-outline
+
+run_validation_now:
+  name: Run Validation Now
+  initial: false
+  icon: mdi:check-circle
+
+force_yaml_check:
+  name: Force YAML Check
+  initial: false
+  icon: mdi:file-check
+
+openai_enabled:
+  name: OpenAI Integration Enabled
+  initial: true
+  icon: mdi:brain

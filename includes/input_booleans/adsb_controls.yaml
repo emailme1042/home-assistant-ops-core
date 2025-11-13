@@ -1,0 +1,11 @@
+adsb_alerts_enabled:
+  name: "Enable Aircraft Alerts"
+  icon: mdi:airplane-alert
+  
+adsb_low_altitude_monitoring:
+  name: "Monitor Low Altitude Aircraft"
+  icon: mdi:airplane-landing
+  
+adsb_activity_announcements:
+  name: "Announce High Activity"
+  icon: mdi:volume-high

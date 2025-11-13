@@ -1,0 +1,51 @@
+# Thermostat Vibration Sensors for Heating Demand Detection
+# Add these to includes/sensors/boiler_usage_detection.yaml
+
+# Upstairs Thermostat Vibration Sensor
+- platform: template
+  sensors:
+    thermostat_upstairs_vibration:
+      friendly_name: "Upstairs Thermostat Vibration"
+      device_class: vibration
+      value_template: >
+        {% if states('binary_sensor.aqara_vibration_sensor_occupancy') == 'on' %}
+          {# Check if vibration is near upstairs thermostat location #}
+          {# This would need location-based filtering or separate sensors #}
+          on
+        {% else %}
+          off
+        {% endif %}
+
+# Downstairs Thermostat Vibration Sensor
+- platform: template
+  sensors:
+    thermostat_downstairs_vibration:
+      friendly_name: "Downstairs Thermostat Vibration"
+      device_class: vibration
+      value_template: >
+        {% if states('binary_sensor.aqara_vibration_sensor_occupancy') == 'on' %}
+          {# Check if vibration is near downstairs thermostat location #}
+          {# This would need location-based filtering or separate sensors #}
+          on
+        {% else %}
+          off
+        {% endif %}
+
+# Alternative: If you add separate Aqara vibration sensors to thermostats
+# Uncomment and modify these when sensors are installed:
+
+# - platform: mqtt
+#   name: "Thermostat Upstairs Vibration"
+#   state_topic: "zigbee2mqtt/Thermostat_Upstairs_Vibration"
+#   device_class: vibration
+#   payload_on: "true"
+#   payload_off: "false"
+#   value_template: "{{ value_json.occupancy }}"
+
+# - platform: mqtt
+#   name: "Thermostat Downstairs Vibration"
+#   state_topic: "zigbee2mqtt/Thermostat_Downstairs_Vibration"
+#   device_class: vibration
+#   payload_on: "true"
+#   payload_off: "false"
+#   value_template: "{{ value_json.occupancy }}"

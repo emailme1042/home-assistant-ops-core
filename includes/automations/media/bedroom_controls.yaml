@@ -1,0 +1,168 @@
+- id: aqara_cube_teddys_bedroom_colors
+  alias: "🎨 Aqara Cube - Teddy's Bedroom Color Control"
+  description: "Change Teddy's bedroom light colors using 6 Aqara cube buttons"
+  mode: parallel
+  max: 6
+  max_exceeded: silent
+  
+  trigger:
+    # Button 1 - Red
+    - platform: event
+      event_type: event
+      event_data:
+        entity_id: event.aqara_cube_t1_pro_button
+      id: "red"
+    
+    # Button 2 - Blue  
+    - platform: event
+      event_type: event
+      event_data:
+        entity_id: event.aqara_cube_t1_pro_button_2
+      id: "blue"
+    
+    # Button 3 - Green
+    - platform: event
+      event_type: event
+      event_data:
+        entity_id: event.aqara_cube_t1_pro_button_3
+      id: "green"
+    
+    # Button 4 - Yellow
+    - platform: event
+      event_type: event
+      event_data:
+        entity_id: event.aqara_cube_t1_pro_button_4
+      id: "yellow"
+    
+    # Button 5 - Purple
+    - platform: event
+      event_type: event
+      event_data:
+        entity_id: event.aqara_cube_t1_pro_button_5
+      id: "purple"
+    
+    # Button 6 - White
+    - platform: event
+      event_type: event
+      event_data:
+        entity_id: event.aqara_cube_t1_pro_button_6
+      id: "white"
+
+  condition:
+    # Only run if Teddy's bedroom light exists and is available
+    - condition: state
+      entity_id: light.teddys_bedroom
+      state: 
+        - "on"
+        - "off"
+
+  action:
+    - choose:
+        # Red Color
+        - conditions:
+            - condition: trigger
+              id: "red"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_bedroom
+              data:
+                rgb_color: [255, 0, 0]
+                brightness: 200
+            - service: tts.google_say
+              target:
+                entity_id: media_player.kitchen_alexa
+              data:
+                message: "Teddy's bedroom light set to red."
+
+        # Blue Color  
+        - conditions:
+            - condition: trigger
+              id: "blue"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_bedroom
+              data:
+                rgb_color: [0, 0, 255]
+                brightness: 200
+            - service: tts.google_say
+              target:
+                entity_id: media_player.kitchen_alexa
+              data:
+                message: "Teddy's bedroom light set to blue."
+
+        # Green Color
+        - conditions:
+            - condition: trigger
+              id: "green"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_bedroom
+              data:
+                rgb_color: [0, 255, 0]
+                brightness: 200
+            - service: tts.google_say
+              target:
+                entity_id: media_player.kitchen_alexa
+              data:
+                message: "Teddy's bedroom light set to green."
+
+        # Yellow Color
+        - conditions:
+            - condition: trigger
+              id: "yellow"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_bedroom
+              data:
+                rgb_color: [255, 255, 0]
+                brightness: 200
+            - service: tts.google_say
+              target:
+                entity_id: media_player.kitchen_alexa
+              data:
+                message: "Teddy's bedroom light set to yellow."
+
+        # Purple Color
+        - conditions:
+            - condition: trigger
+              id: "purple"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_bedroom
+              data:
+                rgb_color: [128, 0, 128]
+                brightness: 200
+            - service: tts.google_say
+              target:
+                entity_id: media_player.kitchen_alexa
+              data:
+                message: "Teddy's bedroom light set to purple."
+
+        # White Color
+        - conditions:
+            - condition: trigger
+              id: "white"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_bedroom
+              data:
+                rgb_color: [255, 255, 255]
+                brightness: 255
+            - service: tts.google_say
+              target:
+                entity_id: media_player.kitchen_alexa
+              data:
+                message: "Teddy's bedroom light set to white."
+
+    # Log which button was pressed
+    - service: logbook.log
+      data:
+        name: "Aqara Cube Color Control"
+        message: "Button {{ trigger.id }} pressed - {{ trigger.entity_id }}"
+        entity_id: light.teddys_bedroom

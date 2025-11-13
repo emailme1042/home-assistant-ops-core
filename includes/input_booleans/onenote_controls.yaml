@@ -1,0 +1,5 @@
+# OneNote Integration Controls
+trigger_onenote_sync:
+  name: "Trigger OneNote Sync"
+  icon: mdi:microsoft-onenote
+  initial: false

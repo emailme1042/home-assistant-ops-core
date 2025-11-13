@@ -1,0 +1,320 @@
+# 🧪 Home Assistant Diagnostics Report
+
+Scanned: 
+
+✅ /generated_groups.yaml — OK
+❌ /configuration.yaml — YAML error: could not determine a constructor for the tag '!include_dir_merge_named'
+  in "/configuration.yaml", line 5, column 16
+✅ /automations.yaml — OK
+✅ /ai_suggestions/ai made/home_messenger.yaml — OK
+✅ /includes/ops/todo.yaml — OK
+✅ /includes/input_booleans/all_input_booleans_combined.yaml — OK
+✅ /includes/input_booleans/show_entity_search.yaml — OK
+✅ /includes/input_booleans/turn_on.yaml — OK
+✅ /includes/input_booleans/irrigation_override.yaml — OK
+✅ /includes/input_booleans/turn_off.yaml — OK
+✅ /includes/input_booleans/ask_ai_trigger.yaml — OK
+✅ /includes/input_booleans/kodi_helpers.yaml — OK
+✅ /includes/input_booleans/irrigation.yaml — OK
+✅ /includes/input_booleans/gpt_session.yaml — OK
+✅ /includes/input_booleans/scan_pokemon_card.yaml — OK
+✅ /includes/scenes/scenes.yaml — OK
+✅ /includes/templates/template_sensors.yaml — OK
+✅ /includes/templates/jit_plugin_sensor.yaml — OK
+❌ /includes/dashboard_suggestions/approved.yaml — YAML error: while scanning an alias
+  in "/includes/dashboard_suggestions/approved.yaml", line 5, column 1
+expected alphabetic or numeric character, but found '*'
+  in "/includes/dashboard_suggestions/approved.yaml", line 5, column 2
+❌ /includes/notifiy/email_notify.yaml — YAML error: could not determine a constructor for the tag '!secret'
+  in "/includes/notifiy/email_notify.yaml", line 7, column 13
+✅ /includes/chips/admin_entities_header.yaml — OK
+✅ /includes/chips/admin_helpers_header.yaml — OK
+✅ /includes/chips/admin_system_header.yaml — OK
+✅ /includes/chips/admin_topology_header.yaml — OK
+✅ /includes/input_texts/input_text.yaml — OK
+✅ /includes/input_texts/kodi.yaml — OK
+✅ /includes/input_datetimes/input_datetimes.yaml — OK
+✅ /includes/input_datetimes/irrigation.yaml — OK
+✅ /includes/sensors/command_sensors.yaml — OK
+✅ /includes/input_numbers/input_numbers.yaml — OK
+✅ /includes/input_numbers/irrigation.yaml — OK
+✅ /includes/input_selects/tts_target.yaml — OK
+✅ /includes/input_selects/input_selects.yaml — OK
+✅ /includes/input_selects/input_select.mood.yaml — OK
+✅ /includes/input_selects/teddy_input_select.yaml — OK
+✅ /includes/input_selects/theme_mode.yaml — OK
+✅ /includes/scripts/scripts.yaml — OK
+✅ /includes/scripts/kodi.yaml — OK
+✅ /includes/cards/entity_audit_note.yaml — OK
+✅ /includes/cards/helper_watchdog_card.yaml — OK
+✅ /includes/cards/entity_status_overview.yaml — OK
+✅ /includes/cards/topology_mapping_note.yaml — OK
+✅ /_archived_backups fm inc/ai_fixes/master-admin-draft.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/garden_combined.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/30_alexa-test.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/teddys_pokemon_lab.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/teddy_central.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/admin-root.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/fire_tv.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/chatgpt-dashboard.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/admin-nav.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/system_JD_overview_navigation.yaml — OK
+❌ /_archived_backups fm inc/final_auto_fixes/admin-helpers.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups fm inc/final_auto_fixes/admin-helpers.yaml", line 6, column 5
+✅ /_archived_backups fm inc/final_auto_fixes/fire-merged.yaml — OK
+❌ /_archived_backups fm inc/final_auto_fixes/admin-system.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups fm inc/final_auto_fixes/admin-system.yaml", line 7, column 5
+❌ /_archived_backups fm inc/final_auto_fixes/admin-entities.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups fm inc/final_auto_fixes/admin-entities.yaml", line 7, column 5
+✅ /_archived_backups fm inc/final_auto_fixes/recovery_dashboard.yaml — OK
+❌ /_archived_backups fm inc/final_auto_fixes/admin-topology.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups fm inc/final_auto_fixes/admin-topology.yaml", line 7, column 5
+✅ /_archived_backups fm inc/final_auto_fixes/04_admin-user-db-index.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/admin_maintenance.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/garden_flow.yaml — OK
+✅ /_archived_backups fm inc/final_auto_fixes/admin_automations.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-root.yaml — OK
+❌ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-helpers.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-helpers.yaml", line 37, column 5
+❌ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-system.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-system.yaml", line 45, column 5
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-entities.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-helpers-overview.yaml — OK
+❌ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-topology.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin-topology.yaml", line 51, column 5
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/admin_maintenance.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/autopatch_preview.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/_autopatch_preview/30_alexa-test.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/_autopatch_preview/admin-nav.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/_autopatch_preview/system_JD_overview_navigation.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/_autopatch_preview/recovery_dashboard.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/_autopatch_preview/04_admin-user-db-index.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/- TO DO SORT ETC -NOT IN STORAGE AI GPT SYSTEM YET/aimagic/_autopatch_preview/admin_automations.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/test_user_db.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/chatgpt-dashboard.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/entity-manager.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/chatgpt.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/ui-playground.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/homev2.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/user_dashboards/fun-test.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/admin_dashboards/all 13.07.25.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/admin_dashboards/JD in use ADMIN COCKPIT AI GPT YAML.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/user_root.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/JD COPY 6.7.25 ADMIN COCKPIT AI GPT YAML.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/admin_tools.yaml — OK
+❌ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/ops_dashboard.yaml — YAML error: while scanning a simple key
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/ops_dashboard.yaml", line 5, column 1
+could not find expected ':'
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/ops_dashboard.yaml", line 9, column 12
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/admin_control_and _health.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/user db.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/likely_for_bin/system_overview_navigation.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/masterX-adminX.yaml — OK
+❌ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/ops_dashboard.yaml — YAML error: while scanning a simple key
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/ops_dashboard.yaml", line 4, column 1
+could not find expected ':'
+  in "/secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/ops_dashboard.yaml", line 7, column 9
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/admin-dashboard.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/master-admin.yaml — OK
+✅ /secret_not_syncing/D-ASHBOARDS - NOT USED YET/unused_dashboards/main-dashboard.yaml — OK
+✅ /dashboards/ops/admin_ops_fix.yaml — OK
+✅ /dashboards/ops/ops_admin_overview.yaml — OK
+✅ /dashboards/ops/daily-ops.yaml — OK
+❌ /dashboards/ops/main.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/dashboards/ops/main.yaml", line 3, column 5
+✅ /dashboards/ops/todo-dashboard.yaml — OK
+✅ /dashboards/ops/gpt-session.yaml — OK
+✅ /dashboards/ops/network_diagnostics.yaml — OK
+✅ /dashboards/admin/ai_control.yaml — OK
+✅ /dashboards/admin/system.yaml — OK
+✅ /dashboards/admin/mqtt.yaml — OK
+✅ /dashboards/admin/scripts.yaml — OK
+✅ /dashboards/admin/admin_partials_batch10.yaml — OK
+✅ /dashboards/admin/helpers.yaml — OK
+✅ /dashboards/admin/admin_batch_index.yaml — OK
+✅ /dashboards/admin/admin_partials_batch6.yaml — OK
+✅ /dashboards/admin/admin_sidebar.yaml — OK
+✅ /dashboards/admin/conversation.yaml — OK
+✅ /dashboards/admin/admin_partials_batch7.yaml — OK
+✅ /dashboards/admin/admin_partials_batch9.yaml — OK
+✅ /dashboards/admin/admin_partials_batch4.yaml — OK
+✅ /dashboards/admin/admin_partials_batch2.yaml — OK
+✅ /dashboards/admin/admin_partials_batch15.yaml — OK
+✅ /dashboards/admin/input_helpers.yaml — OK
+✅ /dashboards/admin/admin_partials_batch8.yaml — OK
+✅ /dashboards/admin/location_custom.yaml — OK
+✅ /dashboards/admin/admin_partials_batch14.yaml — OK
+✅ /dashboards/admin/admin_partials_batch1.yaml — OK
+✅ /dashboards/admin/admin_partials_batch13.yaml — OK
+✅ /dashboards/admin/templates.yaml — OK
+✅ /dashboards/admin/topology.yaml — OK
+✅ /dashboards/admin/timers.yaml — OK
+✅ /dashboards/admin/zones.yaml — OK
+✅ /dashboards/admin/automations.yaml — OK
+❌ /dashboards/admin/main.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/dashboards/admin/main.yaml", line 3, column 5
+✅ /dashboards/admin/admin_partials_batch3.yaml — OK
+✅ /dashboards/admin/admin_root.yaml — OK
+✅ /dashboards/admin/index.yaml — OK
+✅ /dashboards/admin/maintenance.yaml — OK
+✅ /dashboards/admin/schedule.yaml — OK
+✅ /dashboards/admin/homekit.yaml — OK
+✅ /dashboards/admin/admin_partials_batch11.yaml — OK
+✅ /dashboards/admin/scenes.yaml — OK
+✅ /dashboards/admin/people.yaml — OK
+✅ /dashboards/admin/admin_partials_batch5.yaml — OK
+✅ /dashboards/admin/admin_partials_batch12.yaml — OK
+✅ /dashboards/users/kodi_ai_control.yaml — OK
+✅ /dashboards/users/garden_combined.yaml — OK
+✅ /dashboards/users/teddys_pokemon_lab.yaml — OK
+✅ /dashboards/users/user_dashboard.yaml — OK
+✅ /dashboards/users/teddy_central.yaml — OK
+✅ /dashboards/users/fire_tv.yaml — OK
+✅ /dashboards/users/home.yaml — OK
+✅ /dashboards/users/gpt_user.yaml — OK
+✅ /dashboards/users/kodi_remote.yaml — OK
+❌ /dashboards/users/main.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/dashboards/users/main.yaml", line 3, column 5
+✅ /dashboards/users/fire_tv_bedroom.yaml — OK
+✅ /lovelace/resources.yaml — OK
+❌ /blueprints/template/homeassistant/inverted_binary_sensor.yaml — YAML error: could not determine a constructor for the tag '!input'
+  in "/blueprints/template/homeassistant/inverted_binary_sensor.yaml", line 14, column 21
+❌ /blueprints/automation/homeassistant/motion_light.yaml — YAML error: could not determine a constructor for the tag '!input'
+  in "/blueprints/automation/homeassistant/motion_light.yaml", line 40, column 14
+❌ /blueprints/automation/homeassistant/notify_leaving_zone.yaml — YAML error: could not determine a constructor for the tag '!input'
+  in "/blueprints/automation/homeassistant/notify_leaving_zone.yaml", line 30, column 14
+❌ /blueprints/script/homeassistant/confirmable_notification.yaml — YAML error: could not determine a constructor for the tag '!input'
+  in "/blueprints/script/homeassistant/confirmable_notification.yaml", line 63, column 16
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/masterX-adminX.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/admin-dashboard.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/master-admin.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/main-dashboard.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-root.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/ui-playground.yaml — OK
+❌ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-helpers.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-helpers.yaml", line 11, column 5
+❌ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-system.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-system.yaml", line 12, column 5
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-entities.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-helpers-overview.yaml — OK
+❌ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-topology.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin-topology.yaml", line 14, column 5
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/admin_maintenance.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/fun-test.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/autopatch_preview.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/garden_combined.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/30_alexa-test.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/teddys_pokemon_lab.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/teddy_central.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/fire_tv.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/chatgpt-dashboard.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/admin-nav.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/system_JD_overview_navigation.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/fire-merged.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/recovery_dashboard.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/04_admin-user-db-index.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/garden_flow.yaml — OK
+✅ /_archived_backups/pre_final_merge_2025-07-04_0121/aimagic/_autopatch_preview/admin_automations.yaml — OK
+✅ /_archived_backups/final_auto_fixes/all_input_booleans_combined.yaml — OK
+✅ /_archived_backups/final_auto_fixes/garden_combined.yaml — OK
+✅ /_archived_backups/final_auto_fixes/chatgpt_prompt.yaml — OK
+✅ /_archived_backups/final_auto_fixes/entity_audit_note.yaml — OK
+✅ /_archived_backups/final_auto_fixes/show_entity_search.yaml — OK
+✅ /_archived_backups/final_auto_fixes/helper_watchdog_card.yaml — OK
+✅ /_archived_backups/final_auto_fixes/30_alexa-test.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin_entities_header.yaml — OK
+✅ /_archived_backups/final_auto_fixes/teddys_pokemon_lab.yaml — OK
+✅ /_archived_backups/final_auto_fixes/masterX-adminX.yaml — OK
+✅ /_archived_backups/final_auto_fixes/latest_card_features.yaml — OK
+❌ /_archived_backups/final_auto_fixes/confirmable_notification.yaml — YAML error: could not determine a constructor for the tag '!input'
+  in "/_archived_backups/final_auto_fixes/confirmable_notification.yaml", line 63, column 16
+✅ /_archived_backups/final_auto_fixes/admin_helpers_header.yaml — OK
+✅ /_archived_backups/final_auto_fixes/last_chatgpt_prompt.yaml — OK
+✅ /_archived_backups/final_auto_fixes/teddy_central.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin-root.yaml — OK
+✅ /_archived_backups/final_auto_fixes/fire_tv.yaml — OK
+✅ /_archived_backups/final_auto_fixes/chatgpt-dashboard.yaml — OK
+✅ /_archived_backups/final_auto_fixes/new_dashboard_title.yaml — OK
+✅ /_archived_backups/final_auto_fixes/dashboard_builder_helpers.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin-nav.yaml — OK
+✅ /_archived_backups/final_auto_fixes/entity_watchdog_sensor.yaml — OK
+✅ /_archived_backups/final_auto_fixes/turn_on.yaml — OK
+✅ /_archived_backups/final_auto_fixes/latest_card_rarity.yaml — OK
+✅ /_archived_backups/final_auto_fixes/system_JD_overview_navigation.yaml — OK
+❌ /_archived_backups/final_auto_fixes/motion_light.yaml — YAML error: while parsing a block mapping
+  in "/_archived_backups/final_auto_fixes/motion_light.yaml", line 2, column 3
+expected <block end>, but found '<block mapping start>'
+  in "/_archived_backups/final_auto_fixes/motion_light.yaml", line 15, column 5
+✅ /_archived_backups/final_auto_fixes/latest_card_name.yaml — OK
+✅ /_archived_backups/final_auto_fixes/decluttering_templates.yaml — OK
+❌ /_archived_backups/final_auto_fixes/notify_leaving_zone.yaml — YAML error: while parsing a block mapping
+  in "/_archived_backups/final_auto_fixes/notify_leaving_zone.yaml", line 2, column 3
+expected <block end>, but found '<block mapping start>'
+  in "/_archived_backups/final_auto_fixes/notify_leaving_zone.yaml", line 16, column 5
+❌ /_archived_backups/final_auto_fixes/inverted_binary_sensor.yaml — YAML error: could not determine a constructor for the tag '!input'
+  in "/_archived_backups/final_auto_fixes/inverted_binary_sensor.yaml", line 12, column 21
+✅ /_archived_backups/final_auto_fixes/ui-playground.yaml — OK
+✅ /_archived_backups/final_auto_fixes/input_numbers.yaml — OK
+✅ /_archived_backups/final_auto_fixes/latest_card_value.yaml — OK
+❌ /_archived_backups/final_auto_fixes/admin-helpers.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups/final_auto_fixes/admin-helpers.yaml", line 11, column 5
+✅ /_archived_backups/final_auto_fixes/script.chatgpt_query.yaml — OK
+✅ /_archived_backups/final_auto_fixes/fire-merged.yaml — OK
+✅ /_archived_backups/final_auto_fixes/irrigation_override.yaml — OK
+✅ /_archived_backups/final_auto_fixes/turn_off.yaml — OK
+✅ /_archived_backups/final_auto_fixes/entity_status_overview.yaml — OK
+❌ /_archived_backups/final_auto_fixes/admin-system.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups/final_auto_fixes/admin-system.yaml", line 12, column 5
+✅ /_archived_backups/final_auto_fixes/new_dashboard_slug.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin-entities.yaml — OK
+✅ /_archived_backups/final_auto_fixes/recovery_dashboard.yaml — OK
+✅ /_archived_backups/final_auto_fixes/chatgpt_enchanted.yaml — OK
+✅ /_archived_backups/final_auto_fixes/ask_ai_trigger.yaml — OK
+✅ /_archived_backups/final_auto_fixes/teddy_input_text.yaml — OK
+✅ /_archived_backups/final_auto_fixes/script.reask_chatgpt.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin-helpers-overview.yaml — OK
+❌ /_archived_backups/final_auto_fixes/admin-topology.yaml — YAML error: could not determine a constructor for the tag '!include'
+  in "/_archived_backups/final_auto_fixes/admin-topology.yaml", line 14, column 5
+✅ /_archived_backups/final_auto_fixes/entity_audit_refresh.yaml — OK
+✅ /_archived_backups/final_auto_fixes/04_admin-user-db-index.yaml — OK
+✅ /_archived_backups/final_auto_fixes/input_datetimes.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin_maintenance.yaml — OK
+✅ /_archived_backups/final_auto_fixes/irrigation.yaml — OK
+✅ /_archived_backups/final_auto_fixes/system_tracker_helpers.yaml — OK
+✅ /_archived_backups/final_auto_fixes/gpt_result_core.yaml — OK
+✅ /_archived_backups/final_auto_fixes/package.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin-dashboard.yaml — OK
+✅ /_archived_backups/final_auto_fixes/set_value.yaml — OK
+✅ /_archived_backups/final_auto_fixes/fun-test.yaml — OK
+✅ /_archived_backups/final_auto_fixes/master-admin.yaml — OK
+✅ /_archived_backups/final_auto_fixes/main-dashboard.yaml — OK
+✅ /_archived_backups/final_auto_fixes/teddy_input_select.yaml — OK
+✅ /_archived_backups/final_auto_fixes/theme_mode.yaml — OK
+✅ /_archived_backups/final_auto_fixes/topology_mapping_note.yaml — OK
+✅ /_archived_backups/final_auto_fixes/scan_pokemon_card.yaml — OK
+✅ /_archived_backups/final_auto_fixes/new_dashboard_keyword.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin_system_header.yaml — OK
+✅ /_archived_backups/final_auto_fixes/autopatch_preview.yaml — OK
+✅ /_archived_backups/final_auto_fixes/garden_flow.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin_automations.yaml — OK
+✅ /_archived_backups/final_auto_fixes/admin_topology_header.yaml — OK
+✅ /custom_components/tapo_control/services.yaml — OK
+✅ /custom_components/browser_mod/services.yaml — OK
+✅ /custom_components/meross_lan/services.yaml — OK
+✅ /custom_components/ble_monitor/services.yaml — OK
+✅ /custom_components/scheduler/services.yaml — OK
+✅ /custom_components/ha_registry/services.yaml — OK
+✅ /custom_components/ai_automation_suggester/services.yaml — OK
+✅ /custom_components/ai_automation_suggester/automations/weekly-review-automation.yaml — OK
+✅ /custom_components/ai_automation_suggester/automations/new-entity-automation.yaml — OK
+❌ /esphome/atom-lite-btproxyv1.yaml — YAML error: could not determine a constructor for the tag '!secret'
+  in "/esphome/atom-lite-btproxyv1.yaml", line 21, column 9
+❌ /esphome/archive/home-wi-fi.yaml — YAML error: could not determine a constructor for the tag '!secret'
+  in "/esphome/archive/home-wi-fi.yaml", line 23, column 9
+❌ /esphome/archive/atom-bt.yaml — YAML error: could not determine a constructor for the tag '!secret'
+  in "/esphome/archive/atom-bt.yaml", line 23, column 9
+❌ /esphome/archive/atom-lite-btproxy.yaml — YAML error: could not determine a constructor for the tag '!secret'
+  in "/esphome/archive/atom-lite-btproxy.yaml", line 20, column 9
+❌ /esphome/archive/atom-bt-proxy.yaml — YAML error: could not determine a constructor for the tag '!secret'
+  in "/esphome/archive/atom-bt-proxy.yaml", line 17, column 13
+✅ /config/test.yaml — OK

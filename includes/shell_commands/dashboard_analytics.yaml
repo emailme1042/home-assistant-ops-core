@@ -1,0 +1,19 @@
+# Dashboard Analytics Shell Commands
+# Commands for heatmap analysis and complexity auditing
+
+dashboard_complexity_audit: >-
+  python3 /config/AI_WORKSPACE/Scripts/complexity_score.py > /config/AI_WORKSPACE/dashboard_complexity_report.log 2>&1 &&
+  echo "$(date): Dashboard complexity audit completed" >> /config/AI_WORKSPACE/ai_exec_log.md
+
+dashboard_performance_audit: >-
+  echo "=== Dashboard Performance Audit $(date) ===" > /config/AI_WORKSPACE/dashboard_performance_report.log &&
+  echo "Frontend Errors: $(cat /config/.storage/core.restore_state | grep -o 'input_number.frontend_errors' | wc -l)" >> /config/AI_WORKSPACE/dashboard_performance_report.log &&
+  echo "System CPU: $(cat /config/.storage/core.restore_state | grep -o 'sensor.home_assistant_core_cpu_percent' | head -1)" >> /config/AI_WORKSPACE/dashboard_performance_report.log &&
+  echo "System Memory: $(cat /config/.storage/core.restore_state | grep -o 'sensor.home_assistant_core_memory_percent' | head -1)" >> /config/AI_WORKSPACE/dashboard_performance_report.log &&
+  python3 /config/AI_WORKSPACE/Scripts/complexity_score.py >> /config/AI_WORKSPACE/dashboard_performance_report.log &&
+  echo "Dashboard performance audit complete" >> /config/AI_WORKSPACE/dashboard_performance_report.log
+
+refresh_dashboard_metrics: >-
+  curl -X POST -H "Authorization: Bearer $SUPERVISOR_TOKEN" -H "Content-Type: application/json" -d '{"domain": "sensor", "service": "update_entity", "service_data": {"entity_id": "sensor.dashboard_complexity_score_ai_workspace"}}' http://supervisor/core/api/services/homeassistant/update_entity &&
+  curl -X POST -H "Authorization: Bearer $SUPERVISOR_TOKEN" -H "Content-Type: application/json" -d '{"domain": "sensor", "service": "update_entity", "service_data": {"entity_id": "sensor.dashboard_complexity_score_recovery"}}' http://supervisor/core/api/services/homeassistant/update_entity &&
+  echo "Dashboard metrics refreshed"

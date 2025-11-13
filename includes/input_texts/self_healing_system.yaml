@@ -1,0 +1,28 @@
+##
+# Self-Healing System Input Entities
+# Support entities for the self-healing automation system
+##
+
+fallback_notification_service:
+  name: "Fallback Notification Service"
+  initial: "notify.persistent_notification"
+  max: 100
+  icon: "mdi:bell-alert"
+
+current_notification_method:
+  name: "Current Notification Method"
+  initial: "alexa_media"
+  max: 50
+  icon: "mdi:message-alert"
+
+last_self_healing_action:
+  name: "Last Self-Healing Action"
+  initial: "System initialized"
+  max: 200
+  icon: "mdi:robot-excited"
+
+recovery_attempt_count:
+  name: "Recovery Attempt Count"
+  initial: "0"
+  max: 10
+  icon: "mdi:counter"

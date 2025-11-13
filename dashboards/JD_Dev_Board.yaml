@@ -1,0 +1,12 @@
+title: "JD Dev Board"
+views:
+  - title: "Test View"
+    path: test
+    cards:
+      - type: markdown
+        title: "Dashboard Test"
+        content: |
+          ## JD Dev Board Test
+          If you can see this, the dashboard is loading.
+          
+          The file sensors may not be working yet, but the basic dashboard structure is fine.

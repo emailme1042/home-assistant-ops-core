@@ -1,0 +1,11 @@
+# Flight History Timeframe Control
+flight_history_timeframe:
+  name: "Flight History Timeframe"
+  icon: mdi:history
+  options:
+    - "1 Hour"
+    - "6 Hours"
+    - "12 Hours"
+    - "24 Hours"
+    - "7 Days"
+  initial: "24 Hours"

@@ -1,0 +1,126 @@
+# GitHub Backup Add-on Configuration
+# Place this file in your HA addons directory or use it to configure the add-on
+
+name: "GitHub Backup"
+version: "1.0.0"
+slug: "github_backup"
+description: "Automated backup of Home Assistant configuration to GitHub repository"
+url: "https://github.com/your-username/home-assistant-ops-core"
+arch:
+  - amd64
+  - armv7
+  - armhf
+  - aarch64
+  - i386
+startup: services
+boot: auto
+init: false
+map:
+  - config:rw
+  - ssl:rw
+  - addons:rw
+  - backup:rw
+  - share:rw
+options:
+  # GitHub Configuration
+  github_token: "YOUR_GITHUB_TOKEN_HERE"
+  github_username: "YOUR_GITHUB_USERNAME_HERE"
+  repository_name: "home-assistant-ops-core"
+
+  # Backup Configuration
+  backup_schedule: "0 2 * * *"  # Daily at 2 AM
+  backup_retention: 30  # Keep 30 days of backups
+  include_database: false  # Don't backup the large database file
+  include_media: false  # Don't backup media files
+
+  # File Inclusion/Exclusion
+  include_paths:
+    - "/config/configuration.yaml"
+    - "/config/includes/"
+    - "/config/dashboards/"
+    - "/config/AI_WORKSPACE/"
+    - "/config/python_scripts/"
+    - "/config/scripts/"
+    - "/config/themes/"
+    - "/config/www/community/"
+
+  exclude_patterns:
+    - "*.db"
+    - "*.db-*"
+    - "storage/"
+    - "deps/"
+    - "__pycache__/"
+    - "*.log"
+    - "backups/"
+    - "snapshots/"
+
+  # Commit Configuration
+  commit_message_template: "Automated backup: {timestamp}"
+  commit_author_name: "Home Assistant Backup"
+  commit_author_email: "backup@home-assistant.local"
+
+  # Notification Configuration
+  notify_on_success: true
+  notify_on_failure: true
+  notification_title: "Home Assistant Backup"
+
+schema:
+  github_token: "str"
+  github_username: "str"
+  repository_name: "str?"
+  backup_schedule: "str?"
+  backup_retention: "int(1,365)?"
+  include_database: "bool?"
+  include_media: "bool?"
+  include_paths:
+    - "str"
+  exclude_patterns:
+    - "str"
+  commit_message_template: "str?"
+  commit_author_name: "str?"
+  commit_author_email: "str?"
+  notify_on_success: "bool?"
+  notify_on_failure: "bool?"
+  notification_title: "str?"
+
+# Services configuration for the add-on
+services:
+  - "mqtt:want"
+  - "mysql:want"
+
+# Ports (if needed for web interface)
+ports:
+  8099/tcp: 8099
+
+# Environment variables
+environment:
+  LANG: "C.UTF-8"
+
+# Host network access
+host_network: false
+
+# Privileged mode (not needed)
+privileged: []
+
+# Devices (not needed)
+devices: []
+
+# Auto update
+auto_update: true
+
+# Ingress configuration (optional web UI)
+ingress: true
+ingress_port: 0
+ingress_entry: "backup"
+panel_icon: "mdi:github"
+panel_title: "GitHub Backup"
+panel_admin: false
+
+# Backup configuration for the add-on itself
+backup_exclude:
+  - "*.db"
+  - "*.db-*"
+  - "storage/"
+  - "deps/"
+  - "__pycache__/"
+  - "*.log"

@@ -1,0 +1,57 @@
+# AI Periodic Runner with Adaptive Frequency
+# ==========================================
+# Runs hourly when active, every 6 hours when inactive
+
+- id: ai_periodic_runner_active
+  alias: "AI Periodic Runner (Active Mode) (DISABLED - Performance)"
+  description: "DISABLED: Runs AI data collection every hour - causing performance issues"
+  trigger:
+    - platform: time_pattern
+      hours: "*"
+      minutes: 0
+  condition:
+    - condition: state
+      entity_id: input_boolean.ai_active_routine
+      state: "on"
+    - condition: state
+      entity_id: input_boolean.enable_performance_monitoring
+      state: "on"
+  action:
+    # Removed shell_command.collect_ha_metrics (unknown action)
+    # Removed logbook.log action
+
+- id: ai_periodic_runner_idle  
+  alias: "AI Periodic Runner (Idle Mode)"
+  description: "Runs AI data collection every 6 hours when active mode is disabled"
+  trigger:
+    - platform: time_pattern
+      hours: "/6"
+      minutes: 0
+  condition:
+    - condition: state
+      entity_id: input_boolean.ai_active_routine
+      state: "off"
+  action:
+    - service: script.run_ai_data_collection
+      data:
+        mode: "idle_6hourly"
+        frequency: "low"
+  # Removed logbook.log action
+
+- id: ai_routine_daily_archival
+  alias: "AI Routine Daily Archival"
+  description: "Archives daily AI routine logs and metrics every night at midnight"
+  trigger:
+    - platform: time
+      at: "00:01:00"
+  condition:
+    - condition: state
+      entity_id: input_boolean.ai_routine_archival_enabled
+      state: "on"
+  action:
+    - service: script.ai_daily_archive_routine
+  # Removed logbook.log action
+      data:
+        name: "AI Archival"
+        message: "Daily AI routine archival completed for {{ (now() - timedelta(days=1)).strftime('%Y-%m-%d') }}"
+        entity_id: input_boolean.ai_routine_archival_enabled

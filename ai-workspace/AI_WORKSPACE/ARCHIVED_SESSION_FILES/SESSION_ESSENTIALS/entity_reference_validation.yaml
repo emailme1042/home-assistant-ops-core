@@ -1,0 +1,25 @@
+# Entity Reference Validation
+# Version: 2025-11-01
+# Purpose: Cross-check all entity references in dashboards and templates
+
+validate:
+  - source: dashboards/ai/ai_system_insight.yaml
+    check:
+      - sensor.bathroom_motion
+      - sensor.bedroom_motion
+      - sensor.dining_room_motion
+      - sensor.comms_status
+      - switch.grafana
+      - switch.influxdb
+      - switch.mosquitto
+      - switch.node_red
+      - fan.bedroom_fan
+      - humidifier.bedroom_humidifier
+  - source: includes/templates/template_sensors.yaml
+    check:
+      - sensor.bathroom_motion
+      - sensor.bedroom_motion
+      - sensor.dining_room_motion
+      - sensor.comms_status
+      - fan.bedroom_fan
+      - humidifier.bedroom_humidifier

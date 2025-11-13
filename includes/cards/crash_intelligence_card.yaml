@@ -1,0 +1,97 @@
+---
+# Crash Monitoring Dashboard Card
+# Purpose: Real-time crash intelligence display with actionable insights
+
+type: vertical-stack
+cards:
+  - type: markdown
+    content: |
+      # 🛡️ Crash Intelligence Monitor
+      
+      **Live system stability analysis with pattern detection and recovery recommendations**
+      
+  - type: grid
+    square: false
+    columns: 3
+    cards:
+      - type: gauge
+        entity: sensor.crash_count_today
+        name: "Crashes Today"
+        min: 0
+        max: 5
+        severity:
+          green: 0
+          yellow: 1
+          red: 3
+          
+      - type: gauge  
+        entity: sensor.system_stability_score
+        name: "Stability Score"
+        min: 0
+        max: 100
+        severity:
+          red: 0
+          yellow: 70
+          green: 90
+          
+      - type: entity
+        entity: sensor.last_crash_context
+        name: "Last Crash Context"
+        icon: mdi:information-outline
+        
+  - type: entities
+    title: "📊 Stability Analysis"
+    entities:
+      - entity: sensor.crash_count_today
+        name: "Today's Crashes"
+        icon: mdi:counter
+      - entity: sensor.last_crash_context
+        name: "Last Incident"
+        secondary_info: last-changed
+      - entity: sensor.system_stability_score
+        name: "Stability Score"
+        secondary_info: >
+          Grade: {{ state_attr('sensor.system_stability_score', 'grade') }}
+      - type: divider
+      - entity: input_text.crash_detection_method
+        name: "Detection Method"
+        icon: mdi:radar
+        
+  - type: markdown
+    content: |
+      ## 🎯 Current Recommendation
+      
+      **{{ state_attr('sensor.system_stability_score', 'recommendation') }}**
+      
+      ---
+      
+      ### ⏱️ Recovery Timeline
+      - **Last Crash**: {{ state_attr('sensor.last_crash_context', 'last_crash_time') }}
+      - **Minutes Since**: {{ state_attr('sensor.last_crash_context', 'minutes_since_crash') }} min ago
+      - **Risk Level**: {{ state_attr('sensor.crash_count_today', 'risk_level') }}
+      
+  - type: horizontal-stack
+    cards:
+      - type: button
+        entity: shell_command.view_crash_log
+        name: "View Log"
+        icon: mdi:file-document-outline
+        tap_action:
+          action: call-service
+          service: shell_command.view_crash_log
+          
+      - type: button
+        entity: shell_command.archive_crash_log
+        name: "Archive Log" 
+        icon: mdi:archive
+        tap_action:
+          action: call-service
+          service: shell_command.archive_crash_log
+          
+      - type: button
+        entity: shell_command.clear_crash_log
+        name: "Clear Log"
+        icon: mdi:delete
+        tap_action:
+          action: call-service
+          service: shell_command.clear_crash_log

@@ -1,0 +1,98 @@
+- alias: Hall Light On When All Others Are Off at Night
+  id: hall_light_on_when_others_off
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - light.wiz_rgbw_tunable_2609a6
+        - light.wiz_rgbw_tunable_2606be
+        - light.reading_light
+        - light.was_dining_light
+        - light.brown_lamp
+        - light.dining_light
+        - light.wiz_rgbw_tunable_ae6b50
+      to: 'off'
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('light.wiz_rgbw_tunable_2609a6') == 'off' and
+           states('light.wiz_rgbw_tunable_2606be') == 'off' and
+           states('light.reading_light') == 'off' and
+           states('light.was_dining_light') == 'off' and
+           states('light.brown_lamp') == 'off' and
+           states('light.dining_light') == 'off' and
+           states('light.wiz_rgbw_tunable_ae6b50') == 'off' }}
+    - condition: state
+      entity_id: sun.sun
+      state: 'below_horizon'
+  action:
+    - delay: "00:00:03"
+    - service: light.turn_on
+      target:
+        entity_id: light.hallway
+    - delay: "00:02:00"
+    - service: light.turn_off
+      target:
+        entity_id: light.hallway
+
+- alias: Flash Lamp for Low Aircraft
+  id: flash_lamp_low_aircraft_core_lighting
+  initial_state: true
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.lowest_aircraft_altitude
+      below: 5000
+  condition:
+    - condition: time
+      after: "06:00"
+      before: "23:00"
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.brown_lamp
+      data:
+        color_name: red
+        brightness: 255
+    - delay: "00:00:30"
+    - service: light.turn_off
+      target:
+        entity_id: light.brown_lamp
+
+- alias: Bathroom Motion + Switch Light Control
+  id: bathroom_motion_switch_light_control
+  initial_state: true
+  mode: parallel
+  trigger:
+    - id: motion_on
+      platform: state
+      entity_id: binary_sensor.bathroom_motion_sensor_occupancy
+      to: "on"
+    - id: motion_off
+      platform: state
+      entity_id: binary_sensor.bathroom_motion_sensor_occupancy
+      to: "off"
+      for: "00:05:00"
+  condition:
+    - condition: time
+      after: "06:30:00"
+      before: "20:30:00"
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: motion_on
+          sequence:
+            - service: switch.turn_on
+              target:
+                entity_id: switch.bathroom_light_switch
+        - conditions:
+            - condition: trigger
+              id: motion_off
+          sequence:
+            - condition: state
+              entity_id: switch.bathroom_light_switch
+              state: "on"
+            - service: switch.turn_off
+              target:
+                entity_id: switch.bathroom_light_switch

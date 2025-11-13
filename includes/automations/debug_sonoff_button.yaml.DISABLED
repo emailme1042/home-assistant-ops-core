@@ -1,0 +1,94 @@
+# Debug Sonoff Button - Test Individual Components
+# Purpose: Test button detection and individual light control
+
+  alias: "🔧 Debug Sonoff Button Detection"
+  description: "Test if Sonoff button MQTT messages are being detected"
+  mode: single
+  
+  trigger:
+    # Same triggers as main automation
+    - platform: mqtt
+      topic: "zigbee2mqtt/Button Zigbee"
+    - platform: device
+      device_id: "19e81c87689f2f54852d74b3d933eaff"
+      domain: mqtt
+      type: action
+      subtype: single
+
+  action:
+    # Simple TTS announcement to confirm button detection
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Debug: Sonoff button detected! Trigger type {{ trigger.platform }}"
+    
+    # Log what trigger fired
+    - service: logbook.log
+      data:
+        name: "Sonoff Button Debug"
+        message: "Button detected via {{ trigger.platform }} - Topic: {{ trigger.topic if trigger.platform == 'mqtt' else 'device trigger' }}"
+  
+ id: debug_sonoff_button_detection_disabled
+
+- id: debug_individual_lights
+  alias: "🔧 Debug Individual Light Control"
+  description: "Test individual light entities to see which ones exist"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_boolean.test_individual_lights
+      from: "off"
+      to: "on"
+  
+  action:
+    # Test each light individually with error handling
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Testing individual lights. Starting with loo light."
+    
+    - service: light.toggle
+      target:
+        entity_id: light.loo_5
+      continue_on_error: true
+    
+    - delay: 2
+    
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Testing dining light."
+    
+    - service: light.toggle
+      target:
+        entity_id: light.dining_light_5
+      continue_on_error: true
+    
+    - delay: 2
+    
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Testing reading light."
+    
+    - service: light.toggle
+      target:
+        entity_id: light.reading_light
+      continue_on_error: true
+    
+    - delay: 2
+    
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Light testing complete. Check which ones responded."
+    
+    # Reset the test boolean
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.test_individual_lights

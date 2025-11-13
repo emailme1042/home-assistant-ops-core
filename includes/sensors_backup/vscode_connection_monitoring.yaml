@@ -1,0 +1,100 @@
+# VSCode HA Extension Connection Monitoring
+# Tracks connection status, uptime, and disconnection events
+
+- platform: template
+  sensors:
+    vscode_ha_connection_status:
+      friendly_name: "VSCode HA Extension Status"
+      value_template: >
+        {% if states('sensor.last_api_call_vscode') %}
+          {% set last_call = states('sensor.last_api_call_vscode') | as_timestamp %}
+          {% set now_time = now() | as_timestamp %}
+          {% if (now_time - last_call) < 300 %}
+            Connected
+          {% elif (now_time - last_call) < 900 %}
+            Intermittent
+          {% else %}
+            Disconnected
+          {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: >
+        {% set status = this.state %}
+        {% if status == 'Connected' %}mdi:microsoft-visual-studio-code
+        {% elif status == 'Intermittent' %}mdi:connection
+        {% else %}mdi:close-circle{% endif %}
+      attribute_templates:
+        last_seen: >
+          {% if states('sensor.last_api_call_vscode') %}
+            {{ states('sensor.last_api_call_vscode') | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S') }}
+          {% else %}
+            Never
+          {% endif %}
+
+    vscode_connection_uptime:
+      friendly_name: "VSCode Connection Uptime"
+      value_template: >
+        {% if states('input_datetime.vscode_last_connect') %}
+          {% set connect_time = states('input_datetime.vscode_last_connect') | as_timestamp %}
+          {% set now_time = now() | as_timestamp %}
+          {% set uptime_seconds = now_time - connect_time %}
+          {% if uptime_seconds < 3600 %}
+            {{ (uptime_seconds / 60) | round(0) }}m
+          {% elif uptime_seconds < 86400 %}
+            {{ (uptime_seconds / 3600) | round(1) }}h
+          {% else %}
+            {{ (uptime_seconds / 86400) | round(1) }}d
+          {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: mdi:clock-outline
+
+    last_vscode_disconnect:
+      friendly_name: "Last VSCode Disconnect"
+      value_template: >
+        {% if states('input_datetime.vscode_last_disconnect') %}
+          {{ relative_time(states('input_datetime.vscode_last_disconnect') | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S')) }} ago
+        {% else %}
+          Never recorded
+        {% endif %}
+      icon_template: mdi:connection
+
+    vscode_daily_disconnects:
+      friendly_name: "VSCode Disconnects Today"
+      value_template: >
+        {{ states('counter.vscode_disconnects_today') | int(0) }}
+      icon_template: mdi:counter
+      unit_of_measurement: "disconnects"
+
+- platform: template
+  sensors:
+    # Dashboard Summary Sensors
+    admin_dashboard_summary:
+      friendly_name: "Admin Dashboard Summary"
+      value_template: >
+        {{ states('sensor.ha_include_dashboards_count') | int(0) }} dashboards
+      icon_template: mdi:cog
+
+    ops_dashboard_summary:
+      friendly_name: "Ops Dashboard Summary" 
+      value_template: >
+        {{ states('sensor.ha_system_unavailable_entities') | int(0) }} issues
+      icon_template: mdi:chart-line
+
+    ai_workspace_summary:
+      friendly_name: "AI Workspace Summary"
+      value_template: >
+        {% if states('sensor.ai_routine_next_run') %}
+          Next: {{ states('sensor.ai_routine_next_run') }}
+        {% else %}
+          Ready
+        {% endif %}
+      icon_template: mdi:robot
+
+    home_dashboard_summary:
+      friendly_name: "Home Dashboard Summary"
+      value_template: >
+        {{ states.light | selectattr('state', 'eq', 'on') | list | count }} lights on
+      icon_template: mdi:home

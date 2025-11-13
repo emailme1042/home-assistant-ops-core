@@ -1,0 +1,177 @@
+# DISABLED: Blueprint file in wrong location (should be in blueprints/ directory)
+# Contains unresolved !input references causing automation load failures
+# To re-enable: Move to blueprints/ directory and create automation from blueprint
+#
+# # 🤖 AI Routine Enhancer Blueprint - DISABLED (Blueprint in wrong location)
+# # Version: 2025.11.01 | Verified HA Core ≥2025.10.4
+# # Description: Context-aware automation layer for morning/evening lighting, media, and environmental adaptation.
+# # ISSUE: Blueprint file placed in automations directory - should be in blueprints/
+# # DISABLED: Causing !input resolution errors
+# 
+# # blueprint:
+#   name: AI Routine Enhancer
+#   description: >
+#     Adjusts lights, notifications, and scenes automatically based on presence,
+#     time of day, and weather context. Integrates with AI Workspace for adaptive
+#     decision-making and system consistency.
+#   domain: automation
+#   source_url: https://community.home-assistant.io/t/awesome-ha-blueprints/256687
+#   input:
+#     person_entities:
+#       name: Occupants to Track
+#       selector:
+#         target:
+#           entity:
+#             domain: person
+#     light_targets:
+#       name: Lights to Control
+#       selector:
+#         target:
+#           entity:
+#             domain: light
+#     media_player:
+#       name: Media Player (Optional)
+#       selector:
+#         entity:
+#           domain: media_player
+#     notify_target:
+#       name: Notification Target
+#       selector:
+#         target:
+#           entity:
+#             domain: notify
+#     morning_scene:
+#       name: Morning Scene
+#       selector:
+#         entity:
+#           domain: scene
+#     evening_scene:
+#       name: Evening Scene
+#       selector:
+#         entity:
+#           domain: scene
+#     weather_entity:
+#       name: Weather Source
+#       selector:
+#         entity:
+#           domain: weather
+#     ai_sync_sensor:
+#       name: AI Workspace Sync Status Sensor
+#       default: sensor.ha_sync_status
+#       selector:
+#         entity:
+#           domain: sensor
+# 
+# # ───────────────────────────────
+# # ☀️ MORNING ROUTINE
+# # ───────────────────────────────
+# automation:
+#   - id: ai_routine_morning
+#     alias: AI Morning Routine
+#     trigger:
+#       - platform: time
+#         at: "06:30:00"
+#     condition:
+#       - condition: state
+#         entity_id: !input ai_sync_sensor
+#         state: "✅ Synced"
+#       - condition: state
+#         entity_id: sun.sun
+#         state: "below_horizon"
+#     action:
+#       - service: scene.turn_on
+#         target:
+#           entity_id: !input morning_scene
+#       - service: light.turn_on
+#         target: !input light_targets
+#         data:
+#           brightness_pct: 60
+#           color_temp: 350
+#       - service: notify.send_message
+#         target: !input notify_target
+#         data:
+#           title: "☀️ Morning Routine Active"
+#           message: >
+#             Good morning! Current temperature is {{ state_attr(!input weather_entity, 'temperature') }}°C.
+#             AI Workspace status: {{ states(!input ai_sync_sensor) }}.
+#       - choose:
+#           - conditions:
+#               - condition: state
+#                 entity_id: !input media_player
+#                 state: "off"
+#             sequence:
+#               - service: media_player.play_media
+#                 target:
+#                   entity_id: !input media_player
+#                 data:
+#                   media_content_id: "Morning playlist"
+#                   media_content_type: "music"
+# 
+# # ───────────────────────────────
+# # 🌙 EVENING ROUTINE
+# # ───────────────────────────────
+#   - id: ai_routine_evening
+#     alias: AI Evening Routine
+#     trigger:
+#       - platform: sun
+#         event: sunset
+#         offset: "-00:20:00"
+#     condition:
+#       - condition: or
+#         conditions:
+#           - condition: state
+#             entity_id: !input ai_sync_sensor
+#             state: "✅ Synced"
+#           - condition: state
+#             entity_id: !input ai_sync_sensor
+#             state: "⚠️ Pending"
+#     action:
+#       - service: scene.turn_on
+#         target:
+#           entity_id: !input evening_scene
+#       - service: light.turn_on
+#         target: !input light_targets
+#         data:
+#           brightness_pct: 30
+#           color_temp: 250
+#       - service: notify.send_message
+#         target: !input notify_target
+#         data:
+#           title: "🌙 Evening Routine"
+#           message: >
+#             Evening routine activated.
+#             Weather: {{ states(!input weather_entity) }}.
+#             AI Sync: {{ states(!input ai_sync_sensor) }}.
+#       - choose:
+#           - conditions:
+#               - condition: state
+#                 entity_id: !input media_player
+#                 state: "playing"
+#             sequence:
+#               - service: media_player.media_pause
+#                 target:
+#                   entity_id: !input media_player
+# 
+# # ───────────────────────────────
+# # 🧩 PRESENCE & ADAPTIVE CHECK-IN
+# # ───────────────────────────────
+#   - id: ai_presence_checkin
+#     alias: AI Presence Routine Update
+#     trigger:
+#       - platform: state
+#         entity_id: !input person_entities
+#         to: "home"
+#     condition: []
+#     action:
+#       - service: notify.send_message
+#         target: !input notify_target
+#         data:
+#           title: "🏠 Presence Detected"
+#           message: >
+#             {{ trigger.to_state.name }} just arrived home.
+#             AI Workspace: {{ states(!input ai_sync_sensor) }}.
+#       - service: light.turn_on
+#         target: !input light_targets
+#         data:
+#           brightness_pct: 70
+#           color_temp: 400

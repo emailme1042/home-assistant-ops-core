@@ -1,0 +1,69 @@
+- platform: template
+  sensors:
+    ui_minimalist_error_detector:
+      friendly_name: "UI Minimalist Error Monitor"
+      value_template: >
+        {% set log_content = states('sensor.home_assistant_log') %}
+        {% if log_content != 'unknown' and log_content != 'unavailable' %}
+          {% if 'ui_lovelace_minimalist' in log_content and 'ERROR' in log_content %}
+            {% if 'already installed' in log_content or 'duplicate' in log_content %}
+              CONFLICT_DETECTED
+            {% else %}
+              ERROR_DETECTED
+            {% endif %}
+          {% else %}
+            NO_ERRORS
+          {% endif %}
+        {% else %}
+          UNKNOWN
+        {% endif %}
+      icon_template: >
+        {% set state = states('sensor.ui_minimalist_error_detector') %}
+        {% if state == 'CONFLICT_DETECTED' %}
+          mdi:alert-circle
+        {% elif state == 'ERROR_DETECTED' %}  
+          mdi:alert
+        {% else %}
+          mdi:check-circle
+        {% endif %}
+      attribute_templates:
+        status_color: >
+          {% set state = states('sensor.ui_minimalist_error_detector') %}
+          {% if state == 'CONFLICT_DETECTED' %}
+            red
+          {% elif state == 'ERROR_DETECTED' %}
+            orange
+          {% else %}
+            green
+          {% endif %}
+        recommendation: >
+          {% set state = states('sensor.ui_minimalist_error_detector') %}
+          {% if state == 'CONFLICT_DETECTED' %}
+            Disable UI Lovelace Minimalist to resolve card conflicts
+          {% elif state == 'ERROR_DETECTED' %}
+            Check UI Minimalist configuration and logs
+          {% else %}
+            UI Minimalist status normal
+          {% endif %}
+
+    custom_component_health_score:
+      friendly_name: "Custom Component Health Score"
+      unit_of_measurement: "%"
+      value_template: >
+        {% set total_components = 32 %}
+        {% set error_components = 0 %}
+        {% set log_content = states('sensor.home_assistant_log') %}
+        {% if log_content != 'unknown' and log_content != 'unavailable' %}
+          {% set error_components = log_content.count('ERROR') if 'ERROR' in log_content else 0 %}
+        {% endif %}
+        {% set health_score = ((total_components - error_components) / total_components * 100) | round(0) %}
+        {{ health_score if health_score >= 0 else 0 }}
+      icon_template: >
+        {% set score = states('sensor.custom_component_health_score') | int(0) %}
+        {% if score >= 90 %}
+          mdi:heart
+        {% elif score >= 70 %}
+          mdi:heart-half
+        {% else %}
+          mdi:heart-broken
+        {% endif %}

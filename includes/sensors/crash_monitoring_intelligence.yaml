@@ -1,0 +1,120 @@
+---
+# Crash Monitoring Intelligence Sensors
+# Purpose: Template sensors that learn from crash patterns and provide insights
+
+# DISABLED FOR PERFORMANCE - Crash monitoring intelligence sensors causing high CPU load
+# - platform: template
+#   sensors:
+#     # crash_count_today:
+#       friendly_name: "Crashes Today"
+#       value_template: >
+#         {% if states('sensor.date') != 'unavailable' %}
+#           {% set log_file = '/config/www/crash_trap_log.txt' %}
+#           {% set today = now().strftime('%Y-%m-%d') %}
+#           {% set lines = states('sensor.crash_log_reader') | default('') %}
+#           {{ lines.split('\n') | select('contains', today) | list | length | int(0) }}
+#         {% else %}
+#           0
+#         {% endif %}
+#       icon_template: >
+#         {% set count = states('sensor.crash_count_today') | int(0) %}
+#         {% if count == 0 %}mdi:shield-check
+#         {% elif count <= 2 %}mdi:alert-circle-outline
+#         {% else %}mdi:alert-circle
+#         {% endif %}
+#       attribute_templates:
+#         status: >
+#           {% set count = states('sensor.crash_count_today') | int(0) %}
+#           {% if count == 0 %}✅ Stable
+#           {% elif count <= 2 %}⚠️ Minor instability
+#           {% else %}🔴 Multiple crashes
+#           {% endif %}
+#         risk_level: >
+#           {% set count = states('sensor.crash_count_today') | int(0) %}
+#           {% if count == 0 %}Low
+#           {% elif count <= 2 %}Medium
+#           {% else %}High
+#           {% endif %}
+
+#     # last_crash_context:
+#       friendly_name: "Last Crash Context"
+#       value_template: >
+#         {% set log_content = states('sensor.crash_log_reader') | default('') %}
+#         {% set lines = log_content.split('\n') | reject('equalto', '') | list %}
+#         {% if lines | length > 0 %}
+#           {% set last_line = lines[-1] %}
+#           {% if '—' in last_line %}
+#             {{ last_line.split('—')[1].strip() if '—' in last_line else 'Unknown' }}
+#           {% else %}
+#             {{ last_line.split(' ', 2)[2] if last_line.split(' ') | length > 2 else 'Unknown' }}
+#           {% endif %}
+#         {% else %}
+#           No crashes logged
+#         {% endif %}
+#       icon_template: mdi:information-outline
+#       attribute_templates:
+#         last_crash_time: >
+#           {% set log_content = states('sensor.crash_log_reader') | default('') %}
+#           {% set lines = log_content.split('\n') | reject('equalto', '') | list %}
+#           {% if lines | length > 0 %}
+#             {% set last_line = lines[-1] %}
+#             {{ last_line.split(' ')[0] + ' ' + last_line.split(' ')[1] if last_line.split(' ') | length > 1 else 'Unknown' }}
+#           {% else %}
+#             Never
+#           {% endif %}
+#         minutes_since_crash: >
+#           {% set log_content = states('sensor.crash_log_reader') | default('') %}
+#           {% set lines = log_content.split('\n') | reject('equalto', '') | list %}
+#           {% if lines | length > 0 %}
+#             {% set last_line = lines[-1] %}
+#             {% set parts = last_line.split(' ') %}
+#             {% if parts | length >= 2 %}
+#               {% set crash_time_str = parts[0] + ' ' + parts[1] %}
+#               {% if crash_time_str not in ['unknown', 'unavailable', None, ''] %}
+#                 {% set crash_time = strptime(crash_time_str, '%Y-%m-%d %H:%M:%S') %}
+#                 {{ ((now() - crash_time).total_seconds() / 60) | round(0) }}
+#               {% else %}
+#                 999999
+#               {% endif %}
+#             {% else %}
+#               999999
+#             {% endif %}
+#           {% else %}
+#             999999
+#           {% endif %}
+
+#     # system_stability_score:
+#       friendly_name: "System Stability Score"
+#       value_template: >
+#         {% set crashes = states('sensor.crash_count_today') | int(0) %}
+#         {% set minutes_since = state_attr('sensor.last_crash_context', 'minutes_since_crash') | int(999999) %}
+#         {% set base_score = 100 %}
+#         {% set crash_penalty = crashes * 15 %}
+#         {% set recovery_bonus = (minutes_since / 60) | round(0) | int(0) if minutes_since < 360 else 10 %}
+#         {% set final_score = base_score - crash_penalty + recovery_bonus %}
+#         {{ [final_score, 0] | max | int(0) }}
+#       icon_template: >
+#         {% set score = states('sensor.system_stability_score') | int(0) %}
+#         {% if score >= 90 %}mdi:shield-check
+#         {% elif score >= 70 %}mdi:shield-outline
+#         {% elif score >= 50 %}mdi:shield-alert
+#         {% else %}mdi:shield-off
+#         {% endif %}
+#       attribute_templates:
+#         grade: >
+#           {% set score = states('sensor.system_stability_score') | int(0) %}
+#           {% if score >= 95 %}A+
+#           {% elif score >= 90 %}A
+#           {% elif score >= 80 %}B
+#           {% elif score >= 70 %}C
+#           {% elif score >= 60 %}D
+#           {% else %}F
+#           {% endif %}
+#         recommendation: >
+#           {% set crashes = states('sensor.crash_count_today') | int(0) %}
+#           {% set score = states('sensor.system_stability_score') | int(0) %}
+#           {% if score >= 90 %}✅ System stable, continue normal operations
+#           {% elif crashes >= 3 %}🔴 Multiple crashes - investigate schema compliance
+#           {% elif score >= 70 %}⚠️ Monitor system, avoid YAML changes
+#           {% else %}🚨 System unstable - check logs and consider safe mode
+#           {% endif %}

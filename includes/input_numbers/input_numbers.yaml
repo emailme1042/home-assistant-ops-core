@@ -1,0 +1,13 @@
+wizard_slide_opacity:
+  name: Wizard Opacity
+  initial: 0.8
+  min: 0
+  max: 1
+  step: 0.1
+  mode: slider
+hours_between_update_check:
+  name: Time Between Update Checks
+  min: 1
+  max: 24
+  step: 1
+  unit_of_measurement: hours

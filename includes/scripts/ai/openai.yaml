@@ -1,0 +1,57 @@
+query_openai:
+  alias: Query OpenAI
+  description: Send a query to OpenAI and store the response
+  fields:
+    query:
+      description: The query to send to OpenAI
+      example: "What is the weather like?"
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.openai_response
+      data:
+        value: "Processing..."
+    
+    # Store the query for reference
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.openai_query
+      data:
+        value: "{{ query if query is defined else states('input_text.openai_query') }}"
+    
+    # Call the OpenAI REST command
+    - service: rest_command.ask_openai
+      data:
+        prompt: "{{ query if query is defined else states('input_text.openai_query') }}"
+    
+    # For now, indicate the query was sent successfully
+    # Note: REST command responses need webhook or REST sensor to capture
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.openai_response
+      data:
+        value: "OpenAI query sent successfully at {{ now().strftime('%H:%M:%S') }}. Check logs for actual response."
+    
+    - service: persistent_notification.create
+      data:
+        title: "✅ OpenAI Query Sent"
+        message: "Query: {{ query if query is defined else states('input_text.openai_query') }}"
+
+query_openai_simple:
+  alias: Query OpenAI (Simple)
+  description: Simple OpenAI query from input_text
+  sequence:
+    - service: rest_command.ask_openai
+      data:
+        prompt: "{{ states('input_text.openai_query') }}"
+    
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.openai_response
+      data:
+        value: "Query sent at {{ now().strftime('%H:%M:%S') }}"
+    
+    - service: persistent_notification.create
+      data:
+        title: "✅ OpenAI Query"
+        message: "{{ states('input_text.openai_query') }}"

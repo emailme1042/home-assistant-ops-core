@@ -1,0 +1,44 @@
+# OneNote Manual Sync Trigger
+# Triggered by dashboard button press for immediate OneNote processing
+
+- id: onenote_manual_sync_trigger
+  alias: "OneNote: Manual Sync Button"
+  description: "Manual trigger for OneNote extraction and processing"
+  trigger:
+    - platform: state
+      entity_id: input_boolean.trigger_onenote_sync
+      to: 'on'
+  action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.trigger_onenote_sync
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_onenote_sync
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.onenote_extraction_result
+      data:
+        value: "Manual sync triggered at {{ now().strftime('%H:%M:%S') }} - Processing OneNote content"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.current_message_action
+      data:
+        value: "OneNote content extraction requested for M365 Copilot processing"
+    - service: persistent_notification.create
+      data:
+        title: "📝 OneNote Manual Sync"
+        message: >
+          Manual OneNote sync triggered successfully!
+          
+          File: {{ states('input_text.onenote_file_path') }}
+          Time: {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+          
+          Check Message Routing Controls for processing status.
+        notification_id: onenote_manual_sync
+    - delay: '00:00:02'
+    - service: input_number.increment
+      target:
+        entity_id: input_number.messages_today_count

@@ -1,0 +1,61 @@
+# AI Workspace Sync Status Blueprint
+# Home Assistant integration for live markdown merge status
+
+blueprint:
+  name: AI Workspace Sync Status
+  description: >
+    Monitors Copilot markdown merge workflow and exposes sync status, warnings, and last merge summary as sensors and dashboard cards. Enables cross-agent communication and audit traceability.
+  domain: automation
+  input:
+    merge_log_path:
+      name: Merge Log Path
+      description: Path to copilot_session_notes_merge.md
+      default: S:/AI_WORKSPACE/copilot_session_notes_merge.md
+    warnings_log_path:
+      name: Warnings Log Path
+      description: Path to _merge_warnings.log
+      default: S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log
+    dashboard_update_entity:
+      name: Dashboard Update Entity
+      description: Input text or sensor to surface status
+      default: input_text.ai_workspace_sync_status
+
+trigger:
+  - platform: time_pattern
+    minutes: '/2'  # Check every 2 minutes
+
+action:
+  - service: input_text.set_value
+    data_template:
+      entity_id: !input dashboard_update_entity
+      value: >
+        {% set log = states('sensor.merge_log_content') %}
+        {% set warnings = states('sensor.merge_warnings_count') %}
+        {% if warnings|int > 0 %}
+          ⚠️ Merge warnings: {{ warnings }} | {{ log }}
+        {% else %}
+          ✅ Synced | {{ log }}
+        {% endif %}
+
+sensor:
+  - platform: command_line
+    name: Merge Log Content
+    command: "powershell -Command \"Get-Content 'S:/AI_WORKSPACE/copilot_session_notes_merge.md' | Select-Object -Last 1\""
+    scan_interval: 120
+  - platform: command_line
+    name: Merge Warnings Count
+    command: "powershell -Command \"if (Test-Path 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log') { (Get-Content 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log' | Select-String '⚠️').Count } else { 0 }\""
+    scan_interval: 120
+
+# Dashboard Card Example (add to SYSTEM_OVERVIEW)
+# type: markdown
+# content: |
+#   {{ states('input_text.ai_workspace_sync_status') }}
+
+# Cross-Agent Communication
+# - Sensors update every 2 minutes
+# - Status visible in dashboard and automations
+# - All merge events and warnings surfaced for GPT, Copilot, Edge
+# - Fully auditable, no manual refresh needed
+
+# Best outcome: Live sync status, warning count, last merge summary, and dashboard visibility for all agents and Jamie.

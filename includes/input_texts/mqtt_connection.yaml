@@ -1,0 +1,15 @@
+mqtt_host:
+  name: MQTT Broker Host
+  initial: localhost
+
+mqtt_port:
+  name: MQTT Broker Port
+  initial: '1883'
+
+mqtt_user:
+  name: MQTT Username
+  initial: mqtt_user
+
+mqtt_pass:
+  name: MQTT Password
+  initial: mqtt_pass

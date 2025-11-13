@@ -1,0 +1,37 @@
+# Infrastructure Alert Automation
+# Purpose: Alert when ESPHome, MQTT, or Automation failures occur
+# Supports: Mobile notifications with click-to-navigate
+
+- alias: "Infra – Alert on device outages"
+  id: infra_alert_on_outages
+  mode: restart
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.esphome_unavailable_count
+        - sensor.mqtt_unavailable_count
+        - sensor.automations_unavailable_count
+      for: "00:05:00"
+  condition:
+    - condition: template
+      value_template: >
+        {{ (states('sensor.esphome_unavailable_count')|int(0) +
+            states('sensor.mqtt_unavailable_count')|int(0) +
+            states('sensor.automations_unavailable_count')|int(0)) > 0 }}
+  action:
+    - service: notify.mobile_app_plop
+      data:
+        title: "🚨 HA: Outage detected"
+        message: >
+          ESP unavail={{ states('sensor.esphome_unavailable_count') }},
+          MQTT unavail={{ states('sensor.mqtt_unavailable_count') }},
+          Automations unavail={{ states('sensor.automations_unavailable_count') }}.
+          System Health: {{ states('sensor.system_health_score') }}%
+          Tap to open System Overview.
+        data:
+          clickAction: "/lovelace/system-overview"
+          actions:
+            - action: "open_system_overview"
+              title: "Open System Overview"
+            - action: "dismiss"
+              title: "Dismiss"

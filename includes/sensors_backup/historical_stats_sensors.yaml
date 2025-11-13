@@ -1,0 +1,125 @@
+# Historical Stats Template Sensors
+# Provides live sensor data for historical tracking dashboard
+
+- platform: template
+  sensors:
+    # System Overview Stats
+    ha_system_entities_total:
+      friendly_name: "Total HA Entities"
+      value_template: "{{ states | count }}"
+      icon_template: mdi:database
+      
+    ha_system_unavailable_entities:
+      friendly_name: "Unavailable Entities"
+      value_template: "{{ states | selectattr('state', 'eq', 'unavailable') | list | count }}"
+      icon_template: mdi:alert-circle
+      
+    ha_system_health_percentage:
+      friendly_name: "System Health Percentage"
+      value_template: >
+        {% set total = states | count %}
+        {% set unavailable = states | selectattr('state', 'eq', 'unavailable') | list | count %}
+        {% if total > 0 %}
+          {{ ((total - unavailable) / total * 100) | round(1) }}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: "%"
+      icon_template: >
+        {% set health = this.state | int(0) %}
+        {% if health >= 95 %}mdi:heart
+        {% elif health >= 85 %}mdi:heart-pulse
+        {% elif health >= 70 %}mdi:heart-half
+        {% else %}mdi:heart-broken{% endif %}
+      
+    # Component-Specific Working Counts
+    ha_system_automations_working:
+      friendly_name: "Working Automations"
+      value_template: >
+        {% set total = states.automation | count %}
+        {% set unavailable = states.automation | selectattr('state', 'eq', 'unavailable') | list | count %}
+        {{ total - unavailable }}
+      icon_template: mdi:robot
+      
+    ha_system_scripts_working:
+      friendly_name: "Working Scripts"
+      value_template: >
+        {% set total = states.script | count %}
+        {% set unavailable = states.script | selectattr('state', 'eq', 'unavailable') | list | count %}
+        {{ total - unavailable }}
+      icon_template: mdi:script-text
+      
+    ha_system_sensors_working:
+      friendly_name: "Working Sensors"
+      value_template: >
+        {% set total = states.sensor | count %}
+        {% set unavailable = states.sensor | selectattr('state', 'eq', 'unavailable') | list | count %}
+        {{ total - unavailable }}
+      icon_template: mdi:eye
+      
+    ha_system_lights_working:
+      friendly_name: "Working Lights"
+      value_template: >
+        {% set total = states.light | count %}
+        {% set unavailable = states.light | selectattr('state', 'eq', 'unavailable') | list | count %}
+        {{ total - unavailable }}
+      icon_template: mdi:lightbulb
+      
+    ha_system_switches_working:
+      friendly_name: "Working Switches"
+      value_template: >
+        {% set total = states.switch | count %}
+        {% set unavailable = states.switch | selectattr('state', 'eq', 'unavailable') | list | count %}
+        {{ total - unavailable }}
+      icon_template: mdi:toggle-switch
+
+- platform: template
+  sensors:
+    # Include File Counts (Command Line Based)
+    ha_include_automations_count:
+      friendly_name: "Automation Include Files"
+      value_template: "{{ states('sensor.automation_files_count') | int(0) }}"
+      icon_template: mdi:file-code
+      
+    ha_include_scripts_count:
+      friendly_name: "Script Include Files"
+      value_template: "{{ states('sensor.script_files_count') | int(0) }}"
+      icon_template: mdi:file-document
+      
+    ha_include_sensors_count:
+      friendly_name: "Sensor Include Files"
+      value_template: "{{ states('sensor.sensor_files_count') | int(0) }}"
+      icon_template: mdi:file-chart
+      
+    ha_include_templates_count:
+      friendly_name: "Template Include Files"
+      value_template: "{{ states('sensor.template_files_count') | int(0) }}"
+      icon_template: mdi:file-settings
+      
+    ha_include_dashboards_count:
+      friendly_name: "Dashboard Files"
+      value_template: "{{ states('sensor.dashboard_files_count') | int(0) }}"
+      icon_template: mdi:view-dashboard
+      
+    # Domain Summary Stats
+    ha_domain_summary:
+      friendly_name: "Top 10 Entity Domains"
+      value_template: >
+        {% set domains = states | groupby('domain') | list %}
+        {% set sorted_domains = domains | sort(attribute='1') | reverse %}
+        {% set top_10 = sorted_domains[:10] %}
+        {{ top_10 | map(attribute='0') | join(', ') }}
+      icon_template: mdi:format-list-group
+      
+    # System Change Detection
+    ha_system_last_change:
+      friendly_name: "Last System Change"
+      value_template: >
+        {% set recent_changes = states | selectattr('last_changed') | 
+           sort(attribute='last_changed', reverse=true) | first %}
+        {% if recent_changes %}
+          {{ recent_changes.entity_id }}: {{ relative_time(recent_changes.last_changed) }} ago
+        {% else %}
+          No recent changes
+        {% endif %}
+      icon_template: mdi:clock-time-four

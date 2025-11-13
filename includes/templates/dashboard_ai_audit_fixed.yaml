@@ -1,0 +1,181 @@
+# AI-Powered Dashboard Audit Template Sensors (Fixed Version)
+# Intelligent monitoring and optimization recommendation system
+# All template sensors use defensive defaults to prevent 'unavailable' errors
+
+template:
+  - sensor:
+      # Real-time optimization recommendations with defensive defaults
+      - name: "Dashboard Optimization Tip"
+        unique_id: dashboard_optimization_tip_fixed
+        state: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set ai_workspace = states('sensor.dashboard_complexity_score_ai_workspace') | int(0) %}
+          {% set recovery = states('sensor.dashboard_complexity_score_recovery') | int(0) %}
+          {% set system_overview = states('sensor.dashboard_complexity_score_system_overview') | int(0) %}
+          {% set avg_complexity = ((ai_workspace + recovery + system_overview) / 3) | round(0) %}
+          
+          {% if errors > 10 %}
+            🚨 HIGH ERROR RATE: {{ errors }} errors detected. Check dashboard complexity immediately.
+          {% elif errors > 5 %}
+            ⚠️ MODERATE ERRORS: {{ errors }} errors. Monitor dashboard performance closely.
+          {% elif ai_workspace > 150 %}
+            🔥 AI WORKSPACE OVERLOADED: Score {{ ai_workspace }}. Consider simplifying views.
+          {% elif system_overview > 150 %}
+            ⚡ SYSTEM OVERVIEW COMPLEX: Score {{ system_overview }}. Split into focused dashboards.
+          {% elif avg_complexity > 100 %}
+            📊 AVERAGE COMPLEXITY HIGH: {{ avg_complexity }}. Review dashboard optimization.
+          {% elif errors == 0 and avg_complexity < 75 %}
+            🏆 EXCELLENT: System optimally configured. No action needed.
+          {% else %}
+            ✅ HEALTHY: System performing well within normal parameters.
+          {% endif %}
+        icon: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if errors > 10 %}
+            mdi:alert-octagon
+          {% elif errors > 5 %}
+            mdi:alert-circle
+          {% elif errors > 0 %}
+            mdi:alert-circle-outline
+          {% else %}
+            mdi:check-circle
+          {% endif %}
+        attributes:
+          ai_workspace_score: "{{ states('sensor.dashboard_complexity_score_ai_workspace') | int(0) }}"
+          recovery_score: "{{ states('sensor.dashboard_complexity_score_recovery') | int(0) }}"
+          system_overview_score: "{{ states('sensor.dashboard_complexity_score_system_overview') | int(0) }}"
+          
+      # High complexity dashboard counter with defensive defaults
+      - name: "High Complexity Dashboard Count"
+        unique_id: high_complexity_dashboard_count_fixed
+        state: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set ai_score = states('sensor.dashboard_complexity_score_ai_workspace') | int(0) %}
+          {% set high_complexity_count = 0 %}
+          {% if ai_score > 150 %}{% set high_complexity_count = high_complexity_count + 1 %}{% endif %}
+          {% if states('sensor.dashboard_complexity_score_recovery') | int(0) > 150 %}{% set high_complexity_count = high_complexity_count + 1 %}{% endif %}
+          {% if states('sensor.dashboard_complexity_score_system_overview') | int(0) > 150 %}{% set high_complexity_count = high_complexity_count + 1 %}{% endif %}
+          {{ high_complexity_count }}
+        unit_of_measurement: "dashboards"
+        icon: >-
+          {% set count = states('sensor.high_complexity_dashboard_count') | int(0) %}
+          {% if count > 2 %}
+            mdi:alert-circle
+          {% elif count > 0 %}
+            mdi:alert-circle-outline
+          {% else %}
+            mdi:check-circle
+          {% endif %}
+
+      # Weekly audit summary with all defensive defaults
+      - name: "Weekly Audit Summary"
+        unique_id: weekly_audit_summary_fixed
+        state: >-
+          {% if state_attr('sensor.weekly_audit_summary', 'weekly_run_complete') == true %}
+            {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_recovery') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_system_overview') | int(0)) %}
+            {% set avg_score = (total_score / 3) | round(1) %}
+            📊 Weekly Audit Complete: Average complexity {{ avg_score }}, Total score {{ total_score }}
+          {% else %}
+            {% set errors = states('input_number.frontend_errors') | int(0) %}
+            {% set recommendations = 0 %}
+            {% if errors > 5 %}{% set recommendations = recommendations + 1 %}{% endif %}
+            {% if states('sensor.dashboard_complexity_score_ai_workspace') | int(0) > 150 %}{% set recommendations = recommendations + 1 %}{% endif %}
+            {% if states('sensor.dashboard_complexity_score_system_overview') | int(0) > 150 %}{% set recommendations = recommendations + 1 %}{% endif %}
+            📋 Current Status: {{ errors }} errors, {{ recommendations }} optimization opportunities
+          {% endif %}
+        icon: mdi:file-chart
+        attributes:
+          last_updated: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+      # Dashboard performance trend with defensive defaults
+      - name: "Dashboard Performance Trend"
+        unique_id: dashboard_performance_trend_fixed
+        state: >-
+          {% set current_errors = states('input_number.frontend_errors') | int(0) %}
+          {% set current_avg = ((states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) +
+                               (states('sensor.dashboard_complexity_score_recovery') | int(0)) +
+                               (states('sensor.dashboard_complexity_score_system_overview') | int(0))) / 3 %}
+          {% set previous_avg = state_attr('sensor.dashboard_performance_trend', 'previous_average') | float(100) %}
+          
+          {% if current_avg < previous_avg - 10 %}
+            📈 IMPROVING: Complexity reduced from {{ previous_avg | round(1) }} to {{ current_avg | round(1) }}
+          {% elif current_avg > previous_avg + 10 %}
+            📉 DECLINING: Complexity increased from {{ previous_avg | round(1) }} to {{ current_avg | round(1) }}
+          {% elif current_errors == 0 and current_avg < 75 %}
+            🎯 OPTIMAL: Zero errors, low complexity ({{ current_avg | round(1) }})
+          {% else %}
+            ⚖️ STABLE: Complexity {{ current_avg | round(1) }}, {{ current_errors }} errors
+          {% endif %}
+        icon: mdi:chart-line
+        attributes:
+          current_average: "{{ ((states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) + (states('sensor.dashboard_complexity_score_recovery') | int(0)) + (states('sensor.dashboard_complexity_score_system_overview') | int(0))) / 3 | round(1) }}"
+          current_errors: "{{ states('input_number.frontend_errors') | int(0) }}"
+
+      # System health grade with all defensive defaults
+      - name: "Dashboard System Health Grade"
+        unique_id: dashboard_system_health_grade_fixed
+        state: >-
+          {% if state_attr('sensor.dashboard_system_health_grade', 'calculation_complete') == true %}
+            {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) +
+                              (states('sensor.dashboard_complexity_score_recovery') | int(0)) +
+                              (states('sensor.dashboard_complexity_score_system_overview') | int(0)) %}
+            {% set avg_score = total_score / 3 %}
+            {% set errors = states('input_number.frontend_errors') | int(0) %}
+            
+            {% if avg_score < 50 and errors == 0 %}
+              A+
+            {% elif avg_score < 75 and errors < 3 %}
+              A
+            {% elif avg_score < 100 and errors < 5 %}
+              B
+            {% elif avg_score < 150 and errors < 10 %}
+              C
+            {% else %}
+              D
+            {% endif %}
+          {% else %}
+            {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_recovery') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_system_overview') | int(0)) %}
+            {% set avg_score = total_score / 3 %}
+            {% set errors = states('input_number.frontend_errors') | int(0) %}
+            
+            {% if avg_score < 75 and errors < 3 %}
+              B+
+            {% elif avg_score < 125 and errors < 8 %}
+              B
+            {% else %}
+              C
+            {% endif %}
+          {% endif %}
+        icon: >-
+          {% set grade = states('sensor.dashboard_system_health_grade') %}
+          {% if grade in ['A+', 'A'] %}
+            mdi:trophy
+          {% elif grade in ['B+', 'B'] %}
+            mdi:medal
+          {% elif grade == 'C' %}
+            mdi:star-outline
+          {% else %}
+            mdi:alert-circle
+          {% endif %}
+
+      # Performance monitoring summary with defensive defaults
+      - name: "Dashboard Performance Monitor"
+        unique_id: dashboard_performance_monitor_fixed
+        state: >-
+          {% if state_attr('sensor.dashboard_performance_monitor', 'monitoring_active') == true %}
+            {% set total_score = (states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_recovery') | int(0)) +
+                                (states('sensor.dashboard_complexity_score_system_overview') | int(0)) %}
+            📊 Performance Monitor Active: Total complexity {{ total_score }}
+          {% else %}
+            📋 Monitor Standby: System ready for analysis
+          {% endif %}
+        icon: mdi:monitor-dashboard
+        attributes:
+          total_complexity: "{{ (states('sensor.dashboard_complexity_score_ai_workspace') | int(0)) + (states('sensor.dashboard_complexity_score_recovery') | int(0)) + (states('sensor.dashboard_complexity_score_system_overview') | int(0)) }}"
+          error_count: "{{ states('input_number.frontend_errors') | int(0) }}"
+          monitoring_timestamp: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"

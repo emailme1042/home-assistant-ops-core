@@ -1,0 +1,16 @@
+type: markdown
+card_mod:
+  style: |
+    ha-card {
+      border-left: 4px solid #607d8b;
+      padding: 12px;
+      font-size: 14px;
+    }
+content: |
+  ### TODO: Entity Audit Logic Extension
+  - Extend `script.entity_audit_refresh` to **scan for**:
+    - `unavailable`, `unknown`, or `restored: true` entities
+    - orphaned entities not assigned to areas
+    - duplicated `unique_id`s or non-unique helpers
+  - Optionally: write results to markdown summary or persistent_notification
+  _(Logged automatically via Deploy-EntityWatchdogSensor.ps1)_

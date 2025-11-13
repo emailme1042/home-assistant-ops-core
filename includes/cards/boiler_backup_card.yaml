@@ -1,0 +1,63 @@
+# Boiler Stats Backup Dashboard Card
+# Shows backup status and provides manual backup controls
+
+type: vertical-stack
+title: "📊 Boiler Stats Backup"
+cards:
+  - type: entities
+    title: "Backup Controls"
+    show_header_toggle: false
+    entities:
+      - entity: input_button.backup_boiler_stats
+        name: "📤 Backup Now"
+        icon: mdi:cloud-upload
+      - type: divider
+      - entity: sensor.time
+        name: "Last Manual Backup"
+        icon: mdi:clock-outline
+      - entity: sensor.date
+        name: "Backup Date"
+        icon: mdi:calendar
+
+  - type: markdown
+    title: "Backup Status"
+    content: |
+      ## 📁 Backup System Status
+
+      **✅ Automated Backups:** Weekly Sunday 2:00 AM
+      **✅ Manual Backups:** Via button above
+      **✅ Storage:** Dropbox `/HA_Uploads/` folder
+      **✅ Data Included:**
+      - Daily runtime statistics
+      - Heating vs hot water breakdown
+      - Usage type classification
+      - Vibration sensor data
+      - System performance metrics
+
+      ## 🚀 Quick Commands
+
+      **Manual Backup:**
+      ```bash
+      cd AI_WORKSPACE
+      .\backup_boiler_stats.ps1
+      ```
+
+      **Weekly Summary:**
+      ```bash
+      .\backup_boiler_stats.ps1 -Weekly
+      ```
+
+      **Historical Export:**
+      ```bash
+      .\backup_boiler_stats.ps1 -History
+      ```
+
+      ## 📊 What Gets Backed Up
+
+      - **Runtime Data:** Total, heating, hot water hours
+      - **Usage Patterns:** Automatic classification
+      - **Sensor Data:** Vibration levels and patterns
+      - **System Health:** HA version and performance
+      - **Timestamps:** When backups were created
+
+      All files are automatically named with timestamps and uploaded to your Dropbox!

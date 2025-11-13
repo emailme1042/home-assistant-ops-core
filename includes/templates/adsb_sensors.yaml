@@ -1,0 +1,68 @@
+template:
+  - sensor:
+      - name: "Aircraft Count Display"
+        unique_id: aircraft_count_display
+        state: "{{ states('sensor.aircraft_count') | int(0) }}"
+        icon: mdi:airplane
+        unit_of_measurement: "aircraft"
+        device_class: "measurement"
+        
+      - name: "Lowest Aircraft Altitude Display"
+        unique_id: lowest_aircraft_altitude_display
+        state: "{{ states('sensor.lowest_aircraft_altitude') | int(0) }}"
+        icon: mdi:airplane-landing
+        unit_of_measurement: "ft"
+        device_class: "measurement"
+        
+      - name: "ADS-B System Status"
+        unique_id: adsb_system_status
+        state: >
+          {% if states('sensor.aircraft_count') | int(0) > 0 %}
+            Online
+          {% elif states('sensor.aircraft_count') == 'unavailable' %}
+            Offline
+          {% else %}
+            Idle
+          {% endif %}
+        icon: >
+          {% if states('sensor.aircraft_count') | int(0) > 0 %}
+            mdi:radar
+          {% elif states('sensor.aircraft_count') == 'unavailable' %}
+            mdi:radar-off
+          {% else %}
+            mdi:radar
+          {% endif %}
+        
+      - name: "Aircraft Activity Level"
+        unique_id: aircraft_activity_level
+        state: >
+          {% set count = states('sensor.aircraft_count') | int(0) %}
+          {% if count == 0 %}
+            Quiet
+          {% elif count <= 5 %}
+            Low
+          {% elif count <= 15 %}
+            Normal
+          {% elif count <= 30 %}
+            Busy
+          {% else %}
+            Very Busy
+          {% endif %}
+        icon: mdi:airplane-clock
+        
+      - name: "Low Altitude Alert Status"
+        unique_id: low_altitude_alert_status
+        state: >
+          {% set altitude = states('sensor.lowest_aircraft_altitude') | int(99999) %}
+          {% if altitude < 1000 and altitude > 0 %}
+            Low Altitude Detected
+          {% else %}
+            Normal Altitude
+          {% endif %}
+        icon: >
+          {% set altitude = states('sensor.lowest_aircraft_altitude') | int(99999) %}
+          {% if altitude < 1000 and altitude > 0 %}
+            mdi:airplane-alert
+          {% else %}
+            mdi:airplane-check
+          {% endif %}

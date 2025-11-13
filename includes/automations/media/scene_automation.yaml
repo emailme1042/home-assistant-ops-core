@@ -1,0 +1,59 @@
+- alias: Auto Bedtime Scene
+  id: auto_bedtime_scene
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.bedroom_occupied
+      to: "off"
+      for: "00:15:00"
+  action:
+    - service: scene.turn_on
+      target:
+        entity_id: scene.bedroom_bedtime
+
+- alias: Start Party Music when Party Mode Scene Activated
+  id: party_mode_auto_music_scene
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: scene
+        service: turn_on
+        service_data:
+          entity_id: scene.bedroom_party_mode
+  action:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_id: "https://www.myinstants.com/media/sounds/party-time.mp3"
+        media_content_type: music
+
+- alias: Announce Movie Night
+  id: movie_night_voice_notify_scene_automation
+  trigger:
+    - platform: state
+      entity_id: input_boolean.movie_night
+      to: "on"
+  action:
+    - service: media_player.lounge_alexa
+      data:
+        message: "Enjoy your movie night!"
+        type: tts
+
+- alias: Play Relaxing Sound when Relax Scene Activated
+  id: relax_mode_sound_scene_automation
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: scene
+        service: turn_on
+        service_data:
+          entity_id: scene.bedroom_relax
+  action:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_id: "https://www.myinstants.com/media/sounds/ocean-wave.mp3"
+        media_content_type: music

@@ -1,0 +1,29 @@
+# Loo Light Automation - 5 Minute Timer
+# Purpose: Turn off loo light after 5 minutes if left on
+
+- alias: "Loo Light 5 Minute Auto Off"
+  id: loo_light_5_minute_auto_off
+  description: "Turn off loo light after 5 minutes to save energy"
+  mode: restart
+  
+  trigger:
+    - platform: state
+      entity_id: light.loo_5
+      to: "on"
+  
+  action:
+    # Wait 5 minutes
+    - delay:
+        minutes: 5
+    
+    # Turn off loo light if still on
+    - service: light.turn_off
+      target:
+        entity_id: light.loo_5
+    
+    # Optional: Log the action
+    - service: logbook.log
+      data:
+        name: "Loo Light Timer"
+        message: "Loo light turned off after 5 minutes"
+        entity_id: light.loo_5

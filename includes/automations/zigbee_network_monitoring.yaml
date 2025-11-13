@@ -1,0 +1,124 @@
+# 🔍 Zigbee Network Map Monitoring & Audit Logging
+# Purpose: Real-time tracking of device parent assignments and LQI changes
+# Created: 2025-11-06 by VSCode Mesh Surgery Protocol
+
+- id: zigbee_networkmap_logger
+  alias: "📊 Zigbee Network Map Logger"
+  description: "Log all network map changes to track routing assignments"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee2mqtt/bridge/networkmap"
+  mode: queued
+  max: 10
+  action:
+    # Parse and log network topology changes
+    - service: python_script.zigbee_network_parser
+      data:
+        networkmap_data: "{{ trigger.payload_json }}"
+        timestamp: "{{ now().isoformat() }}"
+    
+    # Create audit entry for significant changes
+    - if:
+        - "{{ trigger.payload_json | length > 0 }}"
+      then:
+        - service: mqtt.publish
+          data:
+            topic: "homeassistant/zigbee_audit/network_update"
+            payload: >
+              {
+                "timestamp": "{{ now().isoformat() }}",
+                "device_count": "{{ trigger.payload_json | length }}",
+                "topology_hash": "{{ trigger.payload_json | string | hash('md5') }}",
+                "action": "network_map_updated"
+              }
+
+- id: zigbee_device_joined_tracker
+  alias: "🔗 Zigbee Device Join Tracker"
+  description: "Track when devices successfully join and their assigned parent"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee2mqtt/bridge/log"
+  condition:
+    - "{{ 'device_joined' in trigger.payload_json.type }}"
+  mode: queued
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_joined"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device_name": "{{ trigger.payload_json.message.friendly_name }}",
+            "ieee_address": "{{ trigger.payload_json.message.ieee_address }}",
+            "action": "device_joined_network"
+          }
+    
+    # Wait 30 seconds then query device details for parent info
+    - delay: "00:00:30"
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/options"
+        payload: >
+          {"id": "{{ trigger.payload_json.message.friendly_name }}"}
+
+- id: zigbee_lqi_monitor
+  alias: "📶 Zigbee LQI Monitor"
+  description: "Monitor link quality changes for mesh health tracking"
+  trigger:
+    - platform: time_pattern
+      minutes: "/15"  # Check every 15 minutes
+  mode: single
+  action:
+    # Request LQI scan for all devices
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/networkmap"
+        payload: '{"type": "raw", "routes": true}'
+    
+    # Wait for response then log current LQI status
+    - delay: "00:00:10"
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/lqi_scan"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "scan_type": "periodic_lqi_check",
+            "action": "lqi_scan_requested"
+          }
+
+- id: zigbee_permit_join_manager
+  alias: "🚪 Zigbee Permit Join Manager"
+  description: "Safely manage permit join timeouts and notifications"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee2mqtt/bridge/info"
+  condition:
+    - "{{ 'permit_join' in trigger.payload_json }}"
+  mode: restart
+  action:
+    - if:
+        - "{{ trigger.payload_json.permit_join == true }}"
+      then:
+        - service: persistent_notification.create
+          data:
+            title: "🚪 Zigbee Permit Join Active"
+            message: "Network open for new devices. Auto-close in progress."
+            notification_id: "zigbee_permit_join_status"
+        
+        # Safety timeout - force close after 5 minutes if still open
+        - delay: "00:05:00"
+        - service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/bridge/request/permit_join"
+            payload: '{"value": false}'
+        
+        - service: persistent_notification.create
+          data:
+            title: "🔒 Zigbee Permit Join Closed"
+            message: "Safety timeout reached. Network secured."
+            notification_id: "zigbee_permit_join_status"
+      else:
+        - service: persistent_notification.dismiss
+          data:
+            notification_id: "zigbee_permit_join_status"

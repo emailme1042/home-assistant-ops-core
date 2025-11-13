@@ -1,0 +1,8 @@
+mood:
+  name: Mood Selector
+  options:
+    - Happy
+    - Focused
+    - Chill
+    - Sleepy
+  initial: Happy

@@ -1,0 +1,2 @@
+restart_mqtt_broker: "docker restart mosquitto"
+clear_mqtt_topics: "python3 /config/python_scripts/clear_stale_mqtt.py"

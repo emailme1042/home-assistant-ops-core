@@ -1,0 +1,19 @@
+# Template sensors for integration health
+
+- sensor:
+    - name: "Alexa Media Loaded"
+      unique_id: alexa_media_loaded
+      state: >
+        {{ states('media_player.kitchen_alexa') != 'unavailable' }}
+      attributes:
+        entity_count: >
+          {{ states.media_player | selectattr('entity_id','search','alexa') | list | count }}
+        integration: "alexa_media"
+    - name: "Adaptive Lighting Loaded"
+      unique_id: adaptive_lighting_loaded
+      state: >
+        {{ 'adaptive_lighting' in integration_entities('light') }}
+      attributes:
+        entity_count: >
+          {{ states.light | selectattr('entity_id','search','adaptive_lighting') | list | count }}
+        integration: "adaptive_lighting"

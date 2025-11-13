@@ -1,0 +1,88 @@
+# 🧩 AI System Insight Dashboard
+# Version: 2025.11.01
+# Purpose: Central hub for diagnostics, AI logs, validation status, and Copilot trace data.
+
+title: AI System Insight
+path: ai-insight
+icon: mdi:robot-eye
+theme: Backend-selected
+type: custom:vertical-stack
+badges: []
+
+views:
+  - title: 🧠 AI Diagnostics
+    path: diagnostics
+    type: vertical-stack
+    cards:
+      - type: markdown
+        title: ⚙️ AI System Status
+        content: |
+          **AI Monitoring Layer:** {{ states('sensor.ai_workspace_status') }}
+          **Last Sync:** {{ states('sensor.ha_sync_status') }}
+          **Merge Status:** {{ states('sensor.ai_merge_status') }}
+          **Warnings:** {{ states('sensor.ai_workspace_warnings') }}
+
+      - type: entities
+        title: 🩺 Validation & Merge Sensors
+        entities:
+          - entity: sensor.ai_workspace_status
+            name: AI Workspace Sync
+          - entity: sensor.ai_merge_status
+            name: Merge Operation Status
+          - entity: sensor.ai_workspace_warnings
+            name: Warning Count
+          - entity: sensor.system_health
+            name: HA Core Health
+
+      - type: markdown
+        title: 🧾 Latest Validation Summary
+        content: |
+          {{ states('sensor.ai_validation_summary') }}
+
+      - type: markdown
+        title: 🔄 Restart Validation Checklist
+        content: |
+          [Open AI Restart Validation Checklist](vscode://file/S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/AI_RESTART_VALIDATION_CHECKLIST.md)
+          
+          Use this checklist after every Home Assistant restart to confirm all dashboards, automations, and AI agents are online and healthy.
+
+  - title: 🪶 Session Logs
+    path: logs
+    type: vertical-stack
+    cards:
+      - type: markdown
+        title: 🧩 Copilot Session Notes
+        content: |
+          **Last Update:** {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+          Use [VSCode link](vscode://file/S:/AI_WORKSPACE/copilot_session_notes.md) to open the full log.
+          ---
+          {{ states('sensor.ai_last_log_entry') }}
+
+      - type: markdown
+        title: 🗂️ Active Reports
+        content: |
+          - [AI_Monitoring_Report.md](vscode://file/S:/AI_WORKSPACE/REPORTS/AI_Monitoring_Report.md)
+          - [copilot_session_notes_merge.md](vscode://file/S:/AI_WORKSPACE/copilot_session_notes_merge.md)
+          - [merge_warnings.log](vscode://file/S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log)
+          ---
+          These files are synced with your GitHub Copilot audit logs.
+
+  - title: 🧮 Diagnostics Graphs
+    path: graphs
+    type: vertical-stack
+    cards:
+      - type: history-graph
+        title: Merge & Validation History
+        entities:
+          - entity: sensor.ai_merge_status
+          - entity: sensor.ai_workspace_status
+          - entity: sensor.ai_workspace_warnings
+        hours_to_show: 24
+        refresh_interval: 300
+      - type: history-graph
+        title: Routine Health Correlation
+        entities:
+          - entity: input_select.ai_routine_state
+          - entity: sensor.ha_sync_status
+          - entity: sensor.system_health
+        hours_to_show: 24

@@ -1,0 +1,9 @@
+ai_active_routine:
+  name: "AI Active Routine Mode"
+  icon: mdi:robot-excited
+  initial: true
+
+ai_routine_archival_enabled:
+  name: "AI Routine Auto-Archival"
+  icon: mdi:archive
+  initial: true

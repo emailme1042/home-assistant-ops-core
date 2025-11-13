@@ -1,0 +1,111 @@
+# Safe GPT Audit Integration Sensors
+# Reads GPT audit results from log files (no automatic execution)
+# Manual trigger only via shell commands or dashboard buttons
+
+template:
+  - sensor:
+      # Safe GPT audit log reader (passive, no execution)
+      - name: "GPT Dashboard Audit Status"
+        unique_id: gpt_dashboard_audit_status
+        state: >-
+          {% set audit_file = '/config/AI_WORKSPACE/logs/gpt_audit_request.txt' %}
+          {% set response_file = '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' %}
+          {% if response_file | file_exists %}
+            GPT audit response available
+          {% elif audit_file | file_exists %}
+            GPT audit request prepared
+          {% else %}
+            No GPT audit yet
+          {% endif %}
+        icon: >-
+          {% set audit_file = '/config/AI_WORKSPACE/logs/gpt_audit_request.txt' %}
+          {% set response_file = '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' %}
+          {% if response_file | file_exists %}
+            mdi:brain
+          {% elif audit_file | file_exists %}
+            mdi:file-document-outline
+          {% else %}
+            mdi:robot-outline
+          {% endif %}
+        attributes:
+          audit_request_ready: "{{ '/config/AI_WORKSPACE/logs/gpt_audit_request.txt' | file_exists }}"
+          audit_response_available: "{{ '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' | file_exists }}"
+          last_updated: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+          instructions: "Use shell_command.gpt_dashboard_audit_safe to prepare audit request, then manually submit to GPT"
+
+      # AI Audit Summary (combines local and GPT insights)
+      - name: "AI Audit Summary"
+        unique_id: ai_audit_summary
+        state: >-
+          {% set local_audit = '/config/AI_WORKSPACE/logs/latest_dashboard_audit.json' %}
+          {% set gpt_response = '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' %}
+          {% if local_audit | file_exists and gpt_response | file_exists %}
+            Combined AI analysis available
+          {% elif local_audit | file_exists %}
+            Local AI audit complete
+          {% elif gpt_response | file_exists %}
+            GPT analysis available
+          {% else %}
+            No AI analysis yet
+          {% endif %}
+        icon: >-
+          {% set local_audit = '/config/AI_WORKSPACE/logs/latest_dashboard_audit.json' %}
+          {% set gpt_response = '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' %}
+          {% if local_audit | file_exists and gpt_response | file_exists %}
+            mdi:brain-multiple
+          {% elif local_audit | file_exists %}
+            mdi:robot
+          {% elif gpt_response | file_exists %}
+            mdi:brain
+          {% else %}
+            mdi:help-circle-outline
+          {% endif %}
+        attributes:
+          local_audit_available: "{{ '/config/AI_WORKSPACE/logs/latest_dashboard_audit.json' | file_exists }}"
+          gpt_audit_available: "{{ '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' | file_exists }}"
+          combined_analysis: >-
+            {% if '/config/AI_WORKSPACE/logs/latest_dashboard_audit.json' | file_exists and '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' | file_exists %}
+              Both local AI audit and GPT analysis are available for comprehensive insights
+            {% elif '/config/AI_WORKSPACE/logs/latest_dashboard_audit.json' | file_exists %}
+              Local AI audit complete - run GPT audit for additional insights
+            {% elif '/config/AI_WORKSPACE/logs/gpt_audit_response.txt' | file_exists %}
+              GPT analysis available - run local audit for technical metrics
+            {% else %}
+              No AI analysis available - run shell_command.ai_dashboard_audit for local analysis
+            {% endif %}
+
+      # AI Workspace Dashboard Health (specific to ai_workspace_overview.yaml)
+      - name: "AI Workspace Dashboard Health"
+        unique_id: ai_workspace_dashboard_health
+        state: >-
+          {% set dashboard_file = '/config/dashboards/ai/ai_workspace_overview.yaml' %}
+          {% if dashboard_file | file_exists %}
+            {% set complexity = states('sensor.dashboard_complexity_score_ai_workspace') | int(0) %}
+            {% if complexity < 50 %}
+              Excellent
+            {% elif complexity < 100 %}
+              Good
+            {% elif complexity < 150 %}
+              Moderate
+            {% else %}
+              Complex
+            {% endif %}
+          {% else %}
+            Dashboard missing
+          {% endif %}
+        icon: >-
+          {% set complexity = states('sensor.dashboard_complexity_score_ai_workspace') | int(0) %}
+          {% if complexity < 50 %}
+            mdi:heart
+          {% elif complexity < 100 %}
+            mdi:heart-pulse
+          {% elif complexity < 150 %}
+            mdi:heart-broken-outline
+          {% else %}
+            mdi:heart-broken
+          {% endif %}
+        attributes:
+          complexity_score: "{{ states('sensor.dashboard_complexity_score_ai_workspace') | int(0) }}"
+          optimization_tip: "{{ states('sensor.dashboard_optimization_tip') }}"
+          file_path: "/config/dashboards/ai/ai_workspace_overview.yaml"
+          ready_for_gpt_analysis: "{{ '/config/dashboards/ai/ai_workspace_overview.yaml' | file_exists }}"

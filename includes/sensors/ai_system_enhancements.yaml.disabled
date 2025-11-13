@@ -1,0 +1,13 @@
+---
+- platform: systemmonitor
+  resources:
+    - type: processor_use
+
+- platform: command_line
+  name: AI CPU Load
+  command: "..."
+
+- platform: template
+  sensors:
+    ai_health_score:
+      value_template: "100"

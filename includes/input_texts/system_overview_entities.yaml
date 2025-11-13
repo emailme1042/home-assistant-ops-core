@@ -1,0 +1,29 @@
+gpt_text_prompt:
+  name: GPT Text Prompt
+  initial: ""
+  max: 255
+  icon: mdi:message-text
+
+gpt_text_reply:
+  name: GPT Text Reply
+  initial: ""
+  max: 255
+  icon: mdi:message-reply
+
+backup_log_viewer:
+  name: Backup Log Viewer
+  initial: "No backup logs"
+  max: 255
+  icon: mdi:backup-restore
+
+recovery_notes:
+  name: Recovery Notes
+  initial: ""
+  max: 255
+  icon: mdi:note-edit
+
+orphaned_file_log:
+  name: Orphaned File Log
+  initial: "No orphaned files detected"
+  max: 255
+  icon: mdi:file-question

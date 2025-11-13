@@ -1,0 +1,151 @@
+# Unavailable Entities Monitor - System Health Intelligence
+# Purpose: Track and monitor unavailable/unknown entities for system health
+# Features: Count tracking, entity listing, health percentage calculation
+
+# Temporarily disabled for performance - complex templates causing slow startup
+# - platform: template
+#   sensors:
+    ha_total_entities:
+      friendly_name: "Total Entities Count"
+      unit_of_measurement: "entities"
+      icon_template: mdi:database
+      value_template: >
+        {% if states | length > 0 %}
+          {{ states | length }}
+        {% else %}
+          0
+        {% endif %}
+      availability_template: "{{ true }}"
+
+    # Temporarily disabled for performance - complex template iterating over all states
+# - platform: template
+#   sensors:
+#     ha_unavailable_entities_count:
+      friendly_name: "Unavailable Entities Count"
+      unit_of_measurement: "entities"
+      icon_template: >
+        {% set count = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_unavailable_entities_count') | list | length %}
+        {% if count == 0 %}
+          mdi:check-circle
+        {% elif count < 50 %}
+          mdi:alert-circle
+        {% else %}
+          mdi:alert-circle-outline
+        {% endif %}
+      value_template: >
+        {% set unavailable = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_unavailable_entities_count') | list | length %}
+        {% if unavailable is not defined or unavailable == None %}
+          0
+        {% else %}
+          {{ unavailable }}
+        {% endif %}
+      attribute_templates:
+        unavailable_entities: >
+          {% set unavailable = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_unavailable_entities_count') | map(attribute='entity_id') | list %}
+          {{ unavailable[:50] | join(', ') }}
+        entity_domains: >
+          {% set domains = {} %}
+          {% for state in states %}
+            {% if state.state in ['unavailable', 'unknown', 'none'] %}
+              {% set domain = state.entity_id.split('.')[0] %}
+              {% set domains = dict(domains, **{domain: domains.get(domain, 0) + 1}) %}
+            {% endif %}
+          {% endfor %}
+          {{ domains }}
+      trigger:
+        - platform: time_pattern
+          minutes: "/5"
+
+    ha_system_health_percentage:
+      friendly_name: "System Health Percentage"
+      unit_of_measurement: "%"
+      icon_template: mdi:heart-pulse
+      value_template: >
+        {% set total = states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_percentage') | length %}
+        {% set unavailable = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_percentage') | list | length %}
+        {% if total > 0 and unavailable is not defined %}
+          100
+        {% elif total > 0 %}
+          {{ ((total - unavailable) / total * 100) | round(1) }}
+        {% else %}
+          0
+        {% endif %}
+      availability_template: "{{ states | length > 0 }}"
+      trigger:
+        - platform: time_pattern
+          minutes: "/5"
+
+    ha_system_health_grade:
+      friendly_name: "System Health Grade"
+      icon_template: >
+        {% set health = ((states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | list | length)) / states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length * 100) | round(1) if states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length > 0 else 0 %}
+        {% if health >= 95 %}
+          mdi:alpha-a-circle
+        {% elif health >= 90 %}
+          mdi:alpha-b-circle
+        {% elif health >= 85 %}
+          mdi:alpha-c-circle
+        {% elif health >= 80 %}
+          mdi:alpha-d-circle
+        {% else %}
+          mdi:alpha-f-circle
+        {% endif %}
+      value_template: >
+        {% set health = ((states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | list | length)) / states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length * 100) | round(1) if states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length > 0 else 0 %}
+        {% if health >= 95 %}
+          A+
+        {% elif health >= 90 %}
+          A
+        {% elif health >= 85 %}
+          B
+        {% elif health >= 80 %}
+          C
+        {% elif health >= 70 %}
+          D
+        {% else %}
+          F
+        {% endif %}
+      attribute_templates:
+        total_entities: "{{ states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length }}"
+        unavailable_entities: "{{ states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | list | length }}"
+        health_percentage: "{{ ((states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | list | length)) / states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length * 100) | round(1) if states | rejectattr('entity_id', 'eq', 'sensor.ha_system_health_grade') | length > 0 else 0 }}"
+        status_summary: >
+          {% set health = ((states | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length)) / states | length * 100) | round(1) if states | length > 0 else 0 %}
+          {% if health >= 95 %}
+            Excellent - System running optimally
+          {% elif health >= 90 %}
+            Good - Minor issues detected
+          {% elif health >= 85 %}
+            Fair - Some unavailable entities
+          {% elif health >= 80 %}
+            Poor - Multiple entity issues
+          {% else %}
+            Critical - System needs attention
+          {% endif %}
+      trigger:
+        - platform: time_pattern
+          minutes: "/5"
+
+    ha_entity_registry_summary:
+      friendly_name: "Entity Registry Summary"
+      icon_template: mdi:database-outline
+      value_template: >-
+        {% set domain_list = [] %}
+        {% for state in states %}
+          {% set domain_list = domain_list + [state.entity_id.split('.')[0]] %}
+        {% endfor %}
+        {{ domain_list | unique | list | join(', ') }}
+      attribute_templates:
+        by_domain: >
+          {% set domains = {} %}
+          {% for state in states %}
+            {% set domain = state.entity_id.split('.')[0] %}
+            {% set domains = dict(domains, **{domain: domains.get(domain, 0) + 1}) %}
+          {% endfor %}
+          {{ domains }}
+        top_domains: >
+          {% set domain_list = [] %}
+          {% for state in states %}
+            {% set domain_list = domain_list + [state.entity_id.split('.')[0]] %}
+          {% endfor %}
+          {{ (domain_list | unique | list)[:10] | join(', ') }}

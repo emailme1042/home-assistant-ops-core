@@ -1,0 +1,246 @@
+homeassistant:
+  packages: !include_dir_named packages
+  allowlist_external_dirs:
+    - www
+  allowlist_external_urls:
+    - https://api.openai.com/v1/
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 192.168.1.0/24
+      allow_bypass_login: true
+
+default_config: {}
+
+recorder:
+  db_url: mysql://homeassistant:password@core-mosquitto/homeassistant?charset=utf8mb4
+  purge_keep_days: 3  # Reduced from 7 to 3 days to minimize database growth
+  auto_purge: true
+  commit_interval: 10  # Optimize commit frequency for better performance
+  exclude:
+    domains:
+      - automation
+      - script
+      - mqtt
+      - update
+      - device_tracker
+      - weather
+      - calendar
+      - media_player
+    entities:
+      # Exclude frequently changing sensors that don't need history
+      - sensor.ai_exec_log_recent
+      - sensor.yaml_validation_status
+      - sensor.includes_validation_status
+      - sensor.automation_validation_status
+      - sensor.last_validation_check
+      - sensor.local_flask_status_code
+      - sensor.time
+      - sensor.date
+      - sensor.date_time
+      - sensor.date_time_iso
+      - sensor.timestamp
+    entity_globs:
+      # Exclude command-line sensors that update frequently
+      - sensor.command_line_*
+      # Exclude Bluetooth-related sensors that may be noisy
+      - sensor.bluetooth_*
+      # Exclude high-frequency Zigbee sensors
+      - sensor.*_linkquality
+      - sensor.*_last_seen
+      - sensor.*_lqi
+      - sensor.*_battery
+      - sensor.*_voltage
+      - sensor.*_current
+      - sensor.*_power
+      - sensor.*_energy
+      - sensor.*_illuminance
+      - sensor.*_temperature
+      - sensor.*_humidity
+      - sensor.*_pressure
+      - sensor.*_distance
+      - sensor.*_motion
+      - sensor.*_contact
+      - sensor.*_occupancy
+      - sensor.*_smoke
+      - sensor.*_co
+      - sensor.*_co2
+      - sensor.*_gas
+      - sensor.*_water_leak
+      - sensor.*_vibration
+      # Exclude system monitoring sensors
+      - sensor.cpu_*
+      - sensor.memory_*
+      - sensor.load_*
+      - sensor.disk_*
+      - sensor.network_*
+      - sensor.uptime
+      - sensor.processes
+      - sensor.swap_*
+      # Exclude MQTT status sensors
+      - sensor.mqtt_*
+      # Exclude weather sensors (they update frequently)
+      - sensor.weather_*
+      - sensor.forecast_*
+      # Exclude media player status
+      - sensor.media_player_*
+      # Exclude calendar sensors
+      - sensor.calendar_*
+      # Exclude update sensors
+      - sensor.update_*
+      # Exclude device tracker sensors
+      - sensor.device_tracker_*
+
+logbook:
+  exclude:
+    domains:
+      - automation
+      - script
+      - mqtt
+      - update
+      - device_tracker
+      - weather
+      - calendar
+      - media_player
+    entity_globs:
+      - sensor.*_linkquality
+      - sensor.*_last_seen
+      - sensor.*_battery
+      - sensor.*_temperature
+      - sensor.*_humidity
+      - sensor.*_motion
+      - sensor.*_contact
+      - sensor.cpu_*
+      - sensor.memory_*
+      - sensor.mqtt_*
+
+history:
+  exclude:
+    domains:
+      - automation
+      - script
+      - mqtt
+      - update
+      - device_tracker
+      - weather
+      - calendar
+      - media_player
+    entity_globs:
+      - sensor.*_linkquality
+      - sensor.*_last_seen
+      - sensor.*_battery
+      - sensor.*_temperature
+      - sensor.*_humidity
+      - sensor.*_motion
+      - sensor.*_contact
+      - sensor.cpu_*
+      - sensor.memory_*
+      - sensor.mqtt_*
+
+# Disable Bluetooth advertisement monitoring to prevent console spam and performance issues
+# bluetooth:
+#   advertisement_monitor: false
+
+bluetooth:
+
+lovelace:
+  mode: storage
+
+input_boolean: !include_dir_merge_named includes/input_booleans/
+input_text: !include_dir_merge_named includes/input_texts/
+input_number: !include_dir_merge_named includes/input_numbers/
+input_datetime: !include_dir_merge_named includes/input_datetimes/
+input_select: !include_dir_merge_named includes/input_selects/
+input_button: !include_dir_merge_named includes/input_buttons/
+
+automation: !include_dir_merge_list includes/automations/
+script: !include_dir_merge_named includes/scripts/
+scene: !include includes/scenes/scenes.yaml
+template: !include_dir_merge_list includes/templates/
+sensor: !include_dir_merge_list includes/sensors/
+binary_sensor: !include_dir_merge_list includes/binary_sensors/
+notify: !include_dir_merge_list includes/notify/
+shell_command: !include_dir_merge_named includes/shell_commands/
+rest_command: !include includes/rest_commands/rest.yaml
+counter: !include_dir_merge_named includes/counters/
+timer: !include_dir_merge_named includes/timers/
+camera: !include camera.yaml
+
+# Xiaomi Cloud Map Extractor for vacuum maps
+# xiaomi_cloud_map_extractor:
+#   username: !secret xiaomi_username
+#   password: !secret xiaomi_password
+
+# Spotify Spotcast integration
+spotcast:
+  sp_dc: !secret spotify_sp_dc
+  sp_key: !secret spotify_sp_key
+
+# MQTT integration for device discovery
+# NOTE: Broker configuration moved to UI in HA 2025.x
+# Go to: Settings → Devices & Services → Add Integration → MQTT
+# Enter: Host: core-mosquitto, Port: 1883, Username: homeassistant, Password: Donkey123
+
+# Manual MQTT entities (devices not using discovery)
+mqtt:
+  # Add manual MQTT entities here if needed
+  # Example:
+  # sensor:
+  #   - name: "My MQTT Sensor"
+  #     state_topic: "home/mydevice/sensor/state"
+  #     unit_of_measurement: "°C"
+
+# MQTT Discovery Stream for enhanced MQTT device management
+# mqtt_discoverystream_ha: {}  # Commented out - install via HACS if needed
+
+# Auto Backup for automated configuration backups
+# auto_backup:
+#   auto_purge: true
+#   backup_time: "02:00"
+
+# Browser Mod for enhanced browser control and notifications
+browser_mod: {}
+
+# Speedtest Tracker for internet performance monitoring
+# speedtestdotnet:
+#   scan_interval:
+#     minutes: 30
+#   monitored_conditions:
+#     - ping
+#     - download
+#     - upload
+
+# System Monitor for host system resource monitoring
+# sensor:
+#   - platform: systemmonitor
+#     resources:
+#       - type: disk_use_percent
+#       - type: memory_use_percent
+#       - type: processor_use
+
+
+python_script: {}
+api: {}
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+logger:
+  default: info
+  logs:
+    homeassistant.core: info
+    homeassistant.components.automation: info
+    homeassistant.components.script: info
+
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+# Waze Travel Time for traffic monitoring
+# waze_travel_time:
+#   - name: "Home to Work"
+#     origin: !secret home_address
+#     destination: !secret work_address
+
+

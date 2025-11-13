@@ -1,0 +1,23 @@
+# Template sensors for AI Workspace
+template:
+  - sensor:
+      - name: "AI Exec Log Recent"
+        unique_id: ai_exec_log_recent
+        state: >-
+          {% set lines = (states('sensor.ai_exec_log') or '').split('\n')[-5:] %}
+          {{ lines | join(' | ') }}
+        attributes:
+          last_lines: >-
+            {% set lines = (states('sensor.ai_exec_log') or '').split('\n')[-5:] %}
+            {{ lines | join('\n') }}
+
+      - name: "Local Flask Health"
+        unique_id: local_flask_health
+        state: >-
+          {% set code = states('sensor.local_flask_status_code') %}
+          {% if code in ['200','201','202','204'] %}OK
+          {% elif code == '000' or code == '' %}Unknown
+          {% else %}Down ({{ code }})
+          {% endif %}
+        attributes:
+          status_code: "{{ states('sensor.local_flask_status_code') }}"

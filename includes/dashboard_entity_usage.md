@@ -1,0 +1,79 @@
+﻿## Dashboard Entity Usage Report (2025-06-26 14:28:34)
+
+### âœ… Referenced in Views & Defined
+- input_boolean.ask_ai_trigger
+- input_boolean.irrigation_override
+- input_boolean.scan_pokemon_card
+- input_boolean.show_entity_search
+- input_boolean.turn_off
+- input_boolean.turn_on
+- input_select.theme_mode
+- input_text.chatgpt_prompt
+- input_text.gpt_result_core
+- input_text.new_dashboard_keyword
+- input_text.new_dashboard_slug
+- input_text.new_dashboard_title
+- input_text.set_value
+
+### âŒ Referenced but Not Defined
+- input_boolean.admin_settings_summary
+- input_boolean.dashboard_
+- input_boolean.dashboard_admin_nav
+- input_boolean.dashboard_dashboards_hub
+- input_boolean.dashboard_garden_flow
+- input_boolean.dashboard_lights_presence
+- input_boolean.dashboard_media_control
+- input_boolean.dashboard_recovery
+- input_boolean.dashboard_security_panel
+- input_boolean.dashboard_sensor_lab
+- input_boolean.dashboard_smart_core
+- input_boolean.dashboard_teddys_room
+- input_boolean.dashboard_test_lab
+- input_boolean.fire_tv_visible
+- input_boolean.garden_flow_visible
+- input_boolean.garden_panel_visible
+- input_boolean.graveyard_panel_visible
+- input_boolean.pokemon_lab_visible
+- input_boolean.show_dashboard_nav
+- input_boolean.submit_dashboard_prompt
+- input_boolean.teddy_karate_practice_done
+- input_boolean.teddy_pokemon_facts
+- input_boolean.teddy_roblox_facts
+- input_boolean.test_panel_toggle
+- input_boolean.test_panel_visible
+- input_boolean.test_toggle
+- input_boolean.theme_preview_panel
+- input_boolean.visual_automations_flow
+- input_datetime.test_time
+- input_number.test_slider
+- input_select.teddy_karate_belt
+- input_select.test_mode
+- input_text.chat_summary
+- input_text.chatgpt_enchanted
+- input_text.exact_entity_match
+- input_text.goal_backup_cycle
+- input_text.goal_dashboard_stability
+- input_text.goal_watch_config
+- input_text.gpt_result_portal
+- input_text.teddy_dream_pet_1
+- input_text.teddy_dream_pet_2
+- input_text.teddy_dream_pet_3
+- input_text.teddy_fun_fact
+- input_text.teddy_pokemon_wanted_1
+- input_text.teddy_pokemon_wanted_2
+- input_text.teddy_pokemon_wanted_3
+- input_text.todo_task_1
+- input_text.todo_task_2
+- input_text.todo_task_3
+
+### ðŸ’¤ Defined but Not Used in Dashboards
+- input_boolean.all_input_booleans_combined
+- input_select.teddy_input_select
+- input_text.dashboard_builder_helpers
+- input_text.last_chatgpt_prompt
+- input_text.latest_card_features
+- input_text.latest_card_name
+- input_text.latest_card_rarity
+- input_text.latest_card_value
+- input_text.system_tracker_helpers
+- input_text.teddy_input_text

@@ -1,0 +1,84 @@
+# Cloud Status Sensors for GPT Access Monitoring
+# Purpose: Monitor Nabu Casa connectivity and remote access health
+# Supports: GPT access debugging, WebSocket health tracking
+
+- platform: template
+  sensors:
+    cloud_status:
+      friendly_name: "Cloud Connection Status"
+      value_template: >
+        {% if is_state('cloud.cloud', 'connected') %}
+          Connected
+        {% elif is_state('cloud.cloud', 'connecting') %}
+          Connecting
+        {% elif is_state('cloud.cloud', 'disconnected') %}
+          Disconnected
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: >
+        {% if is_state('cloud.cloud', 'connected') %}
+          mdi:cloud-check
+        {% elif is_state('cloud.cloud', 'connecting') %}
+          mdi:cloud-sync
+        {% elif is_state('cloud.cloud', 'disconnected') %}
+          mdi:cloud-off
+        {% else %}
+          mdi:cloud-question
+        {% endif %}
+
+    gpt_access_health:
+      friendly_name: "GPT Access Health Score"
+      value_template: >
+        {% set score = 0 %}
+        {% if is_state('binary_sensor.remote_ui', 'on') %}
+          {% set score = score + 25 %}
+        {% endif %}
+        {% if is_state('cloud.cloud', 'connected') %}
+          {% set score = score + 25 %}
+        {% endif %}
+        {% if is_state('binary_sensor.cloud_logged_in', 'on') %}
+          {% set score = score + 25 %}
+        {% endif %}
+        {% if is_state('binary_sensor.192_168_1_1', 'on') %}
+          {% set score = score + 25 %}
+        {% endif %}
+        {{ score }}
+      unit_of_measurement: "%"
+      icon_template: >
+        {% set score = states('sensor.gpt_access_health') | int(0) %}
+        {% if score >= 75 %}
+          mdi:check-circle
+        {% elif score >= 50 %}
+          mdi:alert-circle
+        {% else %}
+          mdi:close-circle
+        {% endif %}
+
+    nabu_casa_url_status:
+      friendly_name: "Nabu Casa URL Status"
+      value_template: >
+        {% if is_state('binary_sensor.remote_ui', 'on') and is_state('cloud.cloud', 'connected') %}
+          Available
+        {% elif is_state('cloud.cloud', 'connected') %}
+          Partial
+        {% else %}
+          Unavailable
+        {% endif %}
+      icon_template: >
+        {% if is_state('binary_sensor.remote_ui', 'on') and is_state('cloud.cloud', 'connected') %}
+          mdi:link
+        {% elif is_state('cloud.cloud', 'connected') %}
+          mdi:link-variant
+        {% else %}
+          mdi:link-off
+        {% endif %}
+
+# Binary sensors for cloud status
+- platform: template
+  sensors:
+    cloud_logged_in:
+      friendly_name: "Cloud Logged In"
+      value_template: >
+        {{ is_state_attr('cloud.cloud', 'logged_in', true) }}
+  # device_class: connectivity  # Invalid, removed for schema compliance

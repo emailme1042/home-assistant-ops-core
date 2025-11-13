@@ -1,0 +1,27 @@
+kodi_target_device:
+  name: Kodi Target Device
+  options:
+    - media_player.lounge_kodi
+    - media_player.bedroom_kodi
+    - media_player.fire_hd8_kodi
+  initial: media_player.lounge_kodi
+
+media_player_selector:
+  name: Media Player
+  options:
+    - Apple TV
+    - Fire Stick
+    - Spotify (Sonos)
+  initial: Spotify (Sonos)
+  icon: mdi:television
+
+
+media_player_selector_internal:
+  name: Media Player Entity
+  options:
+    - media_player.apple_tv_lounge
+    - media_player.fire_tv
+    - media_player.sonos_lounge
+  initial: media_player.sonos_lounge
+  icon: mdi:speaker
+

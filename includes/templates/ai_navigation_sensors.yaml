@@ -1,0 +1,93 @@
+# AI Navigation Dashboard Template Sensors
+# Purpose: Provide missing sensors for AI navigation dashboard
+
+- sensor:
+  - name: "Session Tag Status"
+    unique_id: input_select_session_tag_status
+    state: >
+      {% if states('input_select.session_tag_status') != 'unknown' %}
+        {{ states('input_select.session_tag_status') }}
+      {% else %}
+        ready
+      {% endif %}
+    icon: mdi:tag-outline
+
+  - name: "Workspace Sync Status"
+    unique_id: sensor_workspace_sync_status
+    state: >
+      {% set context_files = ['current_session.md', 'recent_changes.md', 'system_status.md'] %}
+      {% set missing_files = 0 %}
+      {% for file in context_files %}
+        {% if not states('sensor.file_' + file.replace('.md', '').replace('_', '_')) %}
+          {% set missing_files = missing_files + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if missing_files == 0 %}
+        synced
+      {% elif missing_files <= 1 %}
+        partial
+      {% else %}
+        diverged
+      {% endif %}
+    icon: mdi:sync
+
+  - name: "Shared Context Freshness"
+    unique_id: sensor_shared_context_freshness
+    state: >
+      {% set hours_since_update = 0 %}
+      {% if hours_since_update < 2 %}
+        fresh
+      {% elif hours_since_update < 6 %}
+        stale
+      {% else %}
+        outdated
+      {% endif %}
+    icon: mdi:clock-outline
+
+  - name: "Dashboard Complexity Score AI Workspace"
+    unique_id: sensor_dashboard_complexity_score_ai_workspace
+    state: >
+      {{ states('sensor.dashboard_audit_ai_workspace') | int(0) }}
+    unit_of_measurement: "points"
+    icon: mdi:chart-line
+
+  - name: "Dashboard Complexity Score System Overview"
+    unique_id: sensor_dashboard_complexity_score_system_overview
+    state: >
+      {{ states('sensor.dashboard_audit_system_overview') | int(0) }}
+    unit_of_measurement: "points"
+    icon: mdi:chart-line
+
+  - name: "Dashboard Performance Grade"
+    unique_id: sensor_dashboard_performance_grade
+    state: >
+      {% set score = states('sensor.dashboard_audit_total') | int(0) %}
+      {% if score < 50 %}
+        A+
+      {% elif score < 100 %}
+        A
+      {% elif score < 200 %}
+        B
+      {% elif score < 400 %}
+        C
+      {% else %}
+        D
+      {% endif %}
+    icon: mdi:grade
+
+  - name: "Dashboard Audit Freshness"
+    unique_id: sensor_dashboard_audit_freshness
+    state: >
+      {% set last_run = states('sensor.last_dashboard_audit') %}
+      {% if last_run == 'unknown' %}
+        never
+      {% else %}
+        recent
+      {% endif %}
+    icon: mdi:refresh
+
+  - name: "Sensor Last Context Update"
+    unique_id: sensor_last_context_update
+    state: >
+      {{ now().strftime('%Y-%m-%d %H:%M') }}
+    icon: mdi:update

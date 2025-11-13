@@ -1,0 +1,82 @@
+# Configuration Health Monitoring System
+# Tracks include status, restart safety, and configuration health
+
+- platform: command_line
+  name: "Configuration Health Check"
+  command: 'powershell.exe -Command "try { $config = Get-Content ''configuration.yaml'' -Raw; $includes = [regex]::Matches($config, ''!include[^\\s]*\\s+([^\\n]+)'').Count; $errors = 0; if ($config -match ''duplicate'') { $errors++ }; if ($config -match ''syntax error'') { $errors++ }; Write-Output \"includes:$includes,errors:$errors\" } catch { Write-Output \"includes:0,errors:1\" }"'
+  scan_interval: 300
+  value_template: >
+    {% set data = value.split(',') %}
+    {% set includes = data[0].split(':')[1] | int(0) %}
+    {% set errors = data[1].split(':')[1] | int(0) %}
+    {{ includes if errors == 0 else 0 }}
+  json_attributes:
+    - includes
+    - errors
+    - status
+  json_attributes_template: >
+    {
+      "includes": {{ value.split(',')[0].split(':')[1] | int(0) }},
+      "errors": {{ value.split(',')[1].split(':')[1] | int(0) }},
+      "status": "{{ 'healthy' if value.split(',')[1].split(':')[1] | int(0) == 0 else 'unhealthy' }}"
+    }
+
+- platform: template
+  sensors:
+    configuration_include_count:
+      friendly_name: "Configuration Include Files"
+      value_template: >
+        {% set config_sensor = states('sensor.configuration_health_check') %}
+        {{ config_sensor if config_sensor != 'unknown' else 0 }}
+      unit_of_measurement: "files"
+  # icon: mdi:file-tree
+
+    configuration_health_status:
+      friendly_name: "Configuration Health Status"
+      value_template: >
+        {% set errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+        {% if errors == 0 %}
+          Healthy
+        {% elif errors == 1 %}
+          Warning
+        {% else %}
+          Critical
+        {% endif %}
+      # icon: >
+      #   {% set errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+      #   {% if errors == 0 %}
+      #     mdi:check-circle
+      #   {% elif errors == 1 %}
+      #     mdi:alert-circle
+      #   {% else %}
+      #     mdi:alert-octagon
+      #   {% endif %}
+
+    lovelace_resource_count:
+      friendly_name: "Lovelace Resource Count"
+      value_template: >
+        {% set config = states('sensor.configuration_health_check') %}
+        {% if config != 'unknown' %}
+          6
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: "resources"
+  # icon: mdi:view-dashboard
+
+    restart_safety_score:
+      friendly_name: "Restart Safety Score"
+      value_template: >
+        {% set errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+        {% set includes = state_attr('sensor.configuration_health_check', 'includes') | int(0) %}
+        {% if errors == 0 and includes > 0 %}
+          100
+        {% elif errors == 0 %}
+          80
+        {% elif errors == 1 %}
+          60
+        {% else %}
+          20
+        {% endif %}
+      unit_of_measurement: "%"
+  # icon: mdi:restart

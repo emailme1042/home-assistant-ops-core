@@ -1,0 +1,80 @@
+automation:
+  - alias: "Boiler Status - Vibration Detection"
+    id: boiler_status_vibration_detection
+    description: "Monitor boiler activity using vibration sensor and log runtime"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.aqara_vibration_sensor_occupancy
+        to: "on"
+        id: boiler_start
+      - platform: state
+        entity_id: binary_sensor.aqara_vibration_sensor_occupancy
+        to: "off"
+        for:
+          minutes: 2
+        id: boiler_stop
+    action:
+      - choose:
+          # Boiler started (vibration detected)
+          - conditions:
+              - condition: trigger
+                id: boiler_start
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.boiler_running_status
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.boiler_last_start
+                data:
+                  datetime: "{{ now().isoformat() }}"
+              - service: logbook.log
+                data:
+                  name: "Boiler Monitor"
+                  message: >
+                    Boiler started - {{ states('sensor.boiler_usage_type') }}
+                    {% if states('sensor.boiler_usage_type') == 'Hot Water' %}
+                      (flow: {{ states('sensor.boiler_hot_water_flow') }} L/min)
+                    {% elif states('sensor.boiler_usage_type') == 'Heating' %}
+                      (heating demand active)
+                    {% else %}
+                      (vibration detected)
+                    {% endif %}
+                  entity_id: binary_sensor.aqara_vibration_sensor_occupancy
+              
+          # Boiler stopped (no vibration for 2 minutes)
+          - conditions:
+              - condition: trigger
+                id: boiler_stop
+            sequence:
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.boiler_running_status
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.boiler_last_stop
+                data:
+                  datetime: "{{ now().isoformat() }}"
+              - service: counter.increment
+                target:
+                  entity_id: counter.boiler_cycles_today
+              - service: logbook.log
+                data:
+                  name: "Boiler Monitor"
+                  message: "Boiler stopped - cycle complete ({{ states('sensor.boiler_current_runtime') }})"
+                  entity_id: binary_sensor.aqara_vibration_sensor_occupancy
+
+  - alias: "Boiler Logging - Daily Reset"
+    id: boiler_logging_daily_reset
+    description: "Reset daily boiler counters at midnight"
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: counter.reset
+        target:
+          entity_id: counter.boiler_cycles_today
+      - service: logbook.log
+        data:
+          name: "Boiler Monitor"
+          message: "Daily reset - Total runtime yesterday: {{ states('sensor.boiler_runtime_today') }}"

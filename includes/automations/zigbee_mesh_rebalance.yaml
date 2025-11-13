@@ -1,0 +1,275 @@
+# 🧭 Zigbee Mesh Rebalancing Protocol
+# Purpose: Strategic re-pairing automation for optimal router assignment
+# Created: 2025-11-06 by VSCode Mesh Surgery Protocol
+
+- id: zigbee_mesh_rebalance_bathroom_motion
+  alias: "🔁 Re-pair Bathroom Motion Sensor → Z2"
+  description: "Re-pair bathroom motion sensor to Z2 for optimal routing"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee_mesh/rebalance/bathroom_motion"
+      payload: "execute"
+  mode: single
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🧭 Zigbee Mesh Rebalance"
+        message: "Starting re-pair: Bathroom Motion Sensor → Z2"
+        notification_id: "zigbee_rebalance_status"
+    
+    # Log start of re-pair process
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_repair"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device": "Bathroom Motion Sensor",
+            "target_router": "Z2",
+            "action": "remove_start",
+            "ieee": "0x00158d00079757ca"
+          }
+    
+    # Remove device from Z2M
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/remove"
+        payload: '{"id": "Bathroom Motion Sensor"}'
+    
+    # Wait for removal confirmation
+    - delay: "00:00:15"
+    
+    # Enable permit join for 120 seconds
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": true, "time": 120}'
+    
+    # Log permit join activation
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_repair"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device": "Bathroom Motion Sensor",
+            "target_router": "Z2",
+            "action": "permit_join_active",
+            "duration": 120
+          }
+    
+    # Notification for physical re-pair
+    - service: notify.mobile_app_plop
+      data:
+        title: "🔁 Zigbee Re-pair Ready"
+        message: "Permit join active for 120s. Re-pair Bathroom Motion Sensor near Z2 router NOW."
+        data:
+          push:
+            sound: "default"
+    
+    # Auto-disable permit join after timeout
+    - delay: "00:02:00"
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": false}'
+
+- id: zigbee_mesh_rebalance_office_temp
+  alias: "🔁 Re-pair Office Temp Humidity → Z2"
+  description: "Re-pair office temperature sensor to Z2 for stable LQI"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee_mesh/rebalance/office_temp"
+      payload: "execute"
+  mode: single
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🧭 Zigbee Mesh Rebalance"
+        message: "Starting re-pair: Office Temp Humidity → Z2"
+        notification_id: "zigbee_rebalance_status"
+    
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_repair"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device": "Office Temp Humidity",
+            "target_router": "Z2",
+            "action": "remove_start",
+            "ieee": "0x00158d000968e021"
+          }
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/remove"
+        payload: '{"id": "Office Temp Humidity"}'
+    
+    - delay: "00:00:15"
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": true, "time": 120}'
+    
+    - service: notify.mobile_app_plop
+      data:
+        title: "🔁 Zigbee Re-pair Ready"
+        message: "Permit join active for 120s. Re-pair Office Temp Humidity near Z2 router NOW."
+    
+    - delay: "00:02:00"
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": false}'
+
+- id: zigbee_mesh_rebalance_water_valve
+  alias: "🔁 Re-pair Water Control Valve → Z3"
+  description: "Re-pair irrigation valve to Z3 for optimal garden coverage"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee_mesh/rebalance/water_valve"
+      payload: "execute"
+  mode: single
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🧭 Zigbee Mesh Rebalance"
+        message: "Starting re-pair: Water Control Valve → Z3"
+        notification_id: "zigbee_rebalance_status"
+    
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_repair"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device": "Water Control Valve - Irrigation",
+            "target_router": "Z3",
+            "action": "remove_start",
+            "ieee": "0x00124b002a1c7c9a"
+          }
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/remove"
+        payload: '{"id": "Water Control Valve - Irrigation"}'
+    
+    - delay: "00:00:15"
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": true, "time": 120}'
+    
+    - service: notify.mobile_app_plop
+      data:
+        title: "🔁 Zigbee Re-pair Ready"
+        message: "Permit join active for 120s. Re-pair Water Valve near Z3 router (garden) NOW."
+    
+    - delay: "00:02:00"
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": false}'
+
+- id: zigbee_mesh_rebalance_button_tyler
+  alias: "🔁 Re-pair Button-Tyler → Z2"
+  description: "Re-pair Tyler's button to Z2 for reliable trigger response"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee_mesh/rebalance/button_tyler"
+      payload: "execute"
+  mode: single
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🧭 Zigbee Mesh Rebalance"
+        message: "Starting re-pair: Button-Tyler → Z2"
+        notification_id: "zigbee_rebalance_status"
+    
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_repair"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device": "Button-Tyler",
+            "target_router": "Z2",
+            "action": "remove_start",
+            "ieee": "0x00158d00083b8b15"
+          }
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/remove"
+        payload: '{"id": "Button-Tyler"}'
+    
+    - delay: "00:00:15"
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": true, "time": 120}'
+    
+    - service: notify.mobile_app_plop
+      data:
+        title: "🔁 Zigbee Re-pair Ready"
+        message: "Permit join active for 120s. Re-pair Button-Tyler near Z2 router NOW."
+    
+    - delay: "00:02:00"
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": false}'
+
+- id: zigbee_mesh_rebalance_bathroom_switch
+  alias: "🔁 Re-pair Bathroom Light Switch → Z2"
+  description: "Re-pair bathroom switch to Z2 and re-enable availability"
+  trigger:
+    - platform: mqtt
+      topic: "zigbee_mesh/rebalance/bathroom_switch"
+      payload: "execute"
+  mode: single
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🧭 Zigbee Mesh Rebalance"
+        message: "Starting re-pair: Bathroom Light Switch → Z2"
+        notification_id: "zigbee_rebalance_status"
+    
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/zigbee_audit/device_repair"
+        payload: >
+          {
+            "timestamp": "{{ now().isoformat() }}",
+            "device": "Bathroom Light Switch",
+            "target_router": "Z2",
+            "action": "remove_start",
+            "ieee": "0x00158d00063bfe11"
+          }
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/remove"
+        payload: '{"id": "Bathroom Light Switch"}'
+    
+    - delay: "00:00:15"
+    
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": true, "time": 120}'
+    
+    - service: notify.mobile_app_plop
+      data:
+        title: "🔁 Zigbee Re-pair Ready"
+        message: "Permit join active for 120s. Re-pair Bathroom Switch near Z2 router NOW. Check power cycle if needed."
+    
+    - delay: "00:02:00"
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": false}'

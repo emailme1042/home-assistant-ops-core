@@ -1,0 +1,63 @@
+- alias: "Trigger Fallback If ADS-B Feed Dies"
+  id: fallback_adsb_trigger
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.adsb_feed_alive
+      to: "off"
+      for:
+        minutes: 2
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "system/fallback_trigger"
+        payload: "true"
+
+- alias: "Fallback Trigger Recovery"
+  id: fallback_trigger_recovery
+  mode: single
+  trigger:
+    - platform: mqtt
+      topic: system/fallback_trigger
+      payload: triggered
+  action:
+    - service: homeassistant.reload_core_config
+
+- alias: "Alert if WSL Restart Marker Missing"
+  id: fallback_wsl_marker_missing
+  mode: single
+  description: Notify if /startup_marker is missing (sensor state is 'Missing')
+  trigger:
+    - platform: state
+      entity_id: sensor.wsl_startup_marker
+      to: "Missing"
+      for: "00:05:00"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "⚠️ WSL Startup Not Detected"
+        message: "The Flask startup script may not have run. Please run run_flask_hardened.sh manually."
+    - service: notify.mobile_app_yourdevice
+      data:
+        title: "🛑 JIT Plugin Not Auto-Launched"
+        message: "WSL Flask marker not found — check Flask server."
+
+- alias: "Sync Orphaned Files to Recovery"
+  id: fallback_orphaned_file_sync
+  mode: single
+  description: Logs orphaned markdowns and notes from mounted drives into Recovery tab
+  trigger:
+    - platform: time
+      at: "03:00:00"
+    - platform: state
+      entity_id: input_boolean.ai_script_toggle_1
+      to: "on"
+  action:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.orphaned_file_log
+        value: "{{ states('sensor.orphaned_file_scan') }}"
+    - service: shell_command.run_openai_orphaned_analysis
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.ai_script_toggle_1

@@ -1,0 +1,7 @@
+todo:
+  - name: daily_tasks
+    icon: mdi:calendar-check
+  - name: weekly_plan
+    icon: mdi:calendar-week
+  - name: admin_assistant_tasks
+    icon: mdi:robot

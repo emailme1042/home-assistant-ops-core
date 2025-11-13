@@ -1,0 +1,14 @@
+openai_query:
+  name: OpenAI Query Input
+  initial: "What is the weather like?"
+  max: 255
+
+openai_response:
+  name: OpenAI Response
+  initial: "Ready for query"
+  max: 255
+
+tts_message:
+  name: TTS Message
+  initial: "Hello from Home Assistant"
+  max: 255

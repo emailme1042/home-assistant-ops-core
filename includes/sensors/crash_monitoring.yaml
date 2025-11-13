@@ -1,0 +1,156 @@
+- platform: template
+  sensors:
+    ha_crash_sentinel:
+      friendly_name: "HA Crash Sentinel"
+      value_template: >
+        {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+      icon_template: mdi:shield-bug
+      attribute_templates:
+        last_dashboard: >
+          {% set dash = states('sensor.current_dashboard_path') %}
+          {{ dash if dash not in ['unknown', 'unavailable', None, ''] else 'unknown' }}
+        active_automations: >
+          {% set autos = expand('automation.*') | selectattr('state', 'equalto', 'on') | map(attribute='entity_id') | list %}
+          {{ autos | length if autos is defined else 0 }}
+        total_automations: >
+          {% set autos = expand('automation.*') | list %}
+          {{ autos | length if autos is defined else 0 }}
+        frontend_errors: >
+          {% set fe = states('input_number.frontend_errors') %}
+          {{ fe | int(0) if fe not in ['unknown', 'unavailable', None, ''] else 0 }}
+        last_card_loaded: >
+          {% set card = states('sensor.last_card_loaded') %}
+          {{ card if card not in ['unknown', 'unavailable', None, ''] else 'unknown' }}
+        vertical_layout_status: >
+          {% set vlt = states('sensor.vertical_layout_tracker') %}
+          {% if vlt == 'loaded' %}
+            ✅ Loaded
+          {% elif vlt == 'failed' %}
+            ❌ Failed
+          {% else %}
+            ⚠️ Unknown
+          {% endif %}
+        system_uptime: >
+          {% set uptime = states('sensor.uptime') %}
+          {{ uptime if uptime not in ['unknown', 'unavailable', None, ''] else 'unknown' }}
+        memory_usage: >
+          {% set mem = states('sensor.home_assistant_core_memory_percent') %}
+          {{ mem | float(0) | round(1) if mem not in ['unknown', 'unavailable', None, ''] else 0 }}%
+        cpu_usage: >
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') %}
+          {{ cpu | float(0) | round(1) if cpu not in ['unknown', 'unavailable', None, ''] else 0 }}%
+        log_timestamp: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+    last_card_loaded:
+      friendly_name: "Last Card Loaded"
+      value_template: >
+        {% if states('sensor.vertical_layout_tracker') == 'loaded' %}
+          vertical-layout ✅
+        {% elif states('input_number.frontend_errors') | int(0) > 0 %}
+          error-state ❌
+        {% else %}
+          monitoring 🔍
+        {% endif %}
+      icon_template: >
+        {% if states('sensor.vertical_layout_tracker') == 'loaded' %}
+          mdi:card-multiple
+        {% elif states('input_number.frontend_errors') | int(0) > 0 %}
+          mdi:alert-circle
+        {% else %}
+          mdi:magnify
+        {% endif %}
+
+    vertical_layout_tracker:
+      friendly_name: "Vertical Layout Tracker"
+      value_template: >
+        {% set errors = states('input_number.frontend_errors') | int(0) %}
+        {% if errors == 0 %}
+          loaded
+        {% elif errors > 5 %}
+          failed
+        {% else %}
+          loading
+        {% endif %}
+      icon_template: >
+        {% set errors = states('input_number.frontend_errors') | int(0) %}
+        {% if errors == 0 %}
+          mdi:view-column
+        {% elif errors > 5 %}
+          mdi:view-column-outline
+        {% else %}
+          mdi:loading
+        {% endif %}
+
+    frontend_resource_tracker:
+      friendly_name: "Frontend Resource Tracker"
+      value_template: >
+        {{ now().strftime('%H:%M') }}
+      icon_template: mdi:webpack
+      attribute_templates:
+        layout_card_status: >
+          {% if states('sensor.vertical_layout_tracker') == 'loaded' %}
+            Available
+          {% else %}
+            Unknown
+          {% endif %}
+        frontend_error_count: >
+          {{ states('input_number.frontend_errors') | int(0) }}
+        error_trend: >
+          {% set current = states('input_number.frontend_errors') | int(0) %}
+          {% if current == 0 %}
+            Stable
+          {% elif current < 5 %}
+            Increasing
+          {% else %}
+            Critical
+          {% endif %}
+        resources_expected: >
+          button-card, mushroom, mini-graph-card, vertical-stack-in-card, card-mod, auto-entities, state-switch, template-entity-row, config-template-card, layout-card
+        last_check: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+    crash_context_summary:
+      friendly_name: "Crash Context Summary"
+      value_template: >
+        {% set errors = states('input_number.frontend_errors') | int(0) %}
+        {% set automations = expand('automation.*') | selectattr('state', 'equalto', 'on') | list | length %}
+        {% if errors == 0 and automations > 0 %}
+          Healthy ({{ automations }} automations)
+        {% elif errors > 0 and errors < 10 %}
+          Warning ({{ errors }} errors)
+        {% elif errors >= 10 %}
+          Critical ({{ errors }} errors)
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: >
+        {% set errors = states('input_number.frontend_errors') | int(0) %}
+        {% if errors == 0 %}
+          mdi:heart
+        {% elif errors < 10 %}
+          mdi:heart-pulse
+        {% else %}
+          mdi:heart-broken
+        {% endif %}
+      attribute_templates:
+        crash_risk_level: >
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if errors == 0 %}
+            Low
+          {% elif errors < 5 %}
+            Medium
+          {% elif errors < 10 %}
+            High
+          {% else %}
+            Critical
+          {% endif %}
+        recommended_action: >
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if errors == 0 %}
+            Continue monitoring
+          {% elif errors < 5 %}
+            Check browser console
+          {% elif errors < 10 %}
+            Consider dashboard refresh
+          {% else %}
+            Restart recommended
+          {% endif %}

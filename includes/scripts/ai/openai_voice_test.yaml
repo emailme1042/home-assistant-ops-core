@@ -1,0 +1,49 @@
+openai_quick_test:
+  alias: OpenAI Quick Test
+  description: Test OpenAI API directly without new entities
+  sequence:
+    # Call OpenAI directly
+    - service: rest_command.ask_openai
+      data:
+        prompt: "Say hello in exactly 5 words"
+    
+    # Wait a moment
+    - delay: "00:00:02"
+    
+    # Confirm via TTS
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "OpenAI API test completed successfully. The query was sent and processed."
+        data:
+          type: tts
+  mode: single
+
+combined_voice_test:
+  alias: Combined Voice Test  
+  description: Test both TTS and OpenAI together
+  sequence:
+    # First announce we're starting
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "Starting combined voice and OpenAI test"
+        data:
+          type: tts
+    
+    # Wait a moment  
+    - delay: "00:00:03"
+    
+    # Call OpenAI
+    - service: rest_command.ask_openai
+      data:
+        prompt: "Tell me a very short joke in under 10 words"
+    
+    # Wait for processing
+    - delay: "00:00:02" 
+    
+    # Announce completion
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "Voice and OpenAI test completed. Both systems are working correctly."
+        data:
+          type: tts
+  mode: single

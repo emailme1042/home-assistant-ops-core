@@ -1,0 +1,81 @@
+ask_chatgpt:
+  alias: Ask ChatGPT
+  sequence:
+    - service: conversation.process
+      data:
+        agent_id: "conversation.openai"
+        text: "Tell Teddy a fun Pokémon fact"
+
+say_hello_to_teddy:
+  alias: Say Hello to Teddy
+  sequence:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.kids_echo_dot
+      data:
+        media_content_type: announce
+        media_content_id: "Hello Teddy! Time to brush your teeth!"
+
+teddy_surprise_me:
+  alias: Surprise Me
+  sequence:
+    - service: script.turn_on
+      data:
+        entity_id: >
+          {% set options = [
+            'script.say_hello_to_teddy',
+            'scene.bedroom_party_mode',
+            'scene.bedroom_movie_night',
+            'script.ask_chatgpt'
+          ] %}
+          {{ options | random }}
+
+launch_roblox:
+  alias: Launch Roblox
+  sequence:
+    - service: notify.alexa_bedroom
+      data:
+        message: "Launching Roblox for Teddy!"
+        data:
+          type: announce
+
+launch_minecraft:
+  alias: Launch Minecraft
+  sequence:
+    - service: notify.alexa_bedroom
+      data:
+        message: "Launching Minecraft for Teddy!"
+        data:
+          type: announce
+
+teddy_surprise_popup:
+  alias: Teddy Surprise Popup
+  sequence:
+    - service: browser_mod.popup
+      data:
+        title: 🎉 Surprise!
+        card:
+          type: markdown
+          content: |
+            🎈 Something fun is happening!  
+            Let's see what Teddy gets...
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.kids_echo_dot
+      data:
+        media_content_type: music
+        media_content_id: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+
+teddy_achievement_badge:
+  alias: Teddy Achievement Badge
+  sequence:
+    - service: browser_mod.popup
+      data:
+        title: 🏅 Achievement Unlocked!
+        card:
+          type: markdown
+          content: |
+            🎉 Teddy just hit a milestone!  
+            Keep going, champion!
+
+

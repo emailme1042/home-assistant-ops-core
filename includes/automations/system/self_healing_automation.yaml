@@ -1,0 +1,112 @@
+##
+# Self-Healing Automation System
+# Re-enables critical automations after restart and monitors system health
+##
+
+- id: self_healing_critical_automations_after_restart
+  alias: "🔄 Self-Healing: Re-enable Critical Automations After Restart (DISABLED - Performance)"
+  description: "DISABLED: Automatically re-enables critical automations - runs every 15 minutes causing performance issues"
+  trigger:
+    - platform: homeassistant
+      event: start
+    - platform: time_pattern
+      minutes: "/15"  # Check every 15 minutes
+  condition:
+    - condition: state
+      entity_id: input_boolean.enable_performance_monitoring
+      state: "on"
+    - condition: template
+      value_template: "{{ (now() - as_timestamp(states.sensor.uptime.last_changed) | timestamp_custom('%Y-%m-%d %H:%M:%S')) | as_timestamp < 300 }}"
+      alias: "Within 5 minutes of restart or periodic check"
+  action:
+    # Check and re-enable critical automations
+    - repeat:
+        count: "{{ (state_attr('sensor.disabled_automations_count', 'automations') or []) | length }}"
+        sequence:
+          - variables:
+              automation_id: "{{ state_attr('sensor.disabled_automations_count', 'automations')[repeat.index - 1] }}"
+          - condition: template
+            value_template: "{{ automation_id in ['multi_agent_message_router', 'onenote_file_watcher', 'system_stability_monitor', 'dashboard_watchdog'] }}"
+            alias: "Is critical automation"
+          - service: automation.turn_on
+            target:
+              entity_id: "automation.{{ automation_id }}"
+          # Removed logbook.log action
+            data:
+              name: "Self-Healing System"
+              message: "Re-enabled critical automation: {{ automation_id }}"
+              entity_id: "automation.{{ automation_id }}"
+
+- id: self_healing_notify_service_fallback
+  alias: "🔧 Self-Healing: Notify Service Fallback"
+  description: "Automatically switches to backup notification services when primary services fail"
+  trigger:
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: ERROR
+    - platform: state
+      entity_id: sensor.restart_safety_score
+      to: 
+        - "Fair"
+        - "Poor"
+        - "Critical"
+  condition:
+    - condition: template
+      value_template: "{{ 'notify' in trigger.event.data.message if trigger.event is defined else True }}"
+  action:
+    - choose:
+        # Alexa Media fallback to TTS service
+        - conditions:
+            - condition: template
+              value_template: "{{ 'alexa_media' in trigger.event.data.message if trigger.event is defined else False }}"
+          sequence:
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.fallback_notification_service
+              data:
+                value: "tts.google_translate_say"
+            - service: persistent_notification.create
+              data:
+                title: "🔧 Self-Healing: Notification Fallback"
+                message: "Alexa Media unavailable. Switched to TTS fallback service."
+                notification_id: "self_healing_notify_fallback"
+        # Mobile app fallback
+        - conditions:
+            - condition: template
+              value_template: "{{ 'mobile_app' in trigger.event.data.message if trigger.event is defined else False }}"
+          sequence:
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.fallback_notification_service
+              data:
+                value: "persistent_notification.create"
+      default:
+  # Removed logbook.log action
+          data:
+            name: "Self-Healing Monitor"
+            message: "Monitoring system health - no action required"
+
+- id: self_healing_integration_recovery
+  alias: "🏥 Self-Healing: Integration Recovery"
+  description: "Attempts to reload integrations that fail during startup"
+  trigger:
+    - platform: time_pattern
+      minutes: "/30"  # Check every 30 minutes
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.restart_safety_score
+      below: 80
+  action:
+    - service: homeassistant.reload_config_entry
+      target:
+        entity_id: 
+          - switch.alexa_media_player_pre_release
+          - update.alexa_media_player_update
+    - delay: "00:02:00"
+    - service: script.validate_critical_services
+    - service: persistent_notification.create
+      data:
+        title: "🏥 Self-Healing: Integration Recovery Attempt"
+        message: "Attempted reload of critical integrations. Check restart safety score for improvement."
+        notification_id: "self_healing_integration_recovery"

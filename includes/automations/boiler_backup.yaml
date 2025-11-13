@@ -1,0 +1,53 @@
+# Boiler Stats Backup Automations
+# Automated and manual backup triggers
+
+- alias: "Weekly Boiler Stats Backup"
+  description: "Automatically backup boiler performance stats to Dropbox every Sunday"
+  trigger:
+    - platform: time
+      at: "02:00:00"  # 2 AM Sunday morning
+  condition:
+    - condition: time
+      weekday:
+        - sun
+  action:
+    - service: shell_command.weekly_boiler_backup
+    - service: notify.mobile_app_plop
+      data:
+        message: "📊 Weekly boiler stats backed up to Dropbox"
+        data:
+          ttl: 0
+          priority: low
+
+- alias: "Manual Boiler Stats Backup"
+  description: "Manual trigger for boiler stats backup via input button"
+  trigger:
+    - platform: state
+      entity_id: input_button.backup_boiler_stats
+      to: "2025-11-11T00:00:00+00:00"  # Any press
+  action:
+    - service: shell_command.backup_boiler_stats
+    - service: notify.mobile_app_plop
+      data:
+        message: "📤 Boiler stats manually backed up to Dropbox"
+        data:
+          ttl: 0
+          priority: low
+
+- alias: "Boiler Performance Alert"
+  description: "Alert when boiler efficiency drops or unusual patterns detected"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.boiler_runtime_today
+      above: 6  # More than 6 hours runtime in a day
+  condition:
+    - condition: time
+      after: "18:00:00"  # Evening check
+  action:
+    - service: shell_command.backup_boiler_stats
+    - service: notify.mobile_app_plop
+      data:
+        message: "⚠️ High boiler usage today ({{ states('sensor.boiler_runtime_today') }}h) - Stats backed up"
+        data:
+          ttl: 0
+          priority: normal

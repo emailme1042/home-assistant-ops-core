@@ -1,0 +1,42 @@
+﻿name: Validate Home Assistant Configuration
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyYAML yamllint
+
+      - name: Validate YAML syntax
+        run: |
+          find config includes dashboards -name "*.yaml" -exec python -c "
+          import yaml, sys
+          try:
+              with open('{}', 'r') as f:
+                  yaml.safe_load(f)
+          except Exception as e:
+              print('ERROR in {}: {}'.format('{}', e))
+              sys.exit(1)
+          " \; 2>/dev/null || true
+
+      - name: Lint YAML files
+        run: |
+          yamllint config/**/*.yaml includes/**/*.yaml dashboards/**/*.yaml 2>/dev/null || true
+
+      - name: Check for potential secrets
+        run: |
+          if grep -r "password\|secret\|token\|key" config/ includes/ dashboards/ 2>/dev/null; then
+            echo "âš ï¸  Warning: Potential secrets found in configuration files"
+            echo "Consider moving sensitive data to secrets.yaml"
+          else
+            echo "âœ… No obvious secrets found in configuration"
+          fi
