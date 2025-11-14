@@ -1,35 +1,21 @@
-title: "Safe UI"
+title: Safe UI
 views:
-  - title: "System Overview"
-    path: overview
+  - title: System Check
+    path: system-check
+    icon: mdi:shield-check
     cards:
       - type: entities
-        title: "System Status"
+        title: System Health
         entities:
+          - sensor.system_health
           - sensor.uptime
-          - sensor.home_assistant_core_cpu_percent
-          - sensor.home_assistant_core_memory_percent
-          - binary_sensor.home_assistant_update_available
-
-      - type: entities
-        title: "Network Status"
+          - sensor.processor_use
+          - sensor.memory_use_percent
+          - sensor.disk_use_percent
+      - type: history-graph
+        title: Uptime & CPU
         entities:
-          - sensor.internet_connection_status
-          - sensor.router_status
-          - sensor.network_speed_down
-          - sensor.network_speed_up
-
-      - type: entities
-        title: "Security"
-        entities:
-          - binary_sensor.front_door
-          - binary_sensor.back_door
-          - binary_sensor.motion_sensor
-          - alarm_control_panel.home_alarm
-
-      - type: entities
-        title: "Climate"
-        entities:
-          - sensor.living_room_temperature
-          - sensor.living_room_humidity
-          - climate.living_room_thermostat
+          - sensor.processor_use
+          - sensor.uptime
+        hours_to_show: 6
+        refresh_interval: 60
