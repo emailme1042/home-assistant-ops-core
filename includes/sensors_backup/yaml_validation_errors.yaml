@@ -1,0 +1,19 @@
+---
+- platform: template
+  sensors:
+    yaml_validation_errors:
+      friendly_name: "YAML Validation Errors"
+      unique_id: yaml_validation_errors
+      value_template: >
+        {% if states('sensor.validation_status') == 'valid' %}0
+        {% else %}
+          {{ state_attr('sensor.validation_status', 'error_count') | int(1) }}
+        {% endif %}
+      icon_template: >
+        {% if states('sensor.yaml_validation_errors') | int(0) == 0 %}mdi:check-circle
+        {% else %}mdi:alert-circle
+        {% endif %}
+      attribute_templates:
+        last_validation: "{{ states.sensor.validation_status.last_changed }}"
+        validation_status: "{{ states('sensor.validation_status') }}"
+        error_details: "{{ state_attr('sensor.validation_status', 'errors') if state_attr('sensor.validation_status', 'errors') else 'None' }}"

@@ -1,0 +1,72 @@
+run_ai_data_collection:
+  alias: "Run AI Data Collection"
+  description: "Collects AI system metrics and performance data"
+  fields:
+    mode:
+      description: "Collection mode (active_hourly or idle_6hourly)"
+      example: "active_hourly"
+    frequency:
+      description: "Collection frequency (high or low)"
+      example: "high"
+  sequence:
+    - service: logbook.log
+      data:
+        name: "AI Data Collection"
+        message: "Starting AI data collection - Mode: {{ mode | default('standard') }}, Frequency: {{ frequency | default('normal') }}"
+    
+    # Update collection counter
+    - service: input_number.increment
+      target:
+        entity_id: input_number.ai_collection_count_today
+    
+    # Collect system metrics
+    - service: rest_command.collect_ha_metrics
+      continue_on_error: true
+    
+    # Run AI workspace validator
+    - service: shell_command.ai_routine_validator
+      continue_on_error: true
+    
+    # Log completion
+    - service: logbook.log
+      data:
+        name: "AI Data Collection"
+        message: "AI data collection completed successfully at {{ now().strftime('%H:%M:%S') }}"
+
+ai_daily_archive_routine:
+  alias: "AI Daily Archive Routine"
+  description: "Archives daily AI metrics and resets counters"
+  sequence:
+    - service: logbook.log
+      data:
+        name: "AI Archive"
+        message: "Starting daily archive for {{ (now() - timedelta(days=1)).strftime('%Y-%m-%d') }}"
+    
+    # Archive today's collection count
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.ai_archive_log
+      data:
+        value: >
+          {{ states('input_text.ai_archive_log') }}
+          {{ (now() - timedelta(days=1)).strftime('%Y-%m-%d') }}: {{ states('input_number.ai_collection_count_today') }} collections
+          
+    # Reset daily counter
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.ai_collection_count_today
+      data:
+        value: 0
+    
+    # Update weekly average
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.ai_weekly_average
+      data:
+        value: >
+          {{ ((states('input_number.ai_weekly_average') | float * 6) + (states('input_number.ai_collection_count_today') | float)) / 7 }}
+    
+    - service: logbook.log
+      data:
+        name: "AI Archive"
+        message: "Daily archive completed - Collections archived: {{ states('input_number.ai_collection_count_today') }}"

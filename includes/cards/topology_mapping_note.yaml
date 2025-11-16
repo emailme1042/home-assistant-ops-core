@@ -1,0 +1,15 @@
+type: markdown
+card_mod:
+  style: |
+    ha-card {
+      border-left: 4px solid #f57f17;
+      padding: 12px;
+      font-size: 14px;
+    }
+content: |
+  ### TODO: Topology Gaps & Mapping Ideas
+  - Review areas vs rooms consistency
+  - Look for orphaned devices without assigned areas
+  - Tag rooms with location-based identifiers or icons
+  - Consider floorplan overlay support in future?
+  _(Anchored in Deploy-AdminTopologyDashboard.ps1)_

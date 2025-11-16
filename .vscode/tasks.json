@@ -1,0 +1,31 @@
+{
+  "label": "Post-Merge Smart Summary Log + Cleanup",
+  "type": "shell",
+  "command": "powershell",
+  "args": [
+    "-Command",
+    "$timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss';",
+    "$warningsFile = 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log';",
+    "$mergeMap = Get-Content 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/merge_map.yaml';",
+    "$targets = ($mergeMap | Select-String '^[ ]{2}[^ ]+\\.md:' -AllMatches).Matches.Count;",
+    "$sources = ($mergeMap | Select-String '^- ' -AllMatches).Matches.Count;",
+    "if (Test-Path $warningsFile) {",
+    "  $warnings = (Get-Content $warningsFile | Select-String '⚠️').Count;",
+    "} else {",
+    "  $warnings = 0;",
+    "}",
+    "$logLine = \"🧠 Merge Summary: $timestamp — $targets targets, $sources sources, $warnings warnings.\";",
+    "Add-Content 'S:/AI_WORKSPACE/copilot_session_notes_merge.md' $logLine;",
+    "Write-Host ('✅ Merge summary logged: ' + $logLine);",
+    "if (Test-Path $warningsFile) { Clear-Content $warningsFile; Write-Host '🧹 Cleared _merge_warnings.log after logging.'; }",
+    "[System.Windows.Forms.MessageBox]::Show($logLine, 'AI Workspace Merge Summary', 'OK', 'Information');"
+  ],
+  "presentation": {
+    "reveal": "always",
+    "panel": "shared"
+  },
+  "dependsOn": [
+    "Run Copilot Merge (Manual Prompt)"
+  ],
+  "problemMatcher": []
+}

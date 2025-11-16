@@ -1,0 +1,50 @@
+# Broadlink Recovery Service Calls
+
+# Use these in Developer Tools → Services to recover Broadlink integration
+
+# 1. Reload Broadlink Integration (if you know the entry ID)
+service: homeassistant.reload_config_entry
+data:
+  entry_id: "REPLACE_WITH_ACTUAL_ENTRY_ID"
+
+---
+
+# 2. Alternative: Restart entire HA (if entry ID unknown)  
+service: homeassistant.restart
+
+---
+
+# 3. Test office blind entity availability
+# Go to Developer Tools → States and search: cover.office_blind
+
+---
+
+# 4. Test blind control commands (once entity is available)
+
+# UP command
+service: cover.open_cover
+target:
+  entity_id: cover.office_blind
+
+---
+
+# DOWN command  
+service: cover.close_cover
+target:
+  entity_id: cover.office_blind
+
+---
+
+# STOP command
+service: cover.stop_cover
+target:
+  entity_id: cover.office_blind
+
+---
+
+# 5. Alternative entity discovery (if cover.office_blind still missing)
+# Search Developer Tools → States for these patterns:
+# - switch.office_blind_*
+# - button.office_blind_*  
+# - remote.rm4_pro_*
+# - Any entity with "office" and "blind" in the name

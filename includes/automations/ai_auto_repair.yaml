@@ -1,0 +1,77 @@
+# AI Auto-Repair Automation System
+# Monitors health sensors and triggers self-repair actions
+
+- id: ai_system_health_monitor
+  alias: "AI System Health Monitor"
+  description: "Monitors AI system health and triggers repair actions"
+  trigger:
+    - platform: state
+      entity_id: sensor.ai_diagnostic_status
+      to: "Critical"
+      for:
+        minutes: 2
+    - platform: state
+      entity_id: sensor.ai_diagnostic_status
+      to: "Emergency"
+  condition: []
+  action:
+    - service: script.ai_self_repair
+      data: {}
+    - service: persistent_notification.create
+      data:
+        title: "🤖 AI Auto-Repair Triggered"
+        message: >
+          AI System Health Status: {{ states('sensor.ai_diagnostic_status') }}
+          Health Score: {{ states('sensor.ai_system_health_score') }}%
+          Auto-repair sequence initiated.
+        notification_id: ai_auto_repair
+
+- id: ai_warning_notification
+  alias: "AI Warning Notification"
+  description: "Sends notifications for AI system warnings"
+  trigger:
+    - platform: state
+      entity_id: sensor.ai_diagnostic_status
+      to: "Warning"
+      for:
+        minutes: 5
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "⚠️ AI System Warning"
+        message: >
+          AI System Health Score: {{ states('sensor.ai_system_health_score') }}%
+          Issues detected:
+          - Invalid Cards: {{ states('sensor.ai_invalid_dashboard_cards') }}
+          - Unsafe Includes: {{ states('sensor.ai_unsafe_config_includes') }}
+          - Restart Safety: {{ states('sensor.ai_restart_safety_level') }}
+        notification_id: ai_warning
+
+- id: ai_frontend_error_reset
+  alias: "AI Frontend Error Reset"
+  description: "Resets frontend error counter when system stabilizes"
+  trigger:
+    - platform: state
+      entity_id: sensor.ai_diagnostic_status
+      to: "Healthy"
+      for:
+        minutes: 10
+  condition:
+    - condition: numeric_state
+      entity_id: input_number.frontend_errors
+      above: 0
+  action:
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.frontend_errors
+      data:
+        value: 0
+    - service: persistent_notification.create
+      data:
+        title: "✅ AI System Recovered"
+        message: >
+          AI System back to healthy status.
+          Frontend error counter reset.
+          Health Score: {{ states('sensor.ai_system_health_score') }}%
+        notification_id: ai_recovery

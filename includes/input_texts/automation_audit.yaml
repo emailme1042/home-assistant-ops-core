@@ -1,0 +1,31 @@
+# Input entities for automation health audit system
+
+audit_status:
+  name: "Automation Audit Status"
+  max: 255
+  initial: "Ready for automation health audit"
+  icon: mdi:robot-confused
+
+session_tag_status:
+  name: "Session Tag Status" 
+  max: 255
+  initial: "Ready for session tagging"
+  icon: mdi:tag-outline
+
+fallback_status:
+  name: "Fallback Test Status"
+  max: 255
+  initial: "Ready for fallback testing"
+  icon: mdi:shield-outline
+
+automation_scan_results:
+  name: "Automation Scan Results"
+  max: 255
+  initial: "No scan results yet"
+  icon: mdi:file-search-outline
+
+audit_recommendation:
+  name: "Audit Recommendation"
+  max: 255
+  initial: "Run automation health audit for recommendations"
+  icon: mdi:lightbulb-outline

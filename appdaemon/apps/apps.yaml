@@ -1,0 +1,17 @@
+nspanel:
+  module: nspanel-lovelace-ui
+  class: NsPanelLovelaceUIManager
+  config:
+    panelRecvTopic: "tele/nspanel/RESULT"
+    panelSendTopic: "cmnd/nspanel/CustomSend"
+    updateMode: "auto-notify"
+    sleepTimeout: 20
+    sleepBrightness:
+      - time: "07:00:00"
+        value: 10
+      - time: "23:00:00"
+        value: 0
+    locale: "en_GB"
+    model: "eu"
+
+

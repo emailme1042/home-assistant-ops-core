@@ -1,0 +1,105 @@
+title: 🛡️ Core-Only Fallback Dashboard
+views:
+  - title: Essential Controls
+    path: essential
+    icon: mdi:home-circle
+    cards:
+      - type: markdown
+        content: |
+          # 🏠 Essential Home Controls
+          **Core Cards Only - Maximum Stability**
+          
+          This dashboard uses **zero custom cards** for guaranteed loading.
+          
+      - type: entities
+        title: 🏠 Main Lights
+        show_header_toggle: false
+        entities:
+          - light.lounge
+          - light.kitchen_1
+          - light.office
+          - light.hallway_5
+          - light.bedroom
+          
+      - type: entities  
+        title: 🌡️ Climate & Sensors
+        show_header_toggle: false
+        entities:
+          - sensor.hall_temperature
+          - sensor.bedroom_temperature
+          - sensor.kitchen_temperature
+          - binary_sensor.front_door_contact
+          - binary_sensor.office_motion
+          
+      - type: entities
+        title: 📺 Media Controls
+        show_header_toggle: false
+        entities:
+          - media_player.kitchen_alexa
+          - media_player.lounge_alexa
+          - media_player.lounge_fire_tv
+          - media_player.bedroom_fire_tv
+          
+      - type: grid
+        columns: 2
+        cards:
+          - type: button
+            tap_action:
+              action: navigate
+              navigation_path: /config/integrations
+            name: "Integrations"
+            icon: mdi:puzzle
+          - type: button
+            tap_action:
+              action: navigate  
+              navigation_path: /config/logs
+            name: "System Logs"
+            icon: mdi:text-box-outline
+          - type: button
+            tap_action:
+              action: navigate
+              navigation_path: /developer-tools/yaml
+            name: "YAML Check"
+            icon: mdi:code-tags
+          - type: button
+            tap_action:
+              action: navigate
+              navigation_path: /config/server_control
+            name: "Server Control" 
+            icon: mdi:server
+            
+  - title: System Health
+    path: health
+    icon: mdi:heart-pulse
+    cards:
+      - type: entities
+        title: 🏥 Core System Status
+        show_header_toggle: false
+        entities:
+          - sensor.time
+          - sensor.date
+          - sensor.uptime
+          - binary_sensor.updater
+          
+      - type: entities
+        title: 🌐 Network Status
+        show_header_toggle: false
+        entities:
+          - binary_sensor.192_168_1_1
+          - sensor.speedtest_download
+          - sensor.speedtest_upload
+          - sensor.speedtest_ping
+          
+      - type: markdown
+        content: |
+          ## 🔧 Recovery Instructions
+          
+          **UI Lovelace Minimalist Disabled**
+          - Folder renamed to `ui_lovelace_minimalist_DISABLED`
+          - Frontend card conflicts resolved
+          - To re-enable: rename folder back and restart HA
+          
+          **Next Steps:**
+          1. Verify all core functionality works
+          2. Check logs for remaining errors
+          3. Re-enable UI Minimalist gradually if needed

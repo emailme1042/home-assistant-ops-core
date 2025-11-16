@@ -1,0 +1,4 @@
+debug_log:
+  name: "Debug Log"
+  initial: "Debug log initialized"
+  max: 255

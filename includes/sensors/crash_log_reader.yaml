@@ -1,0 +1,9 @@
+---
+# Crash Log Reader - Command Line Sensor
+# Purpose: Read crash log file content for template sensor analysis
+
+- platform: command_line
+  name: crash_log_reader
+  command: 'if (Test-Path "/config/www/crash_trap_log.txt") { Get-Content "/config/www/crash_trap_log.txt" | Out-String } else { "" }'
+  scan_interval: 300  # Check every 5 minutes
+  command_timeout: 30

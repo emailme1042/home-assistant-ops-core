@@ -1,0 +1,37 @@
+# HA API Responsiveness Binary Sensor
+# Monitors if HA API is responding to requests
+
+- platform: template
+  sensors:
+    ha_api_responsive:
+      friendly_name: "HA API Responsive"
+      value_template: >
+        {% if states('sensor.ha_system_entities_total') | int(0) > 2000 %}
+          on
+        {% else %}
+          off
+        {% endif %}
+      icon_template: >
+        {% if is_state('binary_sensor.ha_api_responsive', 'on') %}
+          mdi:api
+        {% else %}
+          mdi:api-off
+        {% endif %}
+      device_class: connectivity
+
+- platform: template
+  sensors:
+    nabu_casa_status:
+      friendly_name: "Nabu Casa Cloud Status"
+      value_template: >
+        {% if states('binary_sensor.remote_ui') == 'on' %}
+          Connected
+        {% else %}
+          Disconnected
+        {% endif %}
+      icon_template: >
+        {% if states('binary_sensor.remote_ui') == 'on' %}
+          mdi:cloud-check
+        {% else %}
+          mdi:cloud-alert
+        {% endif %}

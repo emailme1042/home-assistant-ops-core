@@ -1,0 +1,50 @@
+# System Triage Live Monitoring Sensors
+# Purpose: Real-time monitoring of unavailable entities by integration
+# Supports: ESPHome, MQTT, Automation health tracking
+
+- sensor:
+    - name: "ESPHome Unavailable Count"
+      unique_id: esphome_unavailable_count
+      state: >
+        {% set esps = expand(integration_entities('esphome')) %}
+        {{ esps | selectattr('state','in',['unavailable','unknown']) | list | count }}
+      attributes:
+        entities: >
+          {% set esps = expand(integration_entities('esphome')) %}
+          {{ esps | selectattr('state','in',['unavailable','unknown']) | map(attribute='entity_id') | list }}
+
+    - name: "MQTT Unavailable Count"
+      unique_id: mqtt_unavailable_count
+      state: >
+        {% set mq = expand(integration_entities('mqtt')) %}
+        {{ mq | selectattr('state','in',['unavailable','unknown']) | list | count }}
+      attributes:
+        entities: >
+          {% set mq = expand(integration_entities('mqtt')) %}
+          {{ mq | selectattr('state','in',['unavailable','unknown']) | map(attribute='entity_id') | list }}
+
+    - name: "Automations Unavailable Count"
+      unique_id: automations_unavailable_count
+      state: >
+        {% set autos = expand('automation.*') %}
+        {{ autos | selectattr('state','equalto','unavailable') | list | count }}
+      attributes:
+        entities: >
+          {% set autos = expand('automation.*') %}
+          {{ autos | selectattr('state','equalto','unavailable') | map(attribute='entity_id') | list }}
+
+    - name: "System Health Score"
+      unique_id: system_health_score
+      state: >
+        {% set total_entities = states | count %}
+        {% set unavailable = states | selectattr('state','in',['unavailable','unknown']) | list | count %}
+          {% if total_entities > 0 %}
+          {{ (((total_entities - unavailable) / total_entities) * 100) | round(1) }}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: "%"
+      attributes:
+        total_entities: "{{ states | count }}"
+        unavailable_entities: "{{ states | selectattr('state','in',['unavailable','unknown']) | list | count }}"
+        healthy_entities: "{{ states | rejectattr('state','in',['unavailable','unknown']) | list | count }}"

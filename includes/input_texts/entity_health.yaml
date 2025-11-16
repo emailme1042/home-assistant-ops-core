@@ -1,0 +1,5 @@
+entity_health_status:
+  name: "Entity Health Status"
+  initial: "System starting..."
+  max: 255
+  icon: mdi:heart-pulse

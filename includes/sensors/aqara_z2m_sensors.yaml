@@ -1,0 +1,117 @@
+# Enhanced Aqara Sensors via Zigbee2MQTT
+# Rich sensor data configurations for migrated devices
+
+mqtt:
+  sensor:
+    # Vibration Sensor - Rich data from Z2M
+    - name: "Aqara Vibration Sensor Battery"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.battery }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      unique_id: aqara_vibration_battery
+
+    - name: "Aqara Vibration Sensor Link Quality"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.linkquality }}"
+      unit_of_measurement: "lqi"
+      icon: mdi:signal
+      unique_id: aqara_vibration_lqi
+
+    - name: "Aqara Vibration Sensor Voltage"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.voltage | float / 1000 }}"
+      unit_of_measurement: "V"
+      device_class: voltage
+      unique_id: aqara_vibration_voltage
+
+    - name: "Aqara Vibration Sensor Angle X"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.angle_x }}"
+      unit_of_measurement: "°"
+      icon: mdi:angle-acute
+      unique_id: aqara_vibration_angle_x
+
+    - name: "Aqara Vibration Sensor Angle Y"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.angle_y }}"
+      unit_of_measurement: "°"
+      icon: mdi:angle-acute
+      unique_id: aqara_vibration_angle_y
+
+    - name: "Aqara Vibration Sensor Angle Z"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.angle_z }}"
+      unit_of_measurement: "°"
+      icon: mdi:angle-acute
+      unique_id: aqara_vibration_angle_z
+
+    # TRV Sensors - Rich valve position and battery data
+    - name: "Lounge TRV Battery"
+      state_topic: "zigbee2mqtt/Lounge_TRV"
+      value_template: "{{ value_json.battery }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      unique_id: lounge_trv_battery
+
+    - name: "Lounge TRV Position"
+      state_topic: "zigbee2mqtt/Lounge_TRV"
+      value_template: "{{ value_json.position }}"
+      unit_of_measurement: "%"
+      icon: mdi:valve
+      unique_id: lounge_trv_position
+
+    - name: "Lounge TRV Link Quality"
+      state_topic: "zigbee2mqtt/Lounge_TRV"
+      value_template: "{{ value_json.linkquality }}"
+      unit_of_measurement: "lqi"
+      icon: mdi:signal
+      unique_id: lounge_trv_lqi
+
+    - name: "Bedroom TRV Battery"
+      state_topic: "zigbee2mqtt/Bedroom_TRV"
+      value_template: "{{ value_json.battery }}"
+      unit_of_measurement: "%"
+      device_class: battery
+      unique_id: bedroom_trv_battery
+
+    - name: "Bedroom TRV Position"
+      state_topic: "zigbee2mqtt/Bedroom_TRV"
+      value_template: "{{ value_json.position }}"
+      unit_of_measurement: "%"
+      icon: mdi:valve
+      unique_id: bedroom_trv_position
+
+    - name: "Bedroom TRV Link Quality"
+      state_topic: "zigbee2mqtt/Bedroom_TRV"
+      value_template: "{{ value_json.linkquality }}"
+      unit_of_measurement: "lqi"
+      icon: mdi:signal
+      unique_id: bedroom_trv_lqi
+
+  binary_sensor:
+    # Enhanced vibration detection with strength
+    - name: "Aqara Vibration Sensor Occupancy"
+      state_topic: "zigbee2mqtt/Aqara_Vibration_Sensor"
+      value_template: "{{ value_json.occupancy }}"
+      payload_on: true
+      payload_off: false
+      device_class: vibration
+      unique_id: aqara_vibration_occupancy
+
+    # TRV window detection
+    - name: "Lounge TRV Window Open"
+      state_topic: "zigbee2mqtt/Lounge_TRV"
+      value_template: "{{ value_json.window_open }}"
+      payload_on: true
+      payload_off: false
+      device_class: window
+      unique_id: lounge_trv_window
+
+    - name: "Bedroom TRV Window Open"
+      state_topic: "zigbee2mqtt/Bedroom_TRV"
+      value_template: "{{ value_json.window_open }}"
+      payload_on: true
+      payload_off: false
+      device_class: window
+      unique_id: bedroom_trv_window

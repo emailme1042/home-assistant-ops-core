@@ -1,0 +1,83 @@
+- alias: Sync Media Player Selector
+  id: sync_media_player_selector
+  trigger:
+    - platform: state
+      entity_id: input_select.media_player_selector
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.media_player_selector_internal
+      data:
+        option: >
+          {% if states('input_select.media_player_selector') == 'Apple TV' %}
+            media_player.apple_tv_lounge
+          {% elif states('input_select.media_player_selector') == 'Fire Stick' %}
+            media_player.fire_tv
+          {% else %}
+            media_player.sonos_lounge
+          {% endif %}
+
+- alias: Start Party Music when Party Mode Scene Activated
+  id: party_mode_auto_music
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: scene
+        service: turn_on
+        service_data:
+          entity_id: scene.bedroom_party_mode
+  action:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_id: "https://www.myinstants.com/media/sounds/party-time.mp3"
+        media_content_type: music
+
+- alias: Announce Movie Night
+  id: movie_night_voice_notify_core_media
+  trigger:
+    - platform: state
+      entity_id: input_boolean.movie_night
+      to: "on"
+  action:
+    - service: media_player.lounge_alexa
+      data:
+        message: "Enjoy your movie night!"
+        type: tts
+
+- alias: Play Relaxing Sound when Relax Scene Activated
+  id: relax_mode_sound_core_media
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: scene
+        service: turn_on
+        service_data:
+          entity_id: scene.bedroom_relax
+  action:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_id: "https://www.myinstants.com/media/sounds/ocean-wave.mp3"
+        media_content_type: music
+
+- alias: Alexa Lounge Weather Advisory
+  id: alexa_lounge_weather_advisory
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door
+      from: "off"
+      to: "on"
+  condition:
+    - condition: time
+      after: "06:00:00"
+      before: "22:00:00"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Door Triggered"
+        message: "The back door automation ran."

@@ -1,0 +1,47 @@
+automation:
+  - alias: "Aircraft Low Altitude Alert"
+    id: aircraft_low_altitude_alert
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.lowest_aircraft_altitude
+        below: 1000
+        above: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.adsb_low_altitude_monitoring
+        state: "on"
+      - condition: template
+        value_template: "{{ states('sensor.aircraft_count') | int(0) > 0 }}"
+    action:
+      - service: tts.google_say
+        data:
+          message: "Low altitude aircraft detected at {{ states('sensor.lowest_aircraft_altitude') }} feet overhead."
+        
+  - alias: "High Aircraft Activity Alert"
+    id: high_aircraft_activity_alert
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.aircraft_count
+        above: 20
+    condition:
+      - condition: state
+        entity_id: input_boolean.adsb_activity_announcements
+        state: "on"
+    action:
+      - service: tts.google_say
+        data:
+          message: "High aircraft activity detected. {{ states('sensor.aircraft_count') }} aircraft currently tracked."
+    mode: single
+    
+  - alias: "ADS-B System Recovery"
+    id: adsb_system_recovery
+    trigger:
+      - platform: state
+        entity_id: sensor.aircraft_count
+        to: "unavailable"
+        for:
+          minutes: 5
+    action:
+      - service: tts.google_say
+        data:
+          message: "ADS-B aircraft tracking system appears offline. Check dump1090 service."

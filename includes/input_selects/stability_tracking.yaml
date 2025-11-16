@@ -1,0 +1,30 @@
+# ================================================
+# STABILITY TIMELINE SELECT ENTITIES
+# ================================================
+# Purpose: Categorize crash causes and confidence levels
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+last_crash_cause:
+  name: "Last Crash Cause"
+  options:
+    - "Unknown"
+    - "Frontend Error"
+    - "Database Lock"
+    - "Integration Failure"
+    - "Memory Overload"
+    - "Configuration Error"
+    - "VSCode Triggered"
+    - "Network Issue"
+    - "Hardware Problem"
+  initial: "Unknown"
+  icon: mdi:help-circle
+
+crash_cause_confidence:
+  name: "Crash Cause Confidence"
+  options:
+    - "Low"
+    - "Medium"
+    - "High"
+    - "Certain"
+  initial: "Low"
+  icon: mdi:speedometer

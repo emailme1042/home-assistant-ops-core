@@ -1,0 +1,68 @@
+# Comprehensive Health Trends - PERFORMANCE OPTIMIZED
+# Reduced complexity and frequency to improve HA responsiveness
+# Simplified templates to reduce CPU load
+
+# - platform: template
+#   sensors:
+#     # system_component_summary:
+#     #   friendly_name: "System Components Summary"
+#     #   value_template: >
+#     #     {% set domains = states | map(attribute='entity_id') | map('regex_replace', '\.[^.]*$', '') | unique | list %}
+#     #     {{ domains | length }} domains active
+#     #   attribute_templates:
+#     #     domain_breakdown: >
+#     #       {% set domains = {} %}
+#     #       {% for entity in states %}
+#     #         {% set domain = entity.entity_id.split('.')[0] %}
+#     #         {% set available = 1 if entity.state != 'unavailable' else 0 %}
+#     #         {% set unavailable = 1 if entity.state == 'unavailable' else 0 %}
+#     #         {% set current = domains.get(domain, {'total': 0, 'available': 0, 'unavailable': 0}) %}
+#     #         {% set domains = dict(domains, **{domain: {
+#     #           'total': current.total + 1,
+#     #           'available': current.available + available,
+#     #           'unavailable': current.unavailable + unavailable
+#     #         }}) %}
+#     #       {% endfor %}
+#     #       {{ domains }}
+#     #     top_unavailable_domains: >
+#     #       {% set domains = {} %}
+#     #       {% for entity in states if entity.state == 'unavailable' %}
+#     #         {% set domain = entity.entity_id.split('.')[0] %}
+#     #         {% set count = domains.get(domain, 0) + 1 %}
+#     #         {% set domains = dict(domains, **{domain: count}) %}
+#     #       {% endfor %}
+#     #       {% set sorted_domains = domains.items() | sort(attribute='1', reverse=true) %}
+#     #       {{ sorted_domains[:10] | list }}
+
+#     # zigbee_device_health:
+#     #   friendly_name: "Zigbee Device Health"
+#     #   value_template: >
+#     #     {% set zigbee_entities = states | selectattr('entity_id', 'match', '.*zigbee.*|.*button.*|.*motion.*|.*door.*|.*temperature.*') | list %}
+#     #     {% set available = zigbee_entities | selectattr('state', 'ne', 'unavailable') | list | length %}
+#     #     {% set total = zigbee_entities | length %}
+#     #     {{ available }}/{{ total }} devices online
+#     #   attribute_templates:
+#     #     device_list: >
+#     #       {% set zigbee_entities = states | selectattr('entity_id', 'match', '.*zigbee.*|.*button.*|.*motion.*|.*door.*|.*temperature.*') | list %}
+#     #       {{ zigbee_entities | map(attribute='entity_id') | list }}
+#     #     offline_devices: >
+#     #       {% set zigbee_entities = states | selectattr('entity_id', 'match', '.*zigbee.*|.*button.*|.*motion.*|.*door.*|.*temperature.*') | selectattr('state', 'eq', 'unavailable') | list %}
+#     #       {{ zigbee_entities | map(attribute='entity_id') | list }}
+#   #      {% endfor %}
+#   #      {% set sorted_domains = domains.items() | sort(attribute='1', reverse=true) %}
+#   #      {{ sorted_domains[:10] | list }}
+
+#     # zigbee_device_health:
+#     #   friendly_name: "Zigbee Device Health"
+#     #   value_template: >
+#     #     {% set zigbee_entities = states | selectattr('entity_id', 'match', '.*zigbee.*|.*button.*|.*motion.*|.*door.*|.*temperature.*') | list %}
+#     #     {% set available = zigbee_entities | selectattr('state', 'ne', 'unavailable') | list | length %}
+#     #     {% set total = zigbee_entities | length %}
+#     #     {{ available }}/{{ total }} devices online
+#     #   attribute_templates:
+#     #     device_list: >
+#     #       {% set zigbee_entities = states | selectattr('entity_id', 'match', '.*zigbee.*|.*button.*|.*motion.*|.*door.*|.*temperature.*') | list %}
+#     #       {{ zigbee_entities | map(attribute='entity_id') | list }}
+#     #     offline_devices: >
+#     #       {% set zigbee_entities = states | selectattr('entity_id', 'match', '.*zigbee.*|.*button.*|.*motion.*|.*door.*|.*temperature.*') | selectattr('state', 'eq', 'unavailable') | list %}
+#     #       {{ zigbee_entities | map(attribute='entity_id') | list }}

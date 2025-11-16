@@ -1,0 +1,81 @@
+---
+# Intelligent Crash Detection Automation
+# Purpose: Auto-detect HA restarts, log context, and trigger recovery actions
+
+- alias: "🔍 Crash Detection - HA Restart Monitor"
+  id: crash_detection_restart_monitor
+  description: "Automatically detect and log HA restarts with context analysis"
+  trigger:
+    # Detect HA restart via uptime sensor reset
+    - platform: state
+      entity_id: sensor.uptime
+    # Detect automation reload (potential schema fix)
+    - platform: event
+      event_type: automation_reloaded
+    # Detect template reload (potential schema fix)  
+    - platform: event
+      event_type: template_reloaded
+  condition:
+    # Only trigger if it's an actual restart (uptime reset or significant change)
+    - condition: or
+      conditions:
+        - condition: template
+          value_template: "{{ trigger.entity_id == 'sensor.uptime' and trigger.to_state.state | int(0) < trigger.from_state.state | int(9999) }}"
+        - condition: template
+          value_template: "{{ trigger.event_type in ['automation_reloaded', 'template_reloaded'] }}"
+  action:
+    # Log the restart with context
+    - service: shell_command.log_crash_context
+      
+    # Increment crash counter if it's an actual restart (uptime reset)
+    - if:
+        - condition: template
+          value_template: "{{ trigger.entity_id == 'sensor.uptime' }}"
+      then:
+        - service: input_number.increment
+          target:
+            entity_id: input_number.frontend_errors
+            
+    # Update crash detection method
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.crash_detection_method
+      data:
+        value: >
+          {% if trigger.entity_id == 'sensor.uptime' %}Uptime Reset Detection
+          {% elif trigger.event_type == 'automation_reloaded' %}Automation Reload
+          {% elif trigger.event_type == 'template_reloaded' %}Template Reload
+          {% else %}Unknown Detection Method
+          {% endif %}
+    
+    # Smart notification based on crash count
+    - choose:
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.crash_count_today
+              above: 2
+          sequence:
+            - service: persistent_notification.create
+              data:
+                title: "🚨 Multiple Crashes Detected"
+                message: >
+                  System stability compromised. 
+                  Crashes today: {{ states('sensor.crash_count_today') }}
+                  Last context: {{ states('sensor.last_crash_context') }}
+                  Stability score: {{ states('sensor.system_stability_score') }}%
+                  Recommendation: {{ state_attr('sensor.system_stability_score', 'recommendation') }}
+                notification_id: "multiple_crashes"
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.crash_count_today
+              above: 0
+          sequence:
+            - service: persistent_notification.create
+              data:
+                title: "⚠️ System Restart Detected"
+                message: >
+                  HA restart detected. Context: {{ states('sensor.last_crash_context') }}
+                  Stability score: {{ states('sensor.system_stability_score') }}%
+                notification_id: "system_restart"
+
+  mode: single

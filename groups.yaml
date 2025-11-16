@@ -1,0 +1,60 @@
+hacontrol_01:
+  name: Lights & Climate
+  icon: mdi:lightbulb-group
+  entities:
+    # Lights
+    - light.hallway_5
+    - light.loo_5
+    - light.dining_light_5
+    - light.reading_light
+    - light.brown_lamp
+    - light.wiz_rgbw_tunable_2606be
+    - light.wiz_rgbw_tunable_2609a6
+    - light.lounge_tv_strip_lights
+
+    # Switches
+    - switch.wax_warmer
+
+    # Covers
+    - cover.kitchen_blind
+    - cover.blind_tilt_94a1
+
+hacontrol_02:
+  name: Media Zone
+  icon: mdi:television
+  entities:
+    # Media Players
+    - media_player.lounge
+    - media_player.apple_lounge
+    - media_player.kitchen_nest
+    - media_player.kitchen_alexa
+
+    # Remote
+    - remote.apple_lounge
+
+    # Ambient Lighting
+    - light.lounge_tv_strip_lights
+
+    # Audio Toggles
+    - switch.lounge_loudness
+    - switch.lounge_speech_enhancement
+
+
+hacontrol_03:
+  name: Security Essentials
+  icon: mdi:shield-home
+  entities:
+    # Sirens
+    - siren.garden_siren
+    - siren.chime_siren
+    - siren.downstairs_siren
+
+    # Security-linked Switches
+    - switch.garden_lights
+    - switch.teddy_lamp
+    - switch.teddy_fan_2
+
+    # Covers
+    - cover.blind_tilt_94a1
+
+

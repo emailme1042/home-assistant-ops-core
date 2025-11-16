@@ -1,0 +1,52 @@
+- id: test_voice_openai_workflow
+  alias: Test Voice OpenAI Workflow
+  description: Test voice → OpenAI → TTS integration
+  trigger:
+    - platform: event
+      event_type: alexa_actionable_notification
+      event_data:
+        event_id: ask_openai
+        event_response_type: ResponseYes
+  action:
+    # Get the voice query (for now use default)
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.openai_query
+      data:
+        value: "Tell me a short joke"
+    
+    # Call OpenAI
+    - service: script.query_openai_simple
+    
+    # Wait a moment for processing
+    - delay: "00:00:02"
+    
+    # Speak confirmation via TTS
+    - service: notify.alexa_media_kitchen_alexa
+      data:
+        message: "I sent your query to OpenAI. The response has been logged."
+        data:
+          type: tts
+
+- id: voice_openai_simple_test
+  alias: Voice OpenAI Simple Test  
+  description: Simple test triggered by dashboard button
+  trigger:
+    - platform: state
+      entity_id: input_boolean.test_voice_openai
+      to: 'on'
+  action:
+    # Turn off the trigger
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.test_voice_openai
+    
+    # Test the workflow
+    - service: script.query_openai_simple
+    
+    # Give TTS feedback
+    - service: notify.alexa_media_kitchen_alexa
+      data:
+        message: "OpenAI test completed. Check the AI Navigation dashboard for results."
+        data:
+          type: tts

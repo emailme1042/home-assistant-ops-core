@@ -1,0 +1,3 @@
+START
+ERROR: name 'hass' is not defined
+END

@@ -1,0 +1,20 @@
+gpt_flask_prompt:
+  alias: "📡 GPT via Flask (Prompt)"
+  sequence:
+    - service: shell_command.run_gpt_via_flask
+      data:
+        prompt: "{{ states('input_text.gpt_text_prompt') }}"
+  mode: single
+
+send_test_email_gmail:
+  alias: "Send Test Email via Gmail SMTP"
+  sequence:
+    - service: notify.gmail_smtp
+      data:
+        title: "Gmail SMTP Integration Working"
+        message: >
+          ✅ This test confirms Gmail SMTP is correctly configured in your Home Assistant system.
+          Triggered manually from script.
+  mode: single
+
+

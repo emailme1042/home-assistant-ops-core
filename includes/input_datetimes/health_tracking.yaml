@@ -1,0 +1,38 @@
+# System Health Tracking Input DateTimes
+# Purpose: Store timestamps for health snapshots
+
+health_snapshot_1_time:
+  name: "Health Snapshot 1 - Timestamp"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-outline
+
+health_snapshot_2_time:
+  name: "Health Snapshot 2 - Timestamp"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-outline
+
+health_snapshot_3_time:
+  name: "Health Snapshot 3 - Timestamp"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-outline
+
+health_snapshot_4_time:
+  name: "Health Snapshot 4 - Timestamp"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-outline
+
+health_snapshot_5_time:
+  name: "Health Snapshot 5 - Timestamp"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-outline
+
+last_health_check:
+  name: "Last Health Check"
+  has_date: true
+  has_time: true
+  icon: mdi:heart-pulse

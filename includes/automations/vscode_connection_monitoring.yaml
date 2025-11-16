@@ -1,0 +1,75 @@
+# VSCode Connection Monitoring Automation
+# Tracks connection status and logs disconnect events
+
+- id: track_vscode_api_calls
+  alias: "Track VSCode API Calls"
+  description: "Monitor VSCode HA extension API activity"
+  trigger:
+    - platform: state
+      entity_id: sensor.ha_system_entities_total
+    - platform: time_pattern
+      minutes: "/5"  # Check every 5 minutes
+  condition: []
+  action:
+
+
+- id: detect_vscode_disconnect
+  alias: "Detect VSCode Disconnect"
+  description: "Log when VSCode extension disconnects"
+  trigger:
+    - platform: template
+      value_template: >
+        {{ states('sensor.vscode_ha_connection_status') == 'Disconnected' }}
+      for:
+        minutes: 2
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('sensor.vscode_ha_connection_status') == 'Disconnected' }}
+  action:
+
+    - service: counter.increment
+      target:
+        entity_id: counter.vscode_disconnects_today
+    - service: persistent_notification.create
+      data:
+        title: "VSCode Extension Disconnected"
+        message: >
+          VSCode HA extension lost connection at {{ now().strftime('%H:%M:%S') }}.
+          Connection was active for {{ states('sensor.vscode_connection_uptime') }}.
+        notification_id: vscode_disconnect
+
+- id: detect_vscode_reconnect
+  alias: "Detect VSCode Reconnect"
+  description: "Log when VSCode extension reconnects"
+  trigger:
+    - platform: template
+      value_template: >
+        {{ states('sensor.vscode_ha_connection_status') == 'Connected' }}
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('sensor.vscode_ha_connection_status') == 'Connected' }}
+  action:
+
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: vscode_disconnect
+    - service: persistent_notification.create
+      data:
+        title: "VSCode Extension Reconnected"
+        message: >
+          VSCode HA extension reconnected at {{ now().strftime('%H:%M:%S') }}.
+          Disconnected for {{ relative_time(states('input_datetime.vscode_last_disconnect')) }}.
+        notification_id: vscode_reconnect
+
+- id: reset_daily_vscode_counters
+  alias: "Reset Daily VSCode Counters"
+  description: "Reset daily disconnect counters at midnight"
+  trigger:
+    - platform: time
+      at: "00:00:00"
+  action:
+    - service: counter.reset
+      target:
+        entity_id: counter.vscode_disconnects_today

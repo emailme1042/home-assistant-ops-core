@@ -1,0 +1,187 @@
+# 🌙 AI Sleep Mode Routine (Extended Edition)
+# Version: 2025.11.01 | Compatible with HA Core ≥2025.10.4
+# Enhancements: Smart noise suppression + voice trigger via Assist, Alexa, or TTS pipeline.
+
+blueprint:
+  name: AI Sleep Mode Routine (Extended)
+  description: >
+    Intelligent sleep mode automation with noise suppression, voice activation,
+    and safety validation. Works with existing AI monitoring and dashboards.
+  domain: automation
+  source_url: https://community.home-assistant.io/t/awesome-ha-blueprints/256687
+  input:
+    person_entities:
+      name: Occupants to Monitor
+      selector:
+        target:
+          entity:
+            domain: person
+    light_targets:
+      name: Lights to Dim or Turn Off
+      selector:
+        target:
+          entity:
+            domain: light
+    notify_target:
+      name: Notification Target
+      selector:
+        target:
+          entity:
+            domain: notify
+    noise_sensor:
+      name: Ambient Noise Sensor (Optional)
+      selector:
+        entity:
+          domain: sensor
+    voice_trigger:
+      name: Voice Intent Entity (Assist or Alexa Trigger)
+      selector:
+        entity:
+          domain: conversation
+    hvac_entities:
+      name: Climate Devices (Optional)
+      selector:
+        target:
+          entity:
+            domain: climate
+    ai_sync_sensor:
+      name: AI Workspace Sync Status
+      default: sensor.ha_sync_status
+      selector:
+        entity:
+          domain: sensor
+    threshold_noise:
+      name: Max Allowed Noise (dB)
+      default: 40
+      selector:
+        number:
+          min: 20
+          max: 80
+          step: 1
+          unit_of_measurement: "dB"
+    sleep_trigger_time:
+      name: Scheduled Sleep Time
+      default: "23:00:00"
+      selector:
+        time: {}
+
+# ───────────────────────────────
+# 💤 SMART NOISE SUPPRESSION MODE
+# ───────────────────────────────
+automation:
+  - id: ai_smart_sleep_trigger
+    alias: AI Smart Sleep Mode Trigger
+    description: Waits for quiet conditions or voice command before sleep mode.
+    trigger:
+      - platform: time
+        at: "{{ sleep_trigger_time }}"
+      - platform: state
+        entity_id: "{{ voice_trigger }}"
+        to: "triggered"
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: "{{ ai_sync_sensor }}"
+            state: "✅ Synced"
+          - condition: state
+            entity_id: "{{ ai_sync_sensor }}"
+            state: "⚠️ Pending"
+      - condition: state
+        entity_id: group.all_persons
+        state: "home"
+    action:
+      - choose:
+          # 🔊 Noise suppression logic
+          - conditions:
+              - condition: template
+                value_template: >
+                  {% if noise_sensor %}
+                    true
+                  {% else %}
+                    {{ states(noise_sensor) | float(0) <= threshold_noise }}
+                  {% endif %}
+            sequence:
+              - service: notify.send_message
+                target: "{{ notify_target }}"
+                data:
+                  title: "🌙 Sleep Mode (Quiet Detected)"
+                  message: >
+                    Noise level: {{ states(noise_sensor) | float(0) }}dB. Starting sleep sequence.
+              - event: ai_sleep_sequence_start
+                event_data:
+                  trigger: "noise_or_voice"
+          # ⚠️ Delay if noisy
+          - conditions:
+              - condition: template
+                value_template: >
+                  {{ states(noise_sensor) | float(0) > threshold_noise }}
+            sequence:
+              - service: notify.send_message
+                target: "{{ notify_target }}"
+                data:
+                  title: "🔇 Sleep Mode Delayed"
+                  message: >
+                    Too noisy ({{ states(noise_sensor) | float(0) }}dB > {{ threshold_noise }}dB).
+                    Will retry in 10 minutes.
+              - delay: "00:10:00"
+              - service: automation.trigger
+                target:
+                  entity_id: automation.ai_smart_sleep_trigger
+
+# ───────────────────────────────
+# 🗣️ VOICE TRIGGER ROUTE (Assist / Alexa)
+# ───────────────────────────────
+  - id: ai_sleep_voice_intent
+    alias: AI Sleep Voice Intent Handler
+    trigger:
+      - platform: state
+        entity_id: "{{ voice_trigger }}"
+        to: "triggered"
+    condition:
+      - condition: template
+        value_template: >
+          {{ 'goodnight' in states(!input voice_trigger) | lower }}
+    action:
+      - event: ai_sleep_sequence_start
+        event_data:
+          trigger: "voice_command"
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🗣️ Goodnight Command Received"
+          message: "Voice trigger detected — starting sleep mode."
+
+# ───────────────────────────────
+# 🧩 AI SLEEP SEQUENCE LISTENER
+# ───────────────────────────────
+  - id: ai_sleep_sequence_handler
+    alias: AI Sleep Sequence Execution
+    trigger:
+      - platform: event
+        event_type: ai_sleep_sequence_start
+    action:
+      - service: light.turn_off
+        target: "{{ light_targets }}"
+        data:
+          transition: 10
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ hvac_entities | length > 0 }}"
+            sequence:
+              - service: climate.set_preset_mode
+                target: "{{ hvac_entities }}"
+                data:
+                  preset_mode: "sleep"
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "😴 Sleep Mode Active"
+          message: >
+            Routine started by {{ trigger.event.data.trigger }}.
+            AI Sync: {{ states(ai_sync_sensor) }}.
+      - service: persistent_notification.create
+        data:
+          title: "🧠 AI Sleep Mode Logged"
+          message: "Triggered by {{ trigger.event.data.trigger }} — logged at {{ now().strftime('%H:%M') }}."

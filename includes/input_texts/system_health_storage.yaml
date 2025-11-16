@@ -1,0 +1,14 @@
+# System Health Storage - Previous Stats for Comparison Logic
+# Purpose: Store previous health snapshot for trend analysis and change detection
+
+previous_system_health_stats:
+  name: "Previous System Health Stats"
+  max: 255
+  initial: "entities:0|unavailable:0|health:100.0|automations:0|scripts:0"
+  icon: mdi:database-outline
+
+system_health_log:
+  name: "System Health Log"
+  max: 255
+  initial: "System health monitoring initialized"
+  icon: mdi:chart-line

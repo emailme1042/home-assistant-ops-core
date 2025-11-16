@@ -1,0 +1,186 @@
+homeassistant:
+  packages: !include_dir_named packages
+  allowlist_external_dirs:
+    - www
+  allowlist_external_urls:
+    - https://api.openai.com/v1/
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 192.168.1.0/24
+      allow_bypass_login: true
+
+default_config: {}
+
+recorder:
+  db_url: mysql://homeassistant:password@core-mosquitto/homeassistant?charset=utf8mb4
+  purge_keep_days: 1  # AGGRESSIVE: Reduced to 1 day for HA Green memory constraints
+  auto_purge: true
+  commit_interval: 30  # Increased to reduce database writes
+  exclude:
+    domains:
+      - automation
+      - script
+      - mqtt
+      - update
+      - device_tracker
+      - weather
+      - calendar
+      - media_player
+      - sensor  # AGGRESSIVE: Exclude ALL sensor history for memory savings
+      - binary_sensor
+      - switch
+      - light
+      - climate
+    entities:
+      # Exclude frequently changing sensors that don't need history
+      - sensor.ai_exec_log_recent
+      - sensor.yaml_validation_status
+      - sensor.includes_validation_status
+      - sensor.automation_validation_status
+      - sensor.last_validation_check
+      - sensor.local_flask_status_code
+      - sensor.time
+      - sensor.date
+      - sensor.date_time
+      - sensor.date_time_iso
+      - sensor.timestamp
+    entity_globs:
+      # Exclude ALL high-frequency sensors for memory savings
+      - sensor.*
+      - binary_sensor.*
+      - "*"
+
+logbook:
+  exclude:
+    domains:
+      - automation
+      - script
+      - mqtt
+      - update
+      - device_tracker
+      - weather
+      - calendar
+      - media_player
+    entity_globs:
+      - sensor.*_linkquality
+      - sensor.*_last_seen
+      - sensor.*_battery
+      - sensor.*_temperature
+      - sensor.*_humidity
+      - sensor.*_motion
+      - sensor.*_contact
+      - sensor.cpu_*
+      - sensor.memory_*
+      - sensor.mqtt_*
+
+history:
+  exclude:
+    domains:
+      - automation
+      - script
+      - mqtt
+      - update
+      - device_tracker
+      - weather
+      - calendar
+      - media_player
+    entity_globs:
+      - sensor.*_linkquality
+      - sensor.*_last_seen
+      - sensor.*_battery
+      - sensor.*_temperature
+      - sensor.*_humidity
+      - sensor.*_motion
+      - sensor.*_contact
+      - sensor.cpu_*
+      - sensor.memory_*
+      - sensor.mqtt_*
+
+# Disable Bluetooth advertisement monitoring to prevent console spam and performance issues
+# bluetooth:
+#   advertisement_monitor: false
+
+bluetooth:
+
+input_boolean: !include_dir_merge_named includes/input_booleans/
+input_text: !include_dir_merge_named includes/input_texts/
+input_number: !include_dir_merge_named includes/input_numbers/
+input_datetime: !include_dir_merge_named includes/input_datetimes/
+input_select: !include_dir_merge_named includes/input_selects/
+input_button: !include_dir_merge_named includes/input_buttons/
+
+automation: !include_dir_merge_list includes/automations/
+script: !include_dir_merge_named includes/scripts/
+scene: !include includes/scenes/scenes.yaml
+template: !include_dir_merge_list includes/templates/
+sensor: !include_dir_merge_list includes/sensors/
+binary_sensor: !include_dir_merge_list includes/binary_sensors/
+notify: !include_dir_merge_list includes/notify/
+shell_command: !include_dir_merge_named includes/shell_commands/
+rest_command: !include includes/rest_commands/rest.yaml
+counter: !include_dir_merge_named includes/counters/
+timer: !include_dir_merge_named includes/timers/
+camera: !include camera.yaml
+
+# Xiaomi Cloud Map Extractor for vacuum maps
+# DISABLED FOR MEMORY SAVINGS
+# xiaomi_cloud_map_extractor:
+#   username: !secret xiaomi_username
+#   password: !secret xiaomi_password
+
+# Spotify Spotcast integration
+# DISABLED FOR MEMORY SAVINGS
+# spotcast:
+#   sp_dc: !secret spotify_sp_dc
+#   sp_key: !secret spotify_sp_key
+
+# Speedtest Tracker for internet performance monitoring
+# DISABLED FOR MEMORY SAVINGS
+# speedtestdotnet:
+#   scan_interval:
+#     minutes: 30
+#   monitored_conditions:
+#     - ping
+#     - download
+#     - upload
+
+# System Monitor for host system resource monitoring
+# DISABLED FOR MEMORY SAVINGS
+# sensor:
+#   - platform: systemmonitor
+#     resources:
+#       - type: disk_use_percent
+#       - type: memory_use_percent
+#       - type: processor_use
+
+
+python_script: {}
+api: {}
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+lovelace:
+  mode: storage
+  resources: !include resources.yaml
+
+logger:
+  default: info
+  logs:
+    homeassistant.core: info
+    homeassistant.components.automation: info
+    homeassistant.components.script: info
+
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+# Waze Travel Time for traffic monitoring
+# waze_travel_time:
+#   - name: "Home to Work"
+#     origin: !secret home_address
+#     destination: !secret work_address
+
+

@@ -1,0 +1,233 @@
+# ================================================
+# CRASH EVENT TRACKING & STABILITY TIMELINE SENSORS
+# ================================================
+# Purpose: Monitor crash frequency, detect stability patterns, track recovery events
+# Created: 2025-11-04 for comprehensive stability monitoring
+# Dependencies: Template sensors, HA core logging, automation triggers
+
+# Crash Frequency Counter - Tracks recent crashes and stability trends
+- platform: template
+  sensors:
+    recent_crash_count:
+      friendly_name: "Recent Crash Count (24h)"
+      value_template: >
+        {{ states('input_number.crash_counter_24h') | int(0) }}
+      unit_of_measurement: "crashes"
+      icon_template: >
+        {% set count = states('input_number.crash_counter_24h') | int(0) %}
+        {% if count == 0 %}
+          mdi:shield-check
+        {% elif count <= 2 %}
+          mdi:shield-alert
+        {% elif count <= 5 %}
+          mdi:shield-half-full
+        {% else %}
+          mdi:shield-off
+        {% endif %}
+      attribute_templates:
+        crash_level: >
+          {% set count = states('input_number.crash_counter_24h') | int(0) %}
+          {% if count == 0 %}
+            Stable
+          {% elif count <= 2 %}
+            Minor Issues
+          {% elif count <= 5 %}
+            Frequent Crashes
+          {% else %}
+            Critical Instability
+          {% endif %}
+        last_crash_time: >
+          {{ states('input_datetime.last_crash_timestamp') }}
+        stability_trend: >
+          {% set count = states('input_number.crash_counter_24h') | int(0) %}
+          {% set prev_count = states('input_number.previous_crash_count') | int(0) %}
+          {% if count < prev_count %}
+            Improving
+          {% elif count > prev_count %}
+            Degrading
+          {% else %}
+            Stable
+          {% endif %}
+
+    # VSCode Action Tracker - Correlates crashes with VSCode configuration changes
+    vscode_action_tracker:
+      friendly_name: "VSCode Action Tracker"
+      value_template: >
+        {% set last_vscode = states('input_datetime.last_vscode_action') %}
+        {% set last_crash = states('input_datetime.last_crash_timestamp') %}
+        {% if last_vscode not in ['unknown', 'unavailable', None] and last_crash not in ['unknown', 'unavailable', None] %}
+          {% set vscode_time = strptime(last_vscode, '%Y-%m-%d %H:%M:%S') %}
+          {% set crash_time = strptime(last_crash, '%Y-%m-%d %H:%M:%S') %}
+          {% set diff = (crash_time - vscode_time).total_seconds() %}
+          {% if diff > 0 and diff < 1800 %}
+            VSCode-Related
+          {% else %}
+            Unrelated
+          {% endif %}
+        {% else %}
+          No Data
+        {% endif %}
+      icon_template: >
+        {% set correlation = states('sensor.vscode_action_tracker') %}
+        {% if correlation == 'VSCode-Related' %}
+          mdi:code-tags-check
+        {% elif correlation == 'Unrelated' %}
+          mdi:code-tags
+        {% else %}
+          mdi:help-circle
+        {% endif %}
+      attribute_templates:
+        last_vscode_action: >
+          {{ states('input_text.last_vscode_action_description') }}
+        time_since_vscode_action: >
+          {% set last_vscode = states('input_datetime.last_vscode_action') %}
+          {% if last_vscode not in ['unknown', 'unavailable', None] %}
+            {% set vscode_time = strptime(last_vscode, '%Y-%m-%d %H:%M:%S') %}
+            {% set diff = (now() - vscode_time).total_seconds() %}
+            {% if diff < 60 %}
+              {{ (diff) | round(0) }} seconds ago
+            {% elif diff < 3600 %}
+              {{ (diff / 60) | round(0) }} minutes ago
+            {% else %}
+              {{ (diff / 3600) | round(1) }} hours ago
+            {% endif %}
+          {% else %}
+            Unknown
+          {% endif %}
+        correlation_confidence: >
+          {% set correlation = states('sensor.vscode_action_tracker') %}
+          {% if correlation == 'VSCode-Related' %}
+            High
+          {% elif correlation == 'Unrelated' %}
+            Low
+          {% else %}
+            None
+          {% endif %}
+
+    # Stability Score - Overall system stability assessment
+    system_stability_score:
+      friendly_name: "System Stability Score"
+      value_template: >
+        {% set crash_count = states('input_number.crash_counter_24h') | int(0) %}
+        {% set uptime_hours = (as_timestamp(now()) - as_timestamp(states('sensor.uptime'))) / 3600 %}
+        {% set base_score = 100 %}
+        {% set crash_penalty = crash_count * 10 %}
+        {% set uptime_bonus = min(uptime_hours * 2, 20) %}
+        {{ max(0, min(100, base_score - crash_penalty + uptime_bonus)) | round(1) }}
+      unit_of_measurement: "%"
+      icon_template: >
+        {% set score = states('sensor.system_stability_score') | float(0) %}
+        {% if score >= 90 %}
+          mdi:chart-line
+        {% elif score >= 70 %}
+          mdi:chart-timeline-variant
+        {% elif score >= 50 %}
+          mdi:chart-bell-curve
+        {% else %}
+          mdi:chart-bell-curve-cumulative
+        {% endif %}
+      attribute_templates:
+        stability_grade: >
+          {% set score = states('sensor.system_stability_score') | float(0) %}
+          {% if score >= 95 %}
+            Excellent
+          {% elif score >= 85 %}
+            Good
+          {% elif score >= 70 %}
+            Fair
+          {% elif score >= 50 %}
+            Poor
+          {% else %}
+            Critical
+          {% endif %}
+        crash_impact: >
+          {% set crash_count = states('input_number.crash_counter_24h') | int(0) %}
+          {% if crash_count == 0 %}
+            No Impact
+          {% elif crash_count <= 2 %}
+            Low Impact
+          {% elif crash_count <= 5 %}
+            Moderate Impact
+          {% else %}
+            High Impact
+          {% endif %}
+        uptime_hours: >
+          {% set uptime_sensor = states('sensor.uptime') %}
+          {% if uptime_sensor != 'unavailable' %}
+            {{ ((as_timestamp(now()) - as_timestamp(uptime_sensor)) / 3600) | round(1) }}
+          {% else %}
+            Unknown
+          {% endif %}
+
+    # Crash Cause Detection - Analyzes patterns and potential causes
+    crash_cause_detector:
+      friendly_name: "Crash Cause Detector"
+      value_template: >
+        {{ states('input_select.last_crash_cause') }}
+      icon_template: >
+        {% set cause = states('input_select.last_crash_cause') %}
+        {% if cause == 'Frontend Error' %}
+          mdi:web-off
+        {% elif cause == 'Database Lock' %}
+          mdi:database-lock
+        {% elif cause == 'Integration Failure' %}
+          mdi:puzzle-remove
+        {% elif cause == 'Memory Overload' %}
+          mdi:memory
+        {% elif cause == 'Configuration Error' %}
+          mdi:file-alert
+        {% elif cause == 'VSCode Triggered' %}
+          mdi:code-tags-check
+        {% else %}
+          mdi:help-circle
+        {% endif %}
+      attribute_templates:
+        detection_method: >
+          {{ states('input_text.crash_detection_method') }}
+        confidence_level: >
+          {{ states('input_select.crash_cause_confidence') }}
+        recommended_action: >
+          {% set cause = states('input_select.last_crash_cause') %}
+          {% if cause == 'Frontend Error' %}
+            Clear browser cache, check custom cards
+          {% elif cause == 'Database Lock' %}
+            Monitor recorder, check disk space
+          {% elif cause == 'Integration Failure' %}
+            Review integration logs, restart integration
+          {% elif cause == 'Memory Overload' %}
+            Monitor memory usage, restart HA
+          {% elif cause == 'Configuration Error' %}
+            Check YAML syntax, review recent changes
+          {% elif cause == 'VSCode Triggered' %}
+            Review recent VSCode changes, validate config
+          {% else %}
+            Monitor logs, check system health
+          {% endif %}
+
+    # Timeline Event Counter - Tracks event frequency over time
+    timeline_event_counter:
+      friendly_name: "Timeline Event Counter"
+      value_template: >
+        {{ states('input_number.timeline_event_count') | int(0) }}
+      unit_of_measurement: "events"
+      icon_template: >
+        {% set count = states('input_number.timeline_event_count') | int(0) %}
+        {% if count < 10 %}
+          mdi:timeline-clock
+        {% elif count < 50 %}
+          mdi:timeline-clock-outline
+        {% else %}
+          mdi:timeline-alert
+        {% endif %}
+      attribute_templates:
+        events_today: >
+          {{ states('input_number.events_today_count') | int(0) }}
+        events_this_week: >
+          {{ states('input_number.events_week_count') | int(0) }}
+        average_daily_events: >
+          {% set weekly = states('input_number.events_week_count') | int(0) %}
+          {{ (weekly / 7) | round(1) }}
+        last_event_type: >
+          {{ states('input_text.last_timeline_event_type') }}
+        last_event_time: >
+          {{ states('input_datetime.last_timeline_event') }}

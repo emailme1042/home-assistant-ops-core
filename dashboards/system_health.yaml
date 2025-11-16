@@ -1,0 +1,36 @@
+views:
+  - title: System Health
+    path: health
+    icon: mdi:heart-pulse
+    cards:
+      - type: entities
+        title: Crash Intelligence
+        entities:
+          - sensor.system_uptime
+          - sensor.template_validator_status
+          - sensor.frontend_asset_health
+      - type: entities
+        title: Validator Status
+        entities:
+          - sensor.yaml_validation_result
+          - sensor.fix_sheet_last_checked
+          - sensor.fix_sheet_last_updated
+      - type: logbook
+        title: Recent Crash Events
+        entities:
+          - sensor.ha_crash_sentinel
+          - sensor.last_card_loaded
+          - sensor.vertical_layout_tracker
+      - type: gauge
+        entity: sensor.restart_safety_score
+        name: Restart Safety Score
+        min: 0
+        max: 100
+        severity:
+          green: 80
+          yellow: 50
+          red: 0
+      - type: markdown
+        content: |
+          **Crash Log:**
+          [View Crash Log](/local/crash_trap_log.txt)

@@ -1,0 +1,27 @@
+# HACS Component Testing Entities
+# Purpose: Test entities for demonstrating HACS card functionality
+
+test_button_card:
+  name: "HACS Button Card Test"
+  initial: false
+  icon: mdi:gesture-tap-button
+
+test_state_switch:
+  name: "HACS State Switch Test"
+  initial: false
+  icon: mdi:toggle-switch
+
+test_scheduler:
+  name: "HACS Scheduler Test"
+  initial: false
+  icon: mdi:calendar-clock
+
+test_media_player:
+  name: "HACS Media Player Test"
+  initial: false
+  icon: mdi:play-circle
+
+test_weather_card:
+  name: "HACS Weather Card Test"
+  initial: false
+  icon: mdi:weather-cloudy

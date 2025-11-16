@@ -1,0 +1,6 @@
+theme_mode:
+  name: theme mode.Value.ToUpper() heme mode
+  options:
+    - Option 1
+    - Option 2
+    - Option 3

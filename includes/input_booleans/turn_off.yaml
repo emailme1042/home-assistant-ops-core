@@ -1,0 +1,3 @@
+turn_off:
+  name: turn off.Value.ToUpper() turn off
+  icon: mdi:toggle-switch

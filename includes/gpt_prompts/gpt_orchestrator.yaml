@@ -1,0 +1,85 @@
+openapi: 3.0.0
+info:
+  title: GPT Orchestrator API
+  version: 1.0.0
+
+servers:
+  - url: http://192.168.1.203:5001
+    description: GPT Flask Proxy
+  - url: http://192.168.1.217:8123
+    description: Home Assistant Core
+
+tags:
+  - name: Orchestration
+    description: Chained GPT + HA actions
+  - name: Recovery
+    description: Fallback and watchdog triggers
+
+paths:
+  /api/orchestrate_gpt_flow:
+    post:
+      tags: [Orchestration]
+      summary: Run full GPT automation flow
+      description: Injects prompt, triggers GPT, logs response, and updates HA entities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+      responses:
+        "200":
+          description: GPT flow executed
+
+  /api/trigger_fallback:
+    post:
+      tags: [Recovery]
+      summary: Trigger system fallback
+      description: Activates fallback automation or MQTT trigger
+      responses:
+        "200":
+          description: Fallback triggered
+
+  /api/log_gpt_response:
+    post:
+      tags: [Orchestration]
+      summary: Write GPT response to file
+      description: Saves GPT output to `/config/www/gpt_response.txt`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [response_text]
+              properties:
+                response_text:
+                  type: string
+      responses:
+        "200":
+          description: Response logged
+
+  /api/update_input_text:
+    post:
+      tags: [Orchestration]
+      summary: Update input_text entity
+      description: Writes value to any input_text entity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entity_id, value]
+              properties:
+                entity_id:
+                  type: string
+                value:
+                  type: string
+      responses:
+        "200":
+          description: input_text updated

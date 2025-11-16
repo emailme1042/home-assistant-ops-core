@@ -1,0 +1,32 @@
+template:
+  - sensor:
+      - name: "AI Exec Log Recent"
+        unique_id: ai_exec_log_recent
+        state: >-
+          {% set log_text = states('input_text.ai_exec_log') %}
+          {% if log_text and log_text != 'unknown' %}
+            {{ log_text.split('\n')[-1:][0] if log_text.split('\n') else 'No recent activity' }}
+          {% else %}
+            No recent activity
+          {% endif %}
+        attributes:
+          last_lines: >-
+            {% set log_text = states('input_text.ai_exec_log') %}
+            {% if log_text and log_text != 'unknown' %}
+              {{ log_text.split('\n')[-5:] | join('\n') if log_text.split('\n') else 'No activity' }}
+            {% else %}
+              No activity
+            {% endif %}
+
+      - name: "Local Flask Health"
+        unique_id: local_flask_health
+        state: >-
+          {% if states('binary_sensor.jit_plugin_flask_online') == 'on' %}
+            OK
+          {% elif states('binary_sensor.jit_plugin_flask_online') == 'off' %}
+            Down
+          {% else %}
+            Unknown
+          {% endif %}
+        attributes:
+          status: "{{ states('binary_sensor.jit_plugin_flask_online') }}"

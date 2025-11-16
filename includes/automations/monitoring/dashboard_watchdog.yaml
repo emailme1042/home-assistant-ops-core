@@ -1,0 +1,213 @@
+# Dashboard Health Monitoring Automations
+# Detects frontend crashes, resource loading failures, and system instability
+# Enhanced with performance tracking and session management
+
+# Session Start Tracker
+- id: dashboard_session_tracker
+  alias: Dashboard Session Tracker
+  description: Track dashboard sessions and update performance metrics
+  trigger:
+    # Track when dashboards are accessed
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: persistent_notification
+        service: create
+    # Track when HA frontend is accessed
+    - platform: homeassistant
+      event: start
+  action:
+    # Removed broken input_datetime.set_datetime action
+    - service: system_log.write
+      data:
+        message: "Dashboard session started - performance tracking active"
+        level: info
+        logger: homeassistant.components.frontend.performance
+
+# Frontend Health Monitor
+- id: frontend_health_monitor
+  alias: Frontend Health Monitor
+  description: Monitor for frontend crashes and connection issues
+  trigger:
+    # Check every 5 minutes
+    - platform: time_pattern
+      minutes: "/5"
+  condition:
+    # Only run during active hours (7 AM to 11 PM)
+    - condition: time
+      after: "07:00:00"
+      before: "23:00:00"
+  action:
+    # Log current status
+    - service: system_log.write
+      data:
+        message: "Frontend health check: System {{ states('sensor.uptime') }} uptime"
+        level: info
+        logger: homeassistant.components.frontend
+
+# Resource Loading Failure Detection
+- id: resource_loading_failure_alert
+  alias: Resource Loading Failure Alert
+  description: Alert when frontend resources fail to load
+  trigger:
+    # Monitor for repeated authentication failures (indicates frontend issues)
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: WARNING
+  condition:
+    # Check if the warning relates to frontend/resources
+    - condition: template
+      value_template: >
+        {{
+          'frontend' in trigger.event.data.message.lower() or
+          'resource' in trigger.event.data.message.lower() or
+          'lovelace' in trigger.event.data.message.lower() or
+          '404' in trigger.event.data.message
+        }}
+  action:
+    # Count failures
+    - service: input_number.increment
+      target:
+        entity_id: input_number.frontend_errors
+    # Notify if errors are frequent (more than 5 in recent period)
+    - condition: template
+      value_template: "{{ states('input_number.frontend_errors') | int > 5 }}"
+    - service: script.mobile_alexa_announce
+      data:
+        message: "Alert: Frontend resource loading issues detected. Check the Recovery dashboard."
+
+# System Instability Detection
+- id: system_instability_monitor
+  alias: System Instability Monitor
+  description: Monitor for signs of system instability affecting the frontend
+  trigger:
+    # High CPU usage
+    - platform: numeric_state
+      entity_id: sensor.home_assistant_core_cpu_percent
+      above: 80
+      for:
+        minutes: 5
+    # High memory usage
+    - platform: numeric_state
+      entity_id: sensor.home_assistant_core_memory_percent
+      above: 90
+      for:
+        minutes: 3
+    # Network connectivity issues
+    - platform: state
+      entity_id: binary_sensor.192_168_1_1
+      to: 'off'
+      for:
+        minutes: 2
+  action:
+    # Log the issue
+    - service: system_log.write
+      data:
+        message: >
+          System instability detected: {{ trigger.entity_id }} = {{ trigger.to_state.state }}
+        level: warning
+        logger: homeassistant.components.system_monitor
+    # Recommend recovery mode
+    - service: persistent_notification.create
+      data:
+        title: "🚨 System Instability Detected"
+        message: >
+          **Issue**: {{ trigger.entity_id }} is showing problems.
+          
+          **Recommendation**: Use the Recovery Dashboard for essential controls.
+          
+          **Recovery Link**: [🛡️ Recovery Mode](/recovery/safe-mode)
+        notification_id: system_instability_alert
+
+# Dashboard Load Success Monitor
+- id: dashboard_load_success_monitor
+  alias: Dashboard Load Success Monitor
+  description: Track successful dashboard loads and reset error counters
+  trigger:
+    # When someone successfully navigates between dashboards
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: persistent_notification
+        service: dismiss
+  condition:
+    # Only reset if it's been more than 30 minutes since last reset
+    - condition: template
+      value_template: >
+        {{ 
+          (now() - states.input_number.frontend_errors.last_changed).total_seconds() > 1800 
+        }}
+  action:
+    # Reset error counter on successful operation
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.frontend_errors
+      data:
+        value: 0
+    # Log successful operation
+    - service: system_log.write
+      data:
+        message: "Dashboard navigation successful - error counter reset"
+        level: info
+        logger: homeassistant.components.frontend
+
+# Recovery Mode Recommendation
+- id: recovery_mode_recommendation
+  alias: Recovery Mode Recommendation
+  description: Recommend recovery mode when multiple issues are detected
+  trigger:
+    # When frontend error counter reaches 10
+    - platform: numeric_state
+      entity_id: input_number.frontend_errors
+      above: 10
+  action:
+    # Create urgent notification
+    - service: persistent_notification.create
+      data:
+        title: "🛡️ Recovery Mode Recommended"
+        message: >
+          **Multiple frontend issues detected**
+          
+          Your main dashboards may be unstable. Consider using Recovery Mode for essential controls.
+          
+          **Quick Actions**:
+          - [🛡️ Recovery Dashboard](/recovery/safe-mode)
+          - [🚨 Emergency Controls](/recovery/emergency)
+          - Check browser console (F12) for errors
+          
+          **If problems persist**:
+          1. Clear browser cache
+          2. Restart Home Assistant
+          3. Check HACS resources
+        notification_id: recovery_mode_recommendation
+    # Announce via Alexa
+    - service: script.mobile_alexa_announce
+      data:
+        message: "Multiple dashboard issues detected. Consider using Recovery Mode for stable operation."
+
+# Weekly Dashboard Health Report
+- id: weekly_dashboard_health_report
+  alias: Weekly Dashboard Health Report
+  description: Generate weekly report on dashboard stability
+  trigger:
+    # Every Sunday at 9 AM
+    - platform: time
+      at: "09:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - sun
+  action:
+    # Generate report
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Weekly dashboard report: {{ states('input_number.frontend_errors') }} frontend errors this week.
+          System uptime: {{ states('sensor.uptime') }}.
+    # Reset weekly counter
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.frontend_errors
+      data:
+        value: 0

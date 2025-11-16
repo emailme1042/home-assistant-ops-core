@@ -1,0 +1,93 @@
+# Room Template Automations - Next-Level Room Management
+# Purpose: Track usage, provide health monitoring, and trigger smart actions
+# Integration: Works with room_template sensors and scripts
+
+- alias: "🏷️ Room Template Tag Tracker"
+  description: "Track when room template is accessed and update room tag"
+  id: room_template_tag_tracker
+  trigger:
+    - platform: state
+      entity_id: input_select.active_room_area
+  action:
+    - service: homeassistant.update_entity
+      entity_id: sensor.room_template_tag
+    - service: homeassistant.update_entity  
+      entity_id: sensor.room_health_summary
+    - service: homeassistant.update_entity
+      entity_id: sensor.room_automation_suggestions
+    - service: script.turn_on
+      target:
+        entity_id: script.log_ai_action
+      data:
+        variables:
+          action: "room_template_accessed"
+          room: "{{ states('input_select.active_room_area') }}"
+          timestamp: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+- alias: "⚠️ Room Health Alert"
+  description: "Alert when room devices need attention"
+  id: room_health_alert
+  trigger:
+    - platform: state
+      entity_id: sensor.room_health_summary
+      to: "⚠️ Attention Needed"
+  condition:
+    - condition: template
+      value_template: "{{ states('sensor.room_template_tag') != 'none' }}"
+  action:
+    - service: notify.persistent_notification
+      data:
+        title: "⚠️ Room Health Alert"
+        message: >
+          **{{ states('input_select.active_room_area') | title }} Room Needs Attention**
+          
+          Status: {{ states('sensor.room_health_summary') }}
+          
+          **Issues Detected:**
+          {% if state_attr('sensor.room_health_summary', 'battery_alerts') %}
+          🔋 Low Battery: {{ state_attr('sensor.room_health_summary', 'battery_alerts') }}
+          {% endif %}
+          {% if state_attr('sensor.room_health_summary', 'signal_alerts') %}
+          📶 Weak Signal: {{ state_attr('sensor.room_health_summary', 'signal_alerts') }}
+          {% endif %}
+          {% if state_attr('sensor.room_health_summary', 'power_alerts') %}
+          ⚡ High Power: {{ state_attr('sensor.room_health_summary', 'power_alerts') }}
+          {% endif %}
+          
+          Check the Room Template dashboard for details.
+    - service: notify.alexa_media_kitchen_alexa
+      data:
+        message: "Room health alert for {{ states('input_select.active_room_area') }}. Check the dashboard for details."
+        data:
+          type: tts
+
+- alias: "🤖 Smart Room Suggestions"
+  description: "Provide intelligent automation suggestions based on room activity"
+  id: smart_room_suggestions
+  trigger:
+    - platform: time_pattern
+      hours: "/6"  # Every 6 hours
+  condition:
+    - condition: template
+      value_template: "{{ states('sensor.room_template_tag') != 'none' }}"
+    - condition: template
+      value_template: "{{ state_attr('sensor.room_automation_suggestions', 'complexity_score') in ['Intermediate', 'Advanced'] }}"
+  action:
+    - service: notify.persistent_notification
+      data:
+        title: "🤖 Smart Room Enhancement Ideas"
+        message: >
+          **{{ states('input_select.active_room_area') | title }} Room Enhancement Suggestions**
+          
+          **Current Status:** {{ states('sensor.room_automation_suggestions') }}
+          **Complexity:** {{ state_attr('sensor.room_automation_suggestions', 'complexity_score') }}
+          
+          **Available Automations:**
+          {{ state_attr('sensor.room_automation_suggestions', 'available_automations') }}
+          
+          **Next Steps:**
+          1. Use "Generate Automations" button in Room Template
+          2. Review suggested automation patterns
+          3. Implement motion-based or climate automations
+          
+          Ready for next-level room intelligence!

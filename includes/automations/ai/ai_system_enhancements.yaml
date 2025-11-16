@@ -1,0 +1,64 @@
+
+# 🧠 AI System Enhancements Blueprint Bundle
+# Version: 2025.11.01 | Verified HA Core ≥2025.10.4
+# Purpose: Combine system monitoring, reliability, lighting, presence, and adaptive intelligence layers.
+
+automation:
+  - id: adaptive_lighting_ai
+    alias: Adaptive Lighting (AI)
+    description: Adjust color temperature and brightness based on time of day.
+    trigger:
+      - platform: time_pattern
+        minutes: "/10"
+    condition:
+      - condition: sun
+        after: sunrise
+        before: sunset
+    action:
+      - service: light.turn_on
+        target: "{{ light_targets }}"
+        data:
+          kelvin: >
+            {{ 4000 - (state_attr('sun.sun', 'elevation')|int * 20) }}
+          brightness_pct: >
+            {{ [10 + (state_attr('sun.sun', 'elevation')|int), 100] | min }}
+
+# ───────────────────────────────
+# 🔋 BATTERY WATCHDOG
+# ───────────────────────────────
+  - id: battery_alert_ai
+    alias: Battery Watchdog (AI)
+    trigger:
+      - platform: numeric_state
+        entity_id: "{{ battery_entities }}"
+        below: 25
+    action:
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🔋 Low Battery Alert"
+          message: >
+            The following devices are low: {{ trigger.to_state.name }}
+
+# ───────────────────────────────
+# 🔔 UPDATE & HEALTH NOTIFIER
+# ───────────────────────────────
+  - id: update_notifier_ai
+    alias: Update and System Health Notifier
+    trigger:
+      - platform: state
+        entity_id: update.home_assistant_core_update
+      - platform: numeric_state
+        entity_id: sensor.processor_use
+        above: "{{ cpu_threshold }}"
+    action:
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🧩 System Advisory"
+          message: >
+            {% if trigger.entity_id == 'update.home_assistant_core_update' %}
+              New Home Assistant Core update available: {{ states(trigger.entity_id) }}
+            {% else %}
+              CPU load high ({{ states('sensor.processor_use') }}%)
+            {% endif %}

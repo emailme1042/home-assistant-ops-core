@@ -1,0 +1,49 @@
+---
+# Zigbee Pulse Adapter Integration for SMT-100/200
+# If your SMT-100/200 has pulse output, use this configuration
+
+# Add to configuration.yaml
+sensor:
+  - platform: zha
+    name: "Hot Water Flow Pulse"
+    id: hot_water_flow_pulse
+    # Configure based on your Zigbee pulse adapter (MC241)
+    # This will count pulses from the flow sensor
+
+# Template sensor to convert pulses to flow rate
+  - platform: template
+    sensors:
+      hot_water_flow_rate:
+        friendly_name: "Hot Water Flow Rate"
+        unit_of_measurement: "L/min"
+        value_template: >
+          {# Convert pulse count to flow rate #}
+          {# Adjust conversion factor based on your SMT-100/200 pulse rate #}
+          {% set pulses_per_liter = 100 %}  {# Example: 100 pulses per liter #}
+          {% set pulse_count = states('sensor.hot_water_flow_pulse') | float(0) %}
+          {% set flow_rate = pulse_count / pulses_per_liter %}
+          {{ flow_rate | round(1) }}
+
+# Binary sensor for flow detection
+binary_sensor:
+  - platform: template
+    sensors:
+      hot_water_flow_active:
+        friendly_name: "Hot Water Flow Active"
+        device_class: moisture
+        value_template: "{{ states('sensor.hot_water_flow_rate') | float(0) > 0.5 }}"
+
+# Automation to reset pulse counter periodically
+automation:
+  - alias: "Reset Flow Pulse Counter Daily"
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: zha.set_zigbee_cluster_attribute
+        data:
+          ieee: "zigbee_ieee_address_of_pulse_adapter"  # Replace with actual IEEE
+          endpoint_id: 1
+          cluster_id: 0x0000  # Basic cluster
+          attribute: 0x0000  # Reset attribute (adjust based on adapter)
+          value: 0

@@ -1,0 +1,5 @@
+ai_file_preview:
+  name: "AI File Preview Content"
+  max: 255
+  initial: "Select a file to preview"
+  icon: mdi:file-eye

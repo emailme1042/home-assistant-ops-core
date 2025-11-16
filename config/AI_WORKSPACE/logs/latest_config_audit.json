@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-10-29T22:58:08.272817",
+  "deprecated_count": 0,
+  "problematic_count": 0,
+  "unnecessary_count": 0,
+  "recommendations_count": 1,
+  "cleanup_actions": [
+    {
+      "priority": "INFO",
+      "category": "General Recommendations",
+      "actions": [
+        "resources.yaml not found - this is actually GOOD since resources should be managed via UI"
+      ]
+    }
+  ],
+  "total_issues": 0
+}

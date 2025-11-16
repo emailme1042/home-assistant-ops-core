@@ -1,0 +1,32 @@
+# Multi-Agent Coordination Input DateTimes
+# Tracks timing for agent coordination and OneNote sync
+
+last_onenote_sync:
+  name: "Last OneNote Sync"
+  has_date: true
+  has_time: true
+  icon: mdi:microsoft-onenote
+
+last_agent_coordination:
+  name: "Last Agent Coordination"
+  has_date: true
+  has_time: true
+  icon: mdi:account-group
+
+last_yaml_repair:
+  name: "Last YAML Repair"
+  has_date: true
+  has_time: true
+  icon: mdi:wrench-clock
+
+last_message_routing:
+  name: "Last Message Routing"
+  has_date: true
+  has_time: true
+  icon: mdi:send-clock
+
+last_task_completion:
+  name: "Last Task Completion"
+  has_date: true
+  has_time: true
+  icon: mdi:check-circle-outline

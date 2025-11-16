@@ -1,0 +1,6 @@
+test_openai_simple:
+  url: "https://api.openai.com/v1/models"
+  method: GET
+  headers:
+    Authorization: "Bearer {{ secrets.openai_api_key }}"
+    Content-Type: application/json

@@ -1,0 +1,76 @@
+data_path: /config/zigbee2mqtt
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://core-mosquitto
+  user: homeassistant
+  password: Donkey123
+serial:
+  port: /dev/ttyUSB0
+  baudrate: 115200
+  adapter: zstack
+advanced:
+  advanced: null
+  log_level: debug
+  log_output:
+    - file
+    - console
+  network:
+    log_enabled: true
+  channel: 11
+  last_seen: ISO_8601
+  network_key:
+    - 1
+    - 3
+    - 5
+    - 7
+    - 9
+    - 11
+    - 13
+    - 15
+    - 0
+    - 2
+    - 4
+    - 6
+    - 8
+    - 10
+    - 12
+    - 13
+  pan_id: 60332
+  ext_pan_id:
+    - 181
+    - 96
+    - 25
+    - 99
+    - 7
+    - 197
+    - 23
+    - 156
+version: 4
+homeassistant:
+  enabled: true
+frontend:
+  enabled: true
+  port: 8099
+devices:
+  '0xa49e69fffe6a4386':
+    friendly_name: Water Control Valve - Garden Irregation
+  '0xe406bffffe6fed60':
+    friendly_name: Bathroom Light Switch
+  '0xd44867fffe28b4d8':
+    friendly_name: Bathroom Motion Sensor
+  '0xc09b9efffef56fc8':
+    friendly_name: Office Motion Sensor
+  '0x54ef441000c392db':
+    friendly_name: Teddy Cube
+  '0x0ceff6fffe1be262':
+    friendly_name: Bathroom Water Sensor
+  '0x08ddebfffea32c92':
+    friendly_name: Button Zigbee
+  '0xa4c13804e735ffff':
+    friendly_name: Outside Temp Humidity
+  '0xa4c13801d40cffff':
+    friendly_name: socket z1
+  '0xa4c13801f84cffff':
+    friendly_name: socket z2
+  '0xa4c13801e95fffff':
+    friendly_name: socket z3

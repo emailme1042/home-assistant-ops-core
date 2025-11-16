@@ -1,0 +1,42 @@
+validate_hacs_resources: >
+  python3 -c "
+  import os, json;
+  www_path = '/config/www/community/';
+  missing = [];
+  for root, dirs, files in os.walk('/config/'):
+    for file in files:
+      if file.endswith('.yaml') and 'dashboard' in file:
+        print(f'Checking: {file}');
+  print('HACS resource validation complete')
+  "
+
+cleanup_duplicate_resources: >
+  grep -r "custom-sidebar-yaml.js" /config/dashboards/ || echo "No duplicate custom-sidebar found"
+
+list_unavailable_entities: >
+  python3 -c "
+  import requests, json;
+  try:
+    r = requests.get('http://localhost:8123/api/states', headers={'Authorization': 'Bearer $(cat /config/.storage/auth)'}, timeout=5);
+    states = r.json();
+    unavailable = [s['entity_id'] for s in states if s['state'] == 'unavailable'];
+    print(f'Total entities: {len(states)}');
+    print(f'Unavailable: {len(unavailable)}');
+    print(f'Health: {((len(states)-len(unavailable))/len(states)*100):.1f}%')
+  except Exception as e:
+    print(f'Error: {e}')
+  "
+
+count_entity_domains: >
+  python3 -c "
+  import requests, json;
+  from collections import Counter;
+  try:
+    r = requests.get('http://localhost:8123/api/states', headers={'Authorization': 'Bearer $(cat /config/.storage/auth)'}, timeout=5);
+    states = r.json();
+    domains = Counter([s['entity_id'].split('.')[0] for s in states]);
+    for domain, count in domains.most_common(10):
+      print(f'{domain}: {count}')
+  except Exception as e:
+    print(f'Error: {e}')
+  "

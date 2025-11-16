@@ -1,0 +1,95 @@
+# System Health Tracking Scripts
+# Purpose: Manual and automated health snapshot capture
+
+capture_health_snapshot:
+  alias: "📊 Capture Health Snapshot"
+  description: "Captures current system health metrics for trend analysis"
+  sequence:
+    # Capture current entity counts
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_1_entities
+      data:
+        value: >
+          {{ states | selectattr('domain', 'ne', 'group') | list | length }}
+    
+    # Capture current unavailable count
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_1_unavailable
+      data:
+        value: >
+          {{ states | selectattr('state', 'eq', 'unavailable') | list | length }}
+    
+    # Capture current timestamp
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.health_snapshot_1_time
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    
+    # Log the capture
+    - service: logbook.log
+      data:
+        name: "System Health Tracker"
+        message: >
+          Health snapshot captured: {{ states | selectattr('domain', 'ne', 'group') | list | length }} entities, 
+          {{ states | selectattr('state', 'eq', 'unavailable') | list | length }} unavailable 
+          ({{ ((states | selectattr('state', 'eq', 'unavailable') | list | length) / (states | selectattr('domain', 'ne', 'group') | list | length) * 100) | round(1) }}%)
+
+manual_health_check:
+  alias: "🔍 Manual Health Check"
+  description: "Runs immediate health analysis and displays current status"
+  sequence:
+    - service: script.turn_on
+      target:
+        entity_id: script.capture_health_snapshot
+    - delay: "00:00:03"
+    - service: notify.persistent_notification
+      data:
+        title: "🔍 Manual Health Check Complete"
+        message: >
+          **Current Status**: {{ states('sensor.system_health_snapshot') }}
+          
+          **Entity Count**: {{ states | selectattr('domain', 'ne', 'group') | list | length }} total entities
+          **Unavailable**: {{ states | selectattr('state', 'eq', 'unavailable') | list | length }} entities
+          **Availability**: {{ (100 - ((states | selectattr('state', 'eq', 'unavailable') | list | length) / (states | selectattr('domain', 'ne', 'group') | list | length) * 100)) | round(1) }}%
+          
+          **Trend Analysis**: {{ states('sensor.system_health_trend') }}
+          **HACS Resources**: {{ states('sensor.hacs_resource_status') }}
+          
+          Check the Health Trends dashboard for detailed historical analysis.
+
+reset_health_tracking:
+  alias: "🔄 Reset Health Tracking"
+  description: "Resets all health tracking data (use with caution)"
+  sequence:
+    - service: input_number.set_value
+      target:
+        entity_id: 
+          - input_number.health_snapshot_1_entities
+          - input_number.health_snapshot_1_unavailable
+          - input_number.health_snapshot_2_entities
+          - input_number.health_snapshot_2_unavailable
+          - input_number.health_snapshot_3_entities
+          - input_number.health_snapshot_3_unavailable
+          - input_number.health_snapshot_4_entities
+          - input_number.health_snapshot_4_unavailable
+          - input_number.health_snapshot_5_entities
+          - input_number.health_snapshot_5_unavailable
+      data:
+        value: 0
+    - service: input_datetime.set_datetime
+      target:
+        entity_id:
+          - input_datetime.health_snapshot_1_time
+          - input_datetime.health_snapshot_2_time
+          - input_datetime.health_snapshot_3_time
+          - input_datetime.health_snapshot_4_time
+          - input_datetime.health_snapshot_5_time
+      data:
+        datetime: "2023-01-01 00:00:00"
+    - service: notify.persistent_notification
+      data:
+        title: "🔄 Health Tracking Reset"
+        message: "All health tracking data has been reset. New snapshots will begin capturing fresh data."

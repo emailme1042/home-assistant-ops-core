@@ -1,0 +1,21 @@
+teddy_karate_belt:
+  name: Karate Belt Level
+  options:
+    - White
+    - Yellow
+    - Orange
+    - Green
+    - Blue
+    - Purple
+    - Brown
+    - Black
+  initial: White
+  icon: mdi:karate  # ✅ properly aligned
+dashboard_theme:
+  name: Dashboard Theme
+  options:
+    - default
+    - mushroom
+    - clean
+    - minimal
+  initial: default

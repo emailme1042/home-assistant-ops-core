@@ -1,0 +1,26 @@
+# Automation health audit control booleans
+
+run_automation_audit:
+  name: "Run Automation Health Audit"
+  initial: false
+  icon: mdi:robot-angry
+
+enable_session_tagging:
+  name: "Enable Session Tagging"
+  initial: false
+  icon: mdi:tag-plus
+
+test_fallback_triggers:
+  name: "Test Fallback Triggers"
+  initial: false
+  icon: mdi:shield-check
+
+audit_notifications:
+  name: "Audit Notifications"
+  initial: true
+  icon: mdi:bell-outline
+
+legacy_mode_detection:
+  name: "Legacy Mode Detection"
+  initial: true
+  icon: mdi:alarm-light-outline

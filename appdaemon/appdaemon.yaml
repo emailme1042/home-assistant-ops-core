@@ -1,0 +1,35 @@
+---
+appdaemon:
+  latitude: !secret homeassistant_latitude
+  longitude: !secret homeassistant_longitude
+  elevation: !secret homeassistant_elevation
+  time_zone: !secret homeassistant_time_zone
+  plugins:
+    HASS:
+      type: hass
+      ha_url: http://supervisor/core
+      app_init_delay: 30
+      appdaemon_startup_conditions:
+        - "connected"
+      event_reconnect_delay: 10
+      retry_secs: 10
+      timeout: 60
+      verify_ssl: false
+http:
+  url: http://0.0.0.0:5050
+admin:
+  url: http://0.0.0.0:5050
+api:
+  url: http://0.0.0.0:5050
+hadashboard:
+  url: http://0.0.0.0:5050
+logs:
+  main_log:
+    level: INFO
+    name: appdaemon.log
+  access_log:
+    name: access.log
+  error_log:
+    name: error.log
+  diag_log:
+    name: diag.log

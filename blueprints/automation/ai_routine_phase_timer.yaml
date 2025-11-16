@@ -1,0 +1,59 @@
+# 🕒 AI Routine Phase Timer
+# Version: 2025.11.01 | Compatible with Lifecycle Tracker
+# Tracks duration (in minutes) for each routine phase and updates analytics sensors.
+
+blueprint:
+  name: AI Routine Phase Timer
+  description: >
+    Monitors how long each routine phase (Morning, Focus, Evening, Sleep)
+    remains active. Updates duration sensors for analysis and summary.
+  domain: automation
+
+  input:
+    routine_state_sensor:
+      name: Routine State (input_select)
+      selector:
+        entity:
+          domain: input_select
+    ai_sync_sensor:
+      name: AI Workspace Sync Sensor
+      default: sensor.ha_sync_status
+      selector:
+        entity:
+          domain: sensor
+    phase_timer_entities:
+      name: Phase Duration Sensors (Helpers)
+      description: >
+        Map routine names to numeric sensors (in minutes).
+      selector:
+        object: {}
+
+automation:
+  - id: ai_routine_phase_timer
+    alias: AI Routine Phase Timer
+    trigger:
+      - platform: state
+        entity_id: !input routine_state_sensor
+    variables:
+      prev_state: "{{ trigger.from_state.state }}"
+      new_state: "{{ trigger.to_state.state }}"
+      duration: "{{ (as_timestamp(trigger.to_state.last_changed) - as_timestamp(trigger.from_state.last_changed)) / 60 }}"
+      sync: "{{ states(!input ai_sync_sensor) }}"
+    action:
+      - service: homeassistant.update_entity
+        target:
+          entity_id: !input ai_sync_sensor
+      - service: input_number.set_value
+        data:
+          entity_id: "{{ (!input phase_timer_entities)[prev_state] }}"
+          value: "{{ (states((!input phase_timer_entities)[prev_state]) | float(0)) + duration }}"
+      - service: system_log.write
+        data:
+          level: info
+          message: >
+            [AI Routine Timer] Phase '{{ prev_state }}' lasted {{ duration | round(1) }} min.
+      - service: persistent_notification.create
+        data:
+          title: "🕒 Phase Timer Logged"
+          message: >
+            {{ prev_state }}: {{ duration | round(1) }} min | New: {{ new_state }} | Sync: {{ sync }}

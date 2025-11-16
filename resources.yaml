@@ -1,0 +1,79 @@
+# External resources - COMMENTED OUT FOR HACS DISABLE TEST
+- url: /local/community/auto-entities/auto-entities.js
+  type: module
+# - url: /local/community/bubble-card/bubble-card.js  # UNUSED - not found in any dashboards
+#   type: module
+- url: /local/community/button-card/button-card.js
+  type: module
+# - url: /local/community/clock-weather-card/clock-weather-card.js  # UNUSED - not found in any dashboards
+#   type: module
+- url: /local/community/config-template-card/config-template-card.js
+  type: module
+# - url: /local/community/custom-attributes/custom-attributes.js  # DISABLED - causing JS errors and crashes
+#   type: module
+# - url: /local/community/decluttering-card/decluttering-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/fr24_card/fr24_card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/ha-firemote/HA-Firemote.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/hass-swipe-navigation/swipe-navigation.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/kiosk-mode/kiosk-mode.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/light-entity-card/light-entity-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/logbook-card/logbook-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/lottie-card/lottie-card.js
+#   type: module
+# - url: /local/community/lovelace-background-graph-entities/background-graph-entities.js  # UNUSED - not found in any dashboards
+#   type: module
+- url: /local/community/lovelace-card-mod/card-mod.js
+  type: module
+# - url: /local/community/lovelace-climate-mode-entity-row/climate-mode-entity-row.js  # UNUSED - not found in any dashboards
+#   type: module
+- url: /local/community/lovelace-layout-card/layout-card.js
+  type: module
+- url: /local/community/lovelace-mushroom/mushroom.js
+  type: module
+# - url: /local/community/lovelace-paper-buttons-row/paper-buttons-row.js  # UNUSED - not found in any dashboards
+#   type: module
+- url: /local/community/lovelace-state-switch/state-switch.js
+  type: module
+# - url: /local/community/lovelace-template-entity-row/template-entity-row.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/maxi-media-player/maxi-media-player.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/mini-graph-card/mini-graph-card-bundle.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/mini-media-player/mini-media-player-bundle.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/modern-circular-gauge/modern-circular-gauge.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/room-summary-card/room-summary-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/scheduler-card/scheduler-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/simple-weather-card/simple-weather-card-bundle.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/slider-button-card/slider-button-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/stack-in-card/stack-in-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/status-card/status-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/swipe-navigation-card/swipe-navigation-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/tabbed-card/tabbed-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/timer-bar-card/timer-bar-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/todo-swipe-card/todo-swipe-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/unused-card/unused-card.js  # UNUSED - not found in any dashboards
+#   type: module
+# - url: /local/community/uptime-card/uptime-card.js  # UNUSED - not found in any dashboards
+#   type: module
+- url: /local/community/vertical-stack-in-card/vertical-stack-in-card.js
+  type: module

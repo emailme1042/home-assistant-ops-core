@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: Smart Home GPT Actions API
+  version: 1.0.0
+
+servers:
+  - url: http://192.168.1.203:5001
+    description: GPT Flask Proxy (LAN)
+  - url: http://192.168.1.217:8123
+    description: Home Assistant Core (LAN)
+
+tags:
+  - name: GPT Control
+    description: Actions triggered by GPT
+  - name: Home Assistant Core
+    description: Native HA service calls
+
+paths:
+  /api/chatgpt_query:
+    post:
+      tags: [GPT Control]
+      summary: Submit prompt to ChatGPT
+      description: Writes to input_text.chatgpt_prompt and triggers GPT script
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+      responses:
+        "200":
+          description: Prompt submitted
+
+  /api/reload_automations:
+    post:
+      tags: [Home Assistant Core]
+      summary: Reload automations
+      description: Calls homeassistant.reload_automations
+      responses:
+        "200":
+          description: Automations reloaded
+
+  /api/input_text:
+    post:
+      tags: [Home Assistant Core]
+      summary: Write to input_text entity
+      description: Sets a value to an input_text entity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entity_id, value]
+              properties:
+                entity_id:
+                  type: string
+                value:
+                  type: string
+      responses:
+        "200":
+          description: input_text updated
+
+  /api/gpt_orchestrator:
+    post:
+      tags: [GPT Control]
+      summary: Run Orchestrator AI script
+      description: Triggers orchestrator_ai_ops.py
+      responses:
+        "200":
+          description: Orchestrator triggered
+
+  /api/gpt_generate_yaml:
+    post:
+      tags: [GPT Control]
+      summary: Generate YAML from GPT
+      description: Triggers generate_yaml_ai.py via shell
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+      responses:
+        "200":
+          description: YAML generation triggered

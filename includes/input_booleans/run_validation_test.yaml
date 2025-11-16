@@ -1,0 +1,3 @@
+# Temporary empty file - no entities defined
+# The actual run_validation_test entity is in validation_controls.yaml
+# This file exists only to prevent YAML reload cache errors

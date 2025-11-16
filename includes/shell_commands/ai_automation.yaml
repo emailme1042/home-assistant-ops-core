@@ -1,0 +1,38 @@
+# AI & Automation Shell Commands
+
+# GPT via Flask integration
+run_gpt_via_flask: >-
+  curl -X POST http://localhost:5006/run_command \
+  -H "Authorization: Bearer your_strong_token_here" \
+  -H "Content-Type: application/json" \
+  -d '{"command": "echo \"{\\\"status\\\": \\\"ok\\\"}\" > /config/gpt_status.json"}'
+
+# AI suggestion generator
+run_ai_generate_suggestions: >
+  python3 /config/python_scripts/ai_generate_suggestions.py
+
+# Context collector for AI operations
+run_context_collector: >
+  python3 /config/python_scripts/context_collector.py
+
+# ChatGPT user reply handler
+run_chatgpt_user_reply: >
+  python3 /config/python_scripts/chatgpt_user_reply.py '{{ states("input_text.gpt_text_prompt") }}'
+
+# OpenAI orphaned analysis
+run_openai_orphaned_analysis: >
+  python3 /config/scripts/openai_orphaned_analysis.py
+
+# Deploy dashboard generator
+run_deploy_dashboard: >
+  python3 /config/python_scripts/deploy_dashboard.py
+
+# Generate YAML AI
+run_generate_yaml_ai: >
+  python3 /config/python_scripts/generate_yaml_ai.py
+
+# Mount AI workspace
+mount_ai_workspace: >
+  mkdir -p /config/ai_workspace && \
+  mount -t cifs -o username={{ secrets.smb_user }},password={{ secrets.smb_pass }},rw,file_mode=0777,dir_mode=0777 \
+  //JD-HOMEOFFICE-PC/AI_WORKSPACE /config/ai_workspace

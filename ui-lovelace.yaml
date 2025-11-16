@@ -1,0 +1,20 @@
+---
+title: Home
+views:
+  - title: Home
+    cards:
+      - type: markdown
+        content: |
+          # Welcome to Home Assistant
+
+          Your system is running successfully!
+
+          ## Quick Actions
+          - [System Information](http://homeassistant.local:8123/config/system_dashboard)
+          - [Developer Tools](http://homeassistant.local:8123/developer-tools)
+          - [Settings](http://homeassistant.local:8123/config)
+
+          ## Current Status
+          - MQTT: ✅ Connected (257 entities)
+          - HA Version: 2025.11.1
+          - Supervisor: 2025.11.2

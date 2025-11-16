@@ -1,0 +1,123 @@
+# 🔧 Zigbee Mesh Surgery Helper Scripts
+# Purpose: Support scripts for mesh rebalancing operations
+# Created: 2025-11-06 by VSCode Mesh Surgery Protocol
+
+zigbee_mesh_trigger_bathroom_motion:
+  alias: "🔁 Trigger Bathroom Motion Re-pair"
+  description: "Initiate re-pairing sequence for Bathroom Motion Sensor"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee_mesh/rebalance/bathroom_motion"
+        payload: "execute"
+
+zigbee_mesh_trigger_office_temp:
+  alias: "🔁 Trigger Office Temp Re-pair"
+  description: "Initiate re-pairing sequence for Office Temp Humidity"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee_mesh/rebalance/office_temp"
+        payload: "execute"
+
+zigbee_mesh_trigger_water_valve:
+  alias: "🔁 Trigger Water Valve Re-pair"
+  description: "Initiate re-pairing sequence for Water Control Valve"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee_mesh/rebalance/water_valve"
+        payload: "execute"
+
+zigbee_mesh_trigger_button_tyler:
+  alias: "🔁 Trigger Button-Tyler Re-pair"
+  description: "Initiate re-pairing sequence for Button-Tyler"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee_mesh/rebalance/button_tyler"
+        payload: "execute"
+
+zigbee_mesh_trigger_bathroom_switch:
+  alias: "🔁 Trigger Bathroom Switch Re-pair"
+  description: "Initiate re-pairing sequence for Bathroom Light Switch"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee_mesh/rebalance/bathroom_switch"
+        payload: "execute"
+
+zigbee_request_networkmap:
+  alias: "📊 Request Zigbee Network Map"
+  description: "Request current network topology from Zigbee2MQTT"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/networkmap"
+        payload: '{"type": "raw", "routes": true}'
+    
+    - service: persistent_notification.create
+      data:
+        title: "📊 Network Map Requested"
+        message: "Zigbee network topology scan initiated. Check audit log in 30 seconds."
+        notification_id: "zigbee_networkmap_request"
+
+zigbee_request_device_list:
+  alias: "📋 Request Zigbee Device List"
+  description: "Refresh device list from Zigbee2MQTT"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/devices"
+        payload: '{}'
+    
+    - service: persistent_notification.create
+      data:
+        title: "📋 Device List Refresh"
+        message: "Zigbee device list refresh requested."
+        notification_id: "zigbee_device_refresh"
+
+zigbee_check_permit_join_status:
+  alias: "🚪 Check Permit Join Status"
+  description: "Request current permit join status"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{}'
+    
+    - service: persistent_notification.create
+      data:
+        title: "🚪 Permit Join Status"
+        message: "Permit join status check requested. See MQTT log for details."
+        notification_id: "zigbee_permit_status"
+
+zigbee_emergency_permit_join_close:
+  alias: "🔒 Emergency Close Permit Join"
+  description: "Force close permit join immediately"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/permit_join"
+        payload: '{"value": false}'
+    
+    - service: persistent_notification.create
+      data:
+        title: "🔒 Emergency Permit Join Close"
+        message: "Permit join forcibly closed for network security."
+        notification_id: "zigbee_emergency_close"
+
+zigbee_backup_network_config:
+  alias: "💾 Backup Zigbee Network Config"
+  description: "Create backup of current network configuration"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/backup"
+        payload: '{}'
+    
+    - service: persistent_notification.create
+      data:
+        title: "💾 Network Backup"
+        message: "Zigbee network configuration backup initiated."
+        notification_id: "zigbee_backup_request"

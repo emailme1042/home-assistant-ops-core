@@ -1,0 +1,177 @@
+  - platform: file
+    name: "Copilot Last Snapshot"
+    file_path: /config/AI_WORKSPACE/SYSTEM_OVERVIEW/copilot_snapshot.txt
+    scan_interval: 300
+
+  - platform: file
+    name: "AI Master Context"
+    file_path: /config/AI_WORKSPACE/SYSTEM_OVERVIEW/meta/master_context.md
+    scan_interval: 300
+
+  - platform: command_line
+    name: "File Last Modified"
+    command: "stat -c %Y /config/AI_WORKSPACE/SYSTEM_OVERVIEW/ai_exec_log.md"
+    scan_interval: 300
+    value_template: "{{ value | int | timestamp_custom('%Y-%m-%d %H:%M:%S') }}"
+
+  - platform: command_line
+    name: "Mount Point Health"
+    command: "mount | grep '/config/AI_WORKSPACE' >/dev/null && echo OK || echo MISSING"
+    scan_interval: 300
+
+  - platform: command_line
+    name: "Samba Mount Status"
+    command: "mount | grep 'type cifs' && echo 'mounted' || echo 'missing'"
+    scan_interval: 60
+
+  - platform: command_line
+    name: "WSL Startup Marker"
+    command: "if [ -f /config/startup_marker ]; then echo 'Started'; else echo 'Missing'; fi"
+    scan_interval: 300
+    icon: mdi:restart
+
+  - platform: command_line
+    name: "Config File Count"
+    command: "find /config/includes/ -type f | wc -l"
+    scan_interval: 600
+
+  - platform: command_line
+    name: "AI Workspace File Count"
+    command: "find /config/_AI_WORKSPACE -type f | wc -l"
+    scan_interval: 300
+
+  - platform: command_line
+    name: "Unused Files Count"
+    command: "find /config/AI_WORKSPACE/unused -type f | wc -l"
+    scan_interval: 300
+
+  - platform: command_line
+    name: "AI Result"
+    command: "cat /config/www/ai_last_result.txt"
+    scan_interval: 120  # Reduced from 10 to 120 seconds
+
+  - platform: command_line
+    name: "GPT File Response"
+    command: "cat /config/www/gpt_response.txt"
+    scan_interval: 120  # Reduced from 10 to 120 seconds
+
+  - platform: command_line
+    name: "GPT File Reply"
+    command: "cat /config/chatgpt_response.txt"
+    scan_interval: 120  # Reduced from 10 to 120 seconds
+
+  - platform: command_line
+    name: "GPT Output Preview"
+    command: "cat /config/www/gpt_response.txt"
+    scan_interval: 60
+
+  - platform: command_line
+    name: "GPT Summary Preview File"
+    command: "cat /config/www/gpt_response.txt"
+    scan_interval: 300
+    icon: mdi:comment-text-outline
+
+  - platform: command_line
+    name: "AI Suggestions"
+    command: "cat /config/AI_WORKSPACE/ai_suggestions/latest.txt"
+    scan_interval: 60
+
+  - platform: command_line
+    name: "Snapshot Changelog"
+    command: "tail -n 10 /config/AI_WORKSPACE/snapshots/changelog.log"
+    scan_interval: 300
+
+  - platform: command_line
+    name: "Fix Sheet Last Checked"
+    command: "grep 'last_checked' /config/AI_WORKSPACE/system_ops/fix_sheet.yaml | cut -d '\"' -f2"
+    scan_interval: 300
+
+  - platform: file
+    name: "YAML Validation Result File"
+    file_path: /config/fix_sheet.yaml
+    scan_interval: 60
+
+  - platform: command_line
+    name: "YAML Validation Result"
+    command: "tail -n 1 /config/validation_logs/$(ls -t /config/validation_logs | head -n1)"
+    scan_interval: 300
+    value_template: >-
+      {% if value %} {{ value.split(':')[1].strip() }} {% else %} Unknown {% endif %}
+
+  - platform: command_line
+    name: "Fix Sheet Last Updated"
+    command: "head -n 2 /config/validation_logs/$(ls -t /config/validation_logs | head -n1) | tail -n1"
+    scan_interval: 300
+    value_template: >-
+      {% if value %} {{ value.split(':')[1].strip() }} {% else %} Unknown {% endif %}
+
+  - platform: command_line
+    name: "Fix Sheet Summary"
+    command: "cat /config/validation_logs/fix_sheet_summary.md | tail -n 20"
+    scan_interval: 300
+
+  - platform: command_line
+    name: "Context Snapshot Exists"
+    command: "if [ -f /config/www/context_snapshots/context_latest.md ]; then echo 'yes'; else echo 'no'; fi"
+    scan_interval: 600
+
+  - platform: command_line
+    name: "Backup Snapshot Exists"
+    command: "if [ -f /config/www/context_snapshots/backup_latest.md ]; then echo 'yes'; else echo 'no'; fi"
+    scan_interval: 600
+
+  - platform: command_line
+    name: "GPT Context Snapshots"
+    command: "ls -t /config/www/context_snapshots/context_*.md | head -n 10"
+    scan_interval: 300  # Reduced from 60 to 300 seconds
+    value_template: "OK"
+    json_attributes:
+      - files
+
+  - platform: command_line
+    name: "GPT Last Context Update"
+    command: "date -r /config/www/context_snapshots/context_latest.md '+%Y-%m-%d %H:%M'"
+    scan_interval: 300  # Reduced from 60 to 300 seconds
+
+  - platform: command_line
+    name: "Latest Email Subject"
+    command: "cat /config/email/subject.txt"
+    scan_interval: 300  # Reduced from 30 to 300 seconds
+
+  - platform: command_line
+    name: "Latest Email Body"
+    command: "cat /config/email/body.txt | head -n 10"
+    scan_interval: 300  # Reduced from 30 to 300 seconds
+
+  - platform: command_line
+    name: "Latest Email From"
+    command: "cat /config/email/from.txt"
+    scan_interval: 300  # Reduced from 30 to 300 seconds
+
+  - platform: rest
+    name: "JIT Plugin Status"
+    resource: http://172.25.130.31:5001/jit_plugin/ping
+    scan_interval: 30
+    value_template: >-
+      {% if value_json.status == 'alive' %} alive {% else %} offline {% endif %}
+
+  - platform: file
+    name: "HA Update Log"
+    file_path: "/config/AI_WORKSPACE/2025-08-14 - markdown.txt"
+    scan_interval: 300
+
+  - platform: command_line
+    name: "Mount Audit Sync Status"
+    command: "tail -n 1 /config/AI_WORKSPACE/db/mount_audit.md | cut -d '—' -f2"
+    scan_interval: 300
+    value_template: "{{ value | trim }}"
+
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+
+  - platform: command_line
+    name: "Markdown File List"
+    command: "find /config -type f \\( -name '*.md' -o -name 'README.md' \\) | sort"
+    scan_interval: 3600

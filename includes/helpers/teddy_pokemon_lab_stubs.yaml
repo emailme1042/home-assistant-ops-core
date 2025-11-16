@@ -1,0 +1,26 @@
+input_boolean:
+  teddy_pokemon_facts:
+    name: Teddy Pokémon Facts
+  teddy_roblox_facts:
+    name: Teddy Roblox Facts
+input_text:
+  teddy_fun_fact:
+    name: Teddy Fun Fact
+    max: 255
+switch:
+  - platform: template
+    switches:
+      pokemon_incubator:
+        value_template: "off"
+  - platform: template
+    sensors:
+      pikachu_power_level:
+        value_template: "100"
+        unit_of_measurement: "%"
+  # Removed binary_sensor key for modern structure compliance
+  # Only - platform: template is used for binary sensors
+input_datetime:
+  teddy_bedtime:
+    name: Teddy's Bedtime
+    has_time: true
+    has_date: false

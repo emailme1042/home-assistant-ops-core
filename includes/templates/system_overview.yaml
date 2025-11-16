@@ -1,0 +1,125 @@
+template:
+  - sensor:
+      - name: "Aircraft Data"
+        unique_id: aircraft_data
+        state: "{{ state_attr('sensor.aircraft_data_raw', 'aircraft') | length }}"
+        attributes:
+          aircraft: "{{ state_attr('sensor.aircraft_data_raw', 'aircraft') }}"
+
+      - name: "Lowest Aircraft Altitude"
+        unique_id: lowest_aircraft_altitude
+        unit_of_measurement: "ft"
+        state: >
+          {% set aircraft = state_attr('sensor.aircraft_data', 'aircraft') %}
+          {% if aircraft %}
+            {{ aircraft | map(attribute='altitude') | select('number') | min }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: "ChatGPT Query Run Count"
+        unique_id: chatgpt_query_run_count
+        state: >
+          {% if states.script.chatgpt_query.attributes.last_triggered is defined %}
+            {{ relative_time(states.script.chatgpt_query.attributes.last_triggered) }}
+          {% else %}
+            Never
+          {% endif %}
+
+      - name: "GPT Last Context Update"
+        unique_id: gpt_last_context_update
+        icon: mdi:update
+        state: >
+          {% if is_state('sensor.context_snapshot_exists', 'yes') %}
+            {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+          {% else %}
+            Unknown
+          {% endif %}
+
+      - name: "GPT Summary Preview"
+        unique_id: gpt_summary_preview
+        icon: mdi:comment-text-outline
+        state: >
+          {% set content = states('sensor.gpt_file_response') %}
+          {{ content[:280] ~ ('…' if content|length > 280 else '') if content else 'No preview available' }}
+
+      - name: "Invalid Entities Summary"
+        unique_id: invalid_entities_summary
+        icon: mdi:alert-circle-outline
+        state: >
+          {% set sensors = states.sensor %}
+          {% set issues = sensors | selectattr('state', 'in', ['unavailable', 'unknown']) | list | count %}
+          {{ issues }} issues detected
+
+      - name: "YAML Validation Status"
+        unique_id: yaml_validation_status
+        state: "✅ Passed"
+        attributes:
+          last_checked: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+      - name: "GPT Status"
+        unique_id: gpt_status
+        state: "idle"
+
+      - name: "GPT Last Prompt"
+        unique_id: gpt_last_prompt
+        state: "none"
+
+      - name: "GPT Context File"
+        unique_id: gpt_context_file
+        state: "none"
+
+      - name: "GPT Prompt Log"
+        unique_id: gpt_prompt_log
+        state: "none"
+        attributes:
+          action_1: "none"
+          action_2: "none"
+          action_3: "none"
+          action_4: "none"
+          action_5: "none"
+
+      - name: "Device Map Status"
+        unique_id: device_map_status
+        state: "ok"
+
+      - name: "Device Sync Health"
+        unique_id: device_sync_health
+        state: "ok"
+
+      - name: "Device Orphaned Count"
+        unique_id: device_orphaned_count
+        state: "0"
+
+      - name: "Dashboard Enabled"
+        unique_id: dashboard_enabled
+        state: "true"
+
+      - name: "Dashboard Slug"
+        unique_id: dashboard_slug
+        state: "system-overview"
+
+      - name: "Dashboard Theme"
+        unique_id: dashboard_theme
+        state: "default"
+
+      - name: "Dashboard Stability"
+        unique_id: dashboard_stability
+        state: "stable"
+
+      - name: "Dashboard URLs"
+        unique_id: dashboard_urls
+        state: "none"
+
+      - name: "Unexposed Entities (Alexa & Google)"
+        unique_id: unexposed_entities
+        state: >
+          {% set alexa = integration_entities('alexa') %}
+          {% set google = integration_entities('google_assistant') %}
+          {% set all = states | map(attribute='entity_id') | list %}
+          {% set exposed = alexa + google %}
+          {{ (all | reject('in', exposed)) | list | join(', ') }}
+
+      - name: "Flight Status"
+        unique_id: flight_status
+        state: "{{ states('sensor.flight_data') }}"

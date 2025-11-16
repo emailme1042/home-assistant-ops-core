@@ -1,0 +1,19 @@
+activate_party_mode:
+  alias: "Activate Party Mode"
+  sequence:
+    - service: light.turn_on
+      data:
+        entity_id: light.lounge_ceiling
+        brightness: 255
+        color_name: red
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.tv_lounge_tv
+        media_content_id: "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
+        media_content_type: music
+
+run_verbose_validation:
+  alias: Run Verbose Validation 
+  sequence:
+    - service: shell_command.validate_yaml
+      data: {}

@@ -1,0 +1,126 @@
+# Multi-Agent Message Router Automations
+# Handles routing between AI agents and logs actions
+
+- id: message_router_log_action
+  alias: "Message Router: Log Action"
+  description: "Logs agent actions for routing matrix"
+  trigger:
+    - platform: state
+      entity_id:
+        - input_text.current_message_from
+        - input_text.current_message_to
+        - input_text.current_message_action
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('input_text.current_message_from') not in ['unknown', 'None', ''] and
+           states('input_text.current_message_to') not in ['unknown', 'None', ''] and
+           states('input_text.current_message_action') not in ['unknown', 'None', ''] }}
+  action:
+    - service: input_number.increment
+      target:
+        entity_id: input_number.daily_routing_count
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_message_routing
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: persistent_notification.create
+      data:
+        title: "🤖 AI Agent Message Routed"
+        message: >
+          FROM: {{ states('input_text.current_message_from') }}
+          TO: {{ states('input_text.current_message_to') }}
+          ACTION: {{ states('input_text.current_message_action') }}
+        notification_id: "agent_message_{{ now().timestamp() | int }}"
+
+- id: message_router_yaml_repair
+  alias: "Message Router: YAML Repair Success"
+  description: "Tracks successful YAML repairs via routing"
+  trigger:
+    - platform: state
+      entity_id: input_text.current_message_action
+  condition:
+    - condition: template
+      value_template: >
+        {{ 'repair' in states('input_text.current_message_action').lower() or
+           'fix' in states('input_text.current_message_action').lower() or
+           'yaml' in states('input_text.current_message_action').lower() }}
+  action:
+    - service: input_number.increment
+      target:
+        entity_id: input_number.successful_yaml_repairs
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_yaml_repair
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+- id: message_router_onenote_sync
+  alias: "Message Router: OneNote Sync Trigger"
+  description: "Triggers OneNote integration and sync"
+  trigger:
+    - platform: time_pattern
+      hours: "*"  # Every hour
+      minutes: 0
+    - platform: state
+      entity_id: input_text.onenote_file_path
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('input_text.onenote_file_path') not in ['unknown', 'None', ''] }}
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_onenote_sync
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.onenote_extraction_result
+      data:
+        value: "Sync attempted at {{ now().strftime('%H:%M') }}"
+
+- id: message_router_task_completion
+  alias: "Message Router: Task Completion Tracker"
+  description: "Updates task completion timestamps"
+  trigger:
+    - platform: state
+      entity_id:
+        - input_text.edge_task_queue
+        - input_text.vscode_task_queue
+        - input_text.gpt_task_queue
+        - input_text.openai_task_queue
+        - input_text.m365_task_queue
+      to: ""
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_task_completion
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: persistent_notification.create
+      data:
+        title: "✅ Agent Task Completed"
+        message: >
+          Agent: {{ trigger.entity_id.split('.')[1].replace('_task_queue', '').title() }}
+          Completed at: {{ now().strftime('%H:%M:%S') }}
+        notification_id: "task_complete_{{ now().timestamp() | int }}"
+
+- id: message_router_daily_reset
+  alias: "Message Router: Daily Statistics Reset"
+  description: "Resets daily counters at midnight"
+  trigger:
+    - platform: time
+      at: "00:00:00"
+  action:
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.daily_routing_count
+      data:
+        value: 0
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.routing_error_count
+      data:
+        value: 0

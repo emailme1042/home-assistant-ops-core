@@ -1,0 +1,26 @@
+##
+# Restart Safety Score Sensors
+# Tracks configuration health and restart safety over time
+##
+
+##
+# Sensors split out for modular clarity:
+# - restart_safety_score.yaml (template sensor)
+# - config_health_trend.yaml (custom sensor)
+#
+# This file intentionally left blank for restart safety.
+##
+# Restart Safety Score Sensors
+# Tracks configuration health and restart safety over time
+##
+
+##
+# Sensors split out for modular clarity:
+# - restart_safety_score.yaml (template sensor)
+# - config_health_trend.yaml (custom sensor)
+# - missing_integrations_count.yaml
+# - disabled_automations_count.yaml
+# - yaml_validation_errors.yaml
+#
+# This file intentionally left blank for restart safety.
+##

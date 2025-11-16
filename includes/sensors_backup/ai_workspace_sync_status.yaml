@@ -1,0 +1,4 @@
+- platform: template
+  sensors:
+    ai_workspace_sync_status:
+      value_template: "{{ states('sensor.ai_workspace_sync_status_raw') }}"

@@ -1,0 +1,4 @@
+  - sensor:
+      - name: Update Alert Threshold
+        state: >-
+          {{ 12 if is_state('input_select.backup_strategy', 'Daily') else 48 }}

@@ -1,0 +1,15 @@
+ask_ai_trigger:
+  name: Ask AI Trigger
+  icon: mdi:toggle-switch
+  initial: off
+
+ai_script_toggle_1:
+  name: "AI Script Toggle 1"
+  initial: off
+  icon: mdi:script-text-outline
+
+ai_script_toggle_2:
+  name: "AI Script Toggle 2"
+  initial: off
+  icon: mdi:script-text-outline
+

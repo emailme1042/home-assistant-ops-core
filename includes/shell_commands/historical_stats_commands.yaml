@@ -1,0 +1,25 @@
+# Historical Stats Shell Commands
+# Manual triggers for system analysis and reporting
+
+update_historical_stats: >
+  powershell.exe -ExecutionPolicy Bypass -File "AI_WORKSPACE/historical_stats_tracker.ps1"
+
+show_system_history: >
+  powershell.exe -ExecutionPolicy Bypass -File "AI_WORKSPACE/historical_stats_tracker.ps1" -ShowHistory
+
+create_stats_dashboard: >
+  powershell.exe -ExecutionPolicy Bypass -File "AI_WORKSPACE/historical_stats_tracker.ps1" -CreateDashboard
+
+export_system_report: >
+  powershell.exe -ExecutionPolicy Bypass -File "AI_WORKSPACE/post_restore_verification.ps1" -FullReport -CreateDashboard
+
+system_health_snapshot: >
+  powershell.exe -ExecutionPolicy Bypass -Command "
+  $out = 'AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/system_health_$(Get-Date -Format yyyy-MM-dd_HH-mm-ss).txt';
+  echo 'SYSTEM HEALTH SNAPSHOT - $(Get-Date)' > $out;
+  echo '===========================================' >> $out;
+  ha info >> $out 2>&1;
+  echo '' >> $out;
+  echo 'Entity Counts:' >> $out;
+  curl -s -H 'Authorization: Bearer $(Get-Content AI_WORKSPACE/SHARED_CONTEXT/.ha_token)' http://192.168.1.217:8123/api/states | jq '[group_by(.entity_id | split(\".\")[0]) | .[] | {domain: .[0].entity_id | split(\".\")[0], count: length}] | sort_by(.count) | reverse' >> $out;
+  echo 'Health snapshot saved to: $out'"

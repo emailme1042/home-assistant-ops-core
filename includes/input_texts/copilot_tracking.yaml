@@ -1,0 +1,17 @@
+copilot_session_tracker:
+  name: Copilot Session Tracker
+  initial: "Ready for assistance"
+  max: 255
+  icon: mdi:robot-outline
+
+current_task_status:
+  name: Current Task Status
+  initial: "Waiting for input"
+  max: 255
+  icon: mdi:clipboard-list
+
+last_copilot_action:
+  name: Last Copilot Action
+  initial: "Session started"
+  max: 255
+  icon: mdi:history

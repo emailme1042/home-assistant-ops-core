@@ -1,0 +1,77 @@
+- id: enable_entities_dashboard
+  alias: Enable Entities Dashboard
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_boolean.admin_dashboard_entities
+      to: 'on'
+  action:
+    - service: persistent_notification.create
+      data:
+        title: Dashboard Enabled
+        message: "✅ Entities dashboard toggle turned ON."
+
+- id: disable_entities_dashboard
+  alias: Disable Entities Dashboard
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_boolean.admin_dashboard_entities
+      to: 'off'
+  action:
+    - service: persistent_notification.create
+      data:
+        title: Dashboard Disabled
+        message: "❌ Entities dashboard toggle turned OFF."
+
+- id: add_task_from_dashboard_monitoring
+  alias: Add Task from Dashboard
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.todo_task_1
+      to: ''
+      for: '00:00:01'
+  action:
+    - service: python_script.add_todo
+      data:
+        task: "{{ states('input_text.todo_task_1') }}"
+        category: "{{ states('input_select.todo_category') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.todo_task_1
+      data:
+        value: ''
+
+- id: add_todo_via_dashboard_monitoring
+  alias: Add To-Do via Dashboard (Monitoring)
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.new_todo_task
+      to: ''
+      from: ''
+      for:
+        seconds: 1
+  action:
+    - service: python_script.add_todo
+      data:
+        task: "{{ states('input_text.new_todo_task') }}"
+        category: "{{ states('input_select.new_todo_category') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.new_todo_task
+      data:
+        value: ''
+
+- id: update_fix_sheet_timestamp_dashboard
+  alias: Update Fix Sheet Timestamp (Dashboard)
+  mode: single
+  trigger:
+    - platform: time
+      at: '00:00:00'
+  action:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.fix_sheet_last_checked
+        value: "{{ now().strftime('%Y-%m-%d %H:%M') }}"

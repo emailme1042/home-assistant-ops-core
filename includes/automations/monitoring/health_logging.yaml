@@ -1,0 +1,19 @@
+- alias: "Log System Health Snapshot Daily"
+  id: log_system_health_daily
+  trigger:
+    - platform: time
+      at: "00:01:00"
+    - platform: homeassistant
+      event: start
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.system_health_log
+      data:
+        value: >
+          {{ now().strftime('%Y-%m-%d %H:%M') }}: 
+          Entities: {{ states('sensor.ha_total_entities') }}, 
+          Unavailable: {{ states('sensor.ha_unavailable_entities') }}, 
+          Health: {{ states('sensor.ha_entity_health_percent') }}%, 
+          Automations: {{ states('sensor.ha_automation_count') }}, 
+          Scripts: {{ states('sensor.ha_script_count') }}

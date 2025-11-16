@@ -1,0 +1,43 @@
+# YAML Validation Status Sensors
+# Track the status and results of YAML validation operations
+
+- platform: file
+  name: yaml_validation_status
+  file_path: /config/fix_sheet.yaml
+  value_template: >
+    {% if states('sensor.yaml_validation_status') %}
+      {% set lines = value.split('\n') %}
+      {% set error_count = lines | select('search', 'ERROR') | list | length %}
+      {% set warning_count = lines | select('search', 'WARNING') | list | length %}
+      {% if error_count > 0 %}
+        ERRORS ({{ error_count }})
+      {% elif warning_count > 0 %}
+        WARNINGS ({{ warning_count }})
+      {% else %}
+        VALID
+      {% endif %}
+    {% else %}
+      UNKNOWN
+    {% endif %}
+
+- platform: template
+  sensors:
+    yaml_validation_last_run:
+      friendly_name: "Last YAML Validation"
+      value_template: >
+        {% if states.sensor.yaml_validation_status.last_changed %}
+          {{ states.sensor.yaml_validation_status.last_changed.strftime('%Y-%m-%d %H:%M') }}
+        {% else %}
+          Never
+        {% endif %}
+        
+    validation_error_count:
+      friendly_name: "Validation Errors"
+      unit_of_measurement: "errors"
+      value_template: >
+        {% if states('sensor.yaml_validation_status') %}
+          {% set content = state_attr('sensor.yaml_validation_status', 'value') or '' %}
+          {{ content.count('ERROR') if content else 0 }}
+        {% else %}
+          0
+        {% endif %}

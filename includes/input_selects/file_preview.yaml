@@ -1,0 +1,12 @@
+file_preview:
+  name: "File Preview Selector"
+  options:
+    - "README.md"
+    - "ai_exec_log.md"
+    - "copilot_session_notes.md"
+    - "current_session.md"
+    - "active_issues.md"
+    - "recent_changes.md"
+    - "system_status.md"
+  initial: "README.md"
+  icon: mdi:file-document

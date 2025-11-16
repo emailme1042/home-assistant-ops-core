@@ -1,0 +1,58 @@
+# Dashboard Optimization Template Sensors
+# Intelligent recommendations based on analytics
+
+template:
+  - sensor:
+      - name: "Dashboard Optimization Tip"
+        state: >-
+          {% set complexity = states('sensor.dashboard_complexity_score') | int(0) %}
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set freshness = states('sensor.audit_log_freshness') | int(0) %}
+          {% if complexity > 150 %}
+            Simplify high-complexity dashboards with nested cards and custom components.
+          {% elif complexity > 100 %}
+            Optimize card usage and reduce entity counts in complex views.
+          {% elif errors > 10 %}
+            Investigate dashboards with frequent reloads or missing entities.
+          {% elif errors > 5 %}
+            Monitor frontend error sources and validate entity references.
+          {% elif freshness > 120 %}
+            Run system health audit to update performance metrics.
+          {% else %}
+            System is optimized. No action needed.
+          {% endif %}
+        icon: mdi:lightbulb-on-outline
+        attributes:
+          complexity_score: "{{ states('sensor.dashboard_complexity_score') }}"
+          error_count: "{{ states('input_number.frontend_errors') }}"
+          audit_age_minutes: "{{ states('sensor.audit_log_freshness') }}"
+          optimization_needed: "{{ states('binary_sensor.optimization_needed') }}"
+
+      - name: "Dashboard Performance Grade"
+        state: >-
+          {% set complexity = states('sensor.dashboard_complexity_score') | int(0) %}
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if complexity < 50 and errors == 0 %}
+            A+
+          {% elif complexity < 75 and errors < 2 %}
+            A
+          {% elif complexity < 100 and errors < 5 %}
+            B
+          {% elif complexity < 150 and errors < 10 %}
+            C
+          {% else %}
+            D
+          {% endif %}
+        icon: >
+          {% set grade = states('sensor.dashboard_performance_grade') %}
+          {% if grade in ['A+', 'A'] %}
+            mdi:medal
+          {% elif grade == 'B' %}
+            mdi:star
+          {% elif grade == 'C' %}
+            mdi:star-outline
+          {% else %}
+            mdi:alert
+          {% endif %}
+        attributes:
+          recommendation: "{{ states('sensor.dashboard_optimization_tip') }}"

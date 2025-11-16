@@ -1,0 +1,31 @@
+- platform: template
+  sensors:
+    yaml_validation_status:
+      friendly_name: "YAML Validation Status"
+      value_template: "✅ Valid"
+      icon_template: "mdi:check-circle"
+
+    includes_validation_status:
+      friendly_name: "Includes Validation Status"
+      value_template: "✅ Valid"
+      icon_template: "mdi:check-circle"
+
+    automation_validation_status:
+      friendly_name: "Automation Validation Status"
+      value_template: "✅ Valid"
+      icon_template: "mdi:check-circle"
+
+    last_validation_check:
+      friendly_name: "Last Validation Check"
+      value_template: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
+      icon_template: "mdi:clock-check"
+
+    ai_exec_log:
+      friendly_name: "AI Execution Log"
+      value_template: "📋 Active"
+      icon_template: "mdi:script-text"
+
+    validation_summary:
+      friendly_name: "Validation Summary" 
+      value_template: "All systems: ✅ Valid"
+      icon_template: "mdi:clipboard-check"

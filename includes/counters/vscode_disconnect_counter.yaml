@@ -1,0 +1,9 @@
+# VSCode Disconnect Counter
+# Tracks daily disconnect events
+
+vscode_disconnects_today:
+  name: "VSCode Disconnects Today"
+  initial: 0
+  restore: false  # Reset on restart
+  step: 1
+  icon: mdi:connection

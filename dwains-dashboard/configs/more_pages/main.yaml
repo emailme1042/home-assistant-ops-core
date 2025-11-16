@@ -1,0 +1,40 @@
+# Dwains Dashboard More Pages Configuration
+# Quick fix to get Dwains working
+
+main:
+  title: "Quick Home"
+  icon: mdi:home
+  cards:
+    - type: vertical-stack
+      cards:
+        - type: markdown
+          content: |
+            # 🏠 Dwains Dashboard
+            
+            **Quick Access Home Control**
+            
+            This is a minimal Dwains dashboard configuration to resolve the navigation card error.
+            
+        - type: entities
+          title: "System Status"
+          entities:
+            - sensor.system_health_summary
+            - sensor.yaml_validation_status
+            - binary_sensor.mqtt_connection
+            
+        - type: grid
+          columns: 2
+          cards:
+            - type: button
+              name: "Lights"
+              icon: mdi:lightbulb
+              tap_action:
+                action: navigate
+                navigation_path: /user-dashboard/0
+                
+            - type: button
+              name: "Media"
+              icon: mdi:play
+              tap_action:
+                action: navigate
+                navigation_path: /apple-tv-control/apple-tv-main

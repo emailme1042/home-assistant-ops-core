@@ -1,0 +1,5 @@
+ai_routine_validator: >
+  powershell.exe -ExecutionPolicy Bypass -File "AI_WORKSPACE/run_validator_clean.ps1" > "AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/routine_validation.log" 2>&1
+
+collect_ha_metrics: >
+  powershell.exe -ExecutionPolicy Bypass -Command "$token = Get-Content 'AI_WORKSPACE/SHARED_CONTEXT/.ha_token'; $entities = Invoke-RestMethod -Uri 'http://192.168.1.217:8123/api/states' -Headers @{Authorization = \"Bearer $token\"}; $entities.Count | Out-File 'AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/entity_count.txt'"

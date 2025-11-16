@@ -1,0 +1,14 @@
+mqtt_debug_mode:
+  name: "MQTT Debug Mode"
+  icon: mdi:bug
+  initial: off
+
+mqtt_topic_watchdog:
+  name: "MQTT Topic Watchdog"
+  icon: mdi:eye-check
+  initial: on
+
+mqtt_dashboard_synced:
+  name: "MQTT Dashboard Synced"
+  icon: mdi:cloud-sync
+  initial: off

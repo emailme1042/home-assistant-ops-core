@@ -1,0 +1,181 @@
+{
+    "0xc09b9efffef56fc8": {
+        "occupancy": false,
+        "illumination": "dim",
+        "voltage": 3000,
+        "battery": 100,
+        "linkquality": 129,
+        "motion_timeout": 24,
+        "update": {
+            "state": "idle",
+            "installed_version": 8705,
+            "latest_version": 8705
+        },
+        "last_seen": "2025-11-13T20:52:01.733Z"
+    },
+    "0xe406bffffe6fed60": {
+        "state": "OFF",
+        "power_on_behavior": "off",
+        "device_work_mode": "Zigbee end device",
+        "detach_relay_mode": {
+            "detach_relay_outlet1": "DISABLE",
+            "detach_relay_outlet2": "DISABLE",
+            "detach_relay_outlet3": "DISABLE"
+        },
+        "update": {
+            "state": "idle",
+            "installed_version": 4100,
+            "latest_version": 4100
+        },
+        "linkquality": 63,
+        "last_seen": "2025-11-13T20:47:20.805Z"
+    },
+    "0xd44867fffe28b4d8": {
+        "occupancy": false,
+        "battery": 100,
+        "voltage": 3000,
+        "illumination": "dim",
+        "update": {
+            "state": "idle",
+            "installed_version": 8705,
+            "latest_version": 8705
+        },
+        "linkquality": 75,
+        "last_seen": "2025-11-13T20:24:46.278Z"
+    },
+    "0x54ef441000c392db": {
+        "operation_mode": "scene_mode",
+        "voltage": 3037,
+        "battery": 100,
+        "power_outage_count": 25,
+        "current": 0,
+        "power": 0,
+        "side": 3,
+        "linkquality": 147,
+        "last_seen": "2025-11-13T20:49:00.203Z"
+    },
+    "0x0ceff6fffe1be262": {
+        "battery": 100,
+        "update": {
+            "state": "idle",
+            "installed_version": 4098,
+            "latest_version": 4098
+        },
+        "linkquality": 45,
+        "last_seen": "2025-11-13T20:57:12.470Z"
+    },
+    "0x08ddebfffea32c92": {
+        "battery": 100,
+        "voltage": 3100,
+        "update": {
+            "state": "idle",
+            "installed_version": 8704,
+            "latest_version": 8704
+        },
+        "linkquality": 144,
+        "last_seen": "2025-11-13T20:16:18.126Z"
+    },
+    "0xa4c13804e735ffff": {
+        "battery": 100,
+        "voltage": 3100,
+        "temperature": 11.7,
+        "humidity": 94.9,
+        "temperature_units": "celsius",
+        "temperature_calibration": 0,
+        "humidity_calibration": 0,
+        "linkquality": 48,
+        "last_seen": "2025-11-13T20:41:50.670Z"
+    },
+    "0xa49e69fffe6a4386": {
+        "last_seen": "2025-11-08T23:04:30.524Z"
+    },
+    "0xa4c13801d40cffff": {
+        "current": 0,
+        "voltage": 237.76,
+        "power": 0,
+        "outlet_control_protect": false,
+        "overload_protection": {
+            "enable_max_voltage": "ENABLE",
+            "enable_min_current": "DISABLE",
+            "enable_min_power": "DISABLE",
+            "enable_min_voltage": "DISABLE",
+            "max_current": 922550.528,
+            "max_power": 0,
+            "max_voltage": -45088.768,
+            "min_current": 0,
+            "min_power": 0,
+            "min_voltage": 0.049
+        },
+        "state": "ON",
+        "power_on_behavior": "on",
+        "energy_yesterday": 0,
+        "energy_today": 0,
+        "energy_month": 0,
+        "update": {
+            "state": "idle",
+            "installed_version": 4098,
+            "latest_version": 4098
+        },
+        "last_seen": "2025-11-13T20:58:12.254Z",
+        "linkquality": 60
+    },
+    "0xa4c13801f84cffff": {
+        "current": 0,
+        "voltage": 0,
+        "power": 0,
+        "outlet_control_protect": false,
+        "overload_protection": {
+            "enable_max_voltage": "ENABLE",
+            "enable_min_current": "DISABLE",
+            "enable_min_power": "DISABLE",
+            "enable_min_voltage": "DISABLE",
+            "max_current": 922550.528,
+            "max_power": 0,
+            "max_voltage": -45088.768,
+            "min_current": 0,
+            "min_power": 0,
+            "min_voltage": 0.049
+        },
+        "state": "OFF",
+        "power_on_behavior": "off",
+        "energy_yesterday": 0,
+        "energy_today": 0,
+        "energy_month": 0,
+        "update": {
+            "state": "idle",
+            "installed_version": 4098,
+            "latest_version": 4098
+        },
+        "last_seen": "2025-11-13T20:58:14.974Z",
+        "linkquality": 48
+    },
+    "0xa4c13801e95fffff": {
+        "current": 0,
+        "voltage": 0,
+        "power": 0,
+        "outlet_control_protect": false,
+        "overload_protection": {
+            "enable_max_voltage": "ENABLE",
+            "enable_min_current": "DISABLE",
+            "enable_min_power": "DISABLE",
+            "enable_min_voltage": "DISABLE",
+            "max_current": 922550.528,
+            "max_power": 0,
+            "max_voltage": -45088.768,
+            "min_current": 0,
+            "min_power": 0,
+            "min_voltage": 0.049
+        },
+        "state": "OFF",
+        "power_on_behavior": "off",
+        "energy_yesterday": 0,
+        "energy_today": 0,
+        "energy_month": 0,
+        "update": {
+            "state": "idle",
+            "installed_version": 4098,
+            "latest_version": 4098
+        },
+        "last_seen": "2025-11-13T20:58:17.251Z",
+        "linkquality": 63
+    }

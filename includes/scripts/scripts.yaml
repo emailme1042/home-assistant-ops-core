@@ -1,0 +1,375 @@
+refresh_entity_watchdog:
+  alias: "Refresh Entity Watchdog"
+  mode: single
+  sequence:
+    - service: homeassistant.update_entity
+      data:
+        entity_id: sensor.entity_watchdog_last_run
+    - service: persistent_notification.create
+      data:
+        title: "Entity Watchdog Refreshed"
+        message: "Entity audit manually triggered."
+sexy_time:
+  alias: "Sexy Time"
+  mode: single
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: light.bedroom_strip_lights
+      data:
+        color_name: red
+        brightness_pct: 20
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_type: music
+        media_content_id: "https://example.com/sexy_music.mp3"
+party_mode:
+  alias: "Party Mode"
+  mode: single
+  sequence:
+    - service: scene.turn_on
+      target:
+        entity_id: scene.party_lights
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_type: music
+        media_content_id: "https://example.com/party_playlist.m3u"
+    - delay: "00:00:05"
+    - service: tts.google_translate_say
+      target:
+        entity_id: media_player.bedroom_tv_qe55q6fna
+      data:
+        message: "Party started! Let's go!"
+update_dashboard_list_manual:
+  alias: "Manual Update Dashboard List"
+  mode: single
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.dashboard_urls
+      data:
+        value: >-
+          {% set dashboards = state_attr('sensor.lovelace_dashboards', 'dashboards') %}
+          {{ dashboards | join(', ') if dashboards else 'No dashboards found' }}
+tts_send_custom_message:
+  alias: "Send Custom TTS Message"
+  mode: single
+  sequence:
+    - service: tts.cloud_say
+      data:
+        entity_id: "{{ states('input_select.tts_target') }}"
+        message: "{{ states('input_text.tts_message_text') }}"
+        options:
+          gender: female
+          voice: JennyNeural
+clear_card_scan:
+  alias: "Clear Pokémon Card Scan"
+  mode: single
+  sequence:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.latest_card_name
+        value: ""
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.latest_card_rarity
+        value: ""
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.latest_card_value
+        value: ""
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.latest_card_features
+        value: ""
+ai_generate_suggestions:
+  alias: "AI Generate Suggestions"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "AI Request Sent"
+        message: "Processing... Check YAML file shortly."
+    - service: shell_command.run_ai_generate_suggestions
+scan_and_summary:
+  alias: "Scan & Generate Summary"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "Scan Started"
+        message: "Running system snapshot and generating summary..."
+    - service: shell_command.run_chatgpt_python
+reask_chatgpt:
+  alias: "Reask ChatGPT"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "Reask ChatGPT Placeholder"
+        message: "This script is currently a placeholder."
+chatgpt_query:
+  alias: "Send GPT Prompt (Admin)"
+  mode: queued
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_status
+      data:
+        value: "Sending prompt to OpenAI..."
+    - service: rest_command.ask_openai
+      data:
+        prompt: "{{ states('input_text.gpt_text_prompt') }}"
+      response_variable: openai_reply
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_result_core
+      data:
+        value: >-
+          {% if openai_reply and 'choices' in openai_reply %}
+            {{ openai_reply.choices[0].message.content }}
+          {% else %}
+            ❌ No reply received or invalid OpenAI response.
+          {% endif %}
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_status
+      data:
+        value: "Response received!"
+chatgpt_convo_query:
+  alias: "Send Conversational Prompt to GPT (Shell Command)"
+  mode: single
+  fields:
+    prompt:
+      description: "Prompt to send to GPT"
+  sequence:
+    - service: shell_command.run_chatgpt_user
+      data:
+        prompt: "{{ prompt }}"
+    - delay: "00:00:03"
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_text_reply
+        value: "{{ states('sensor.gpt_file_reply') | default('Reply loaded. Check log.') }}"
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_log
+        value: >-
+          Prompt: {{ prompt }}
+          Reply: {{ states('sensor.gpt_file_reply') }}
+          ---
+          {{ states('input_text.gpt_log') }}
+gpt_convo_tts_reply:
+  alias: "Speak GPT Reply with Apple Handling"
+  mode: single
+  sequence:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: >-
+                {% set reply = states('sensor.gpt_file_reply') %}
+                {{ reply[:280] ~ ('…' if reply|length > 280 else '') }}
+          sequence:
+            - service: media_player.play_media
+              data:
+                entity_id: "{{ states('input_select.gpt_tts_speaker') }}"
+                media_content_id: >-
+                  {% set msg = states('input_text.gpt_text_reply') | urlencode %}
+                  https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ msg }}&tl=en
+                media_content_type: music
+        - conditions:
+            - condition: template
+              value_template: >-
+                {{ states('input_select.gpt_tts_speaker') not in [
+                  'media_player.homepod_left',
+                  'media_player.homepod_right',
+                  'media_player.apple_lounge'
+                ] }}
+          sequence:
+            - service: tts.google_translate_say
+              data:
+                entity_id: "{{ states('input_select.gpt_tts_speaker') }}"
+                message: "{{ states('input_text.gpt_text_reply') }}"
+    - service: persistent_notification.create
+      data:
+        title: "GPT Fallback"
+        message: "{{ states('input_text.gpt_text_reply') }}"
+gpt_convo_tts_reply_generic:
+  alias: "Speak GPT Reply"
+  mode: single
+  sequence:
+    - service: tts.google_translate_say
+      target:
+        entity_id: media_player.bedroom # Change to desired speaker
+      data:
+        message: "{{ states('input_text.gpt_text_reply') }}"
+        language: "en"
+save_gpt_last_sent_prompt:
+  alias: "Save Last GPT Prompt"
+  mode: single
+  sequence:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_last_sent_prompt
+        value: "{{ states('input_text.gpt_text_prompt') }}"
+email_gpt_response:
+  alias: "Email GPT Response"
+  mode: single
+  sequence:
+    - service: notify.notify
+      data:
+        title: "GPT Response"
+        message: "{{ states('input_text.gpt_text_reply') }}"
+copy_gpt_to_clipboard:
+  alias: "Copy GPT to Clipboard"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "📋 Copy GPT to Clipboard"
+        message: "{{ states('input_text.gpt_text_reply') }}\n\n📋 Copied manually from here."
+debug_check_openai_key:
+  alias: "Debug Check OpenAI Key"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "OpenAI Key Debug"
+        message: >-
+          {% set key = secrets['openai_api_key'] %}
+          Key starts with: {{ key[:8] }}...
+          Length: {{ key | length }}
+call_nas_via_pc:
+  alias: "Call NAS via PC"
+  mode: single
+  sequence:
+    - service: rest_command.run_nas_script
+      data:
+        prompt: "{{ states('input_text.chatgpt_prompt') }}"
+chatgpt_query_script:
+  alias: "ChatGPT Query Script"
+  mode: single
+  sequence:
+    - variables:
+        final_prompt: >-
+          {% if is_state('input_boolean.include_system_summary', 'on') %}
+            {{ states('input_text.chatgpt_prompt') ~ '\n\n---\n\nSystem Overview:\n' ~ states('input_text.admin_system_summary') }}
+          {% else %}
+            {{ states('input_text.chatgpt_prompt') }}
+          {% endif %}
+
+    - service: rest_command.run_nas_script
+      data:
+        prompt: "{{ final_prompt }}"
+
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_result_core
+      data:
+        value: >-
+          ✅ AI query sent. System summary: {{ 'included' if is_state('input_boolean.include_system_summary', 'on') else 'excluded' }}.
+
+    - service: python_script.chatgpt_processor
+      data:
+        final_prompt: "{{ final_prompt }}"
+
+gpt_speak_and_ask:
+  alias: "Voice Input → Ask GPT"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "Voice Input"
+        message: "This is a placeholder for future integration."
+gpt_nfc_trigger:
+  alias: "NFC Prompt Trigger"
+  mode: single
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "NFC Trigger"
+        message: "This will eventually read a tag and send a preset GPT prompt."
+chatgpt_user_query:
+  alias: ChatGPT User Query (Internal HA)
+  sequence:
+    - service: shell_command.run_chatgpt_user_reply
+cleanup_zone_ids:
+  alias: "Cleanup Zone.Identifier Files"
+  mode: single
+  sequence:
+    - service: shell_command.cleanup_zone_identifiers
+chatgpt_user_prompt:
+  alias: ChatGPT User Prompt
+  sequence:
+    - service: shell_command.run_chatgpt_user_reply
+      data_template:
+        prompt: "{{ states('input_text.gpt_text_prompt') }}"
+  mode: single
+gpt_session_start:
+  alias: "GPT Session Start"
+  sequence:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.gpt_session_active
+    - service: persistent_notification.create
+      data:
+        title: "GPT Session"
+        message: "Session started and boolean activated."
+gpt_session_end:
+  alias: "GPT Session End"
+  sequence:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.gpt_session_active
+    - service: shell_command.write_changelog_entry
+    - service: persistent_notification.create
+      data:
+        title: "GPT Session"
+        message: "Session ended, snapshot saved, changelog updated."
+chatgpt_kodi_command_handler:
+  alias: "Kodi AI Command Handler"
+  mode: single
+  sequence:
+    - service: script.chatgpt_query_script
+      data:
+        prompt: >
+          Kodi device: {{ states('input_select.kodi_target_device') }}
+          Command: {{ states('input_text.kodi_command') }}
+        save_response_to: input_text.kodi_command_response
+run_entity_audit:
+  alias: Run Entity Audit
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "🧪 Entity Audit Triggered"
+        message: "The nightly audit script has been run manually."
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_status_message
+      data:
+        value: "Running entity audit..."
+    - delay: "00:00:05"
+    - service: python_script.entity_audit # If using a custom script
+      continue_on_error: true
+call_jit_plugin:
+  alias: "Call JIT Plugin"
+  mode: single
+  sequence:
+    - service: rest_command.jit_plugin_call
+      data:
+        endpoint: getAllDashboards
+        payload: {}
+create_wsl_startup_marker:
+  alias: "Create WSL Startup Marker"
+  sequence:
+    - service: shell_command.create_marker_file
+get_includes_dir:
+  alias: "Get includes directory"
+  sequence:
+    - service: rest_command.call_plugin
+      data:
+        endpoint: "/jit_plugin/list_folder?path=includes"

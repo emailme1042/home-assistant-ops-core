@@ -1,0 +1,8 @@
+irrigation_override:
+  name: Irrigation Override
+  initial: false
+  icon: mdi:water-off
+dry_run_irrigation:
+  name: Dry Run Mode
+  initial: false
+  icon: mdi:test-tube

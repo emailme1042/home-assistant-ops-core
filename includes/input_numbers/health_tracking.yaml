@@ -1,0 +1,90 @@
+# System Health Tracking Input Numbers
+# Purpose: Store previous values for trend analysis
+
+previous_unavailable_count:
+  name: "Previous Unavailable Entity Count"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 1361
+  icon: mdi:counter
+
+health_snapshot_1_entities:
+  name: "Health Snapshot 1 - Total Entities"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 3057
+  icon: mdi:database
+
+health_snapshot_1_unavailable:
+  name: "Health Snapshot 1 - Unavailable"
+  min: 0
+  max: 5000
+  step: 1
+  initial: 1361
+  icon: mdi:alert-circle
+
+health_snapshot_2_entities:
+  name: "Health Snapshot 2 - Total Entities"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:database
+
+health_snapshot_2_unavailable:
+  name: "Health Snapshot 2 - Unavailable"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:alert-circle
+
+health_snapshot_3_entities:
+  name: "Health Snapshot 3 - Total Entities"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:database
+
+health_snapshot_3_unavailable:
+  name: "Health Snapshot 3 - Unavailable"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:alert-circle
+
+health_snapshot_4_entities:
+  name: "Health Snapshot 4 - Total Entities"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:database
+
+health_snapshot_4_unavailable:
+  name: "Health Snapshot 4 - Unavailable"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:alert-circle
+
+health_snapshot_5_entities:
+  name: "Health Snapshot 5 - Total Entities"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:database
+
+health_snapshot_5_unavailable:
+  name: "Health Snapshot 5 - Unavailable"
+  min: 0
+  max: 10000
+  step: 1
+  initial: 0
+  icon: mdi:alert-circle

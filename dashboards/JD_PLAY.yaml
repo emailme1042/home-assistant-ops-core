@@ -1,0 +1,132 @@
+title: Planes
+views:
+  - title: Flight Radar HQ
+    path: flight-radar
+    icon: mdi:airplane
+    cards:
+      - type: entities
+        title: ✈️ Flight Sensors
+        entities:
+          - sensor.flightradar24_current_in_area
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+          - sensor.flightradar24_most_tracked
+          - sensor.flightradar24_additional_tracked
+
+      - type: gauge
+        entity: sensor.flightradar24_current_in_area
+        min: 0
+        max: 50
+        name: Flights Nearby
+
+      - type: custom:flightradar24-card
+        flights_entity: sensor.flightradar24_current_in_area
+        location:
+          latitude: 50.78
+          longitude: -1.84
+        radar:
+          enabled: true
+          rings:
+            - 2
+            - 5
+            - 10
+            - 20
+          show_labels: true
+
+      - type: history-graph
+        title: Aircraft Activity (Last 6 Hours)
+        entities:
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+        hours_to_show: 6
+        refresh_interval: 60
+
+      - type: map
+        title: ✈️ Aircraft Over Bournemouth
+        entities:
+          - sensor.flightradar24_current_in_area
+        default_zoom: 10
+
+      - type: markdown
+        content: >
+          ### 📢 Flight Alerts  
+          Alexa will announce noisy or special aircraft within 20km.  
+          Lights flash, notifications pop, and debug info is logged.
+
+      - type: entities
+        title: 🔧 Controls & Toggles
+        entities:
+          - switch.api_data_fetching
+          - update.flightradar24_card_update
+          - update.flightradar24_update
+
+      - type: entities
+        title: ✍️ Manual Tracking
+        entities:
+          - text.flightradar24_add_to_track
+          - text.flightradar24_remove_from_track
+
+      - type: markdown
+        content: >
+          ### ✈️ Bournemouth Flights
+
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% if flights %}
+            {% for f in flights %}
+              {% if 'BOH' in [f.airport_origin_icao, f.airport_destination_icao] %}
+                - **{{ f.aircraft_model }}** from **{{ f.airport_origin_icao or 'Unknown' }}** to **{{ f.airport_destination_icao or 'Unknown' }}**
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            No Bournemouth flights currently tracked.
+          {% endif %}
+
+      - type: button
+        name: Announce Incoming Flight
+        tap_action:
+          action: call-service
+          service: media_player.play_media
+          service_data:
+            entity_id: media_player.lounge_echo
+            media_content_type: tts
+            media_content_id: Heads up! A noisy aircraft is approaching Bournemouth airspace.
+
+      - type: entities
+        title: 💡 Ambient Flight Lighting
+        entities:
+          - entity: light.brown_lamp
+            name: Brown Lamp
+          - entity: automation.flight_alert_takeoff_or_landing
+            name: Flight Alert Automation
+
+      - type: entity
+        entity: automation.flight_alert_takeoff_or_landing
+        name: Flight Alert Automation Status
+
+      - type: entities
+        title: OpenSky
+        entities:
+          - sensor.opensky
+
+      - type: markdown
+        content: >
+          ### ✈️ OpenSky Live Tracker  
+          [Click to open full map](https://map.opensky-network.org)
+
+      - type: gauge
+        entity: sensor.aircraft_count
+        min: 0
+        max: 50
+        name: Aircraft Decoded
+
+      - type: gauge
+        entity: sensor.lowest_aircraft_altitude
+        min: 0
+        max: 40000
+        name: Lowest Altitude
+
+      - type: entities
+        title: ✈️ MQTT Aircraft Feed
+        entities:
+          - sensor.aircraft_count
+          - sensor.lowest_aircraft_altitude

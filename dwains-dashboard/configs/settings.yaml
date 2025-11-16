@@ -1,0 +1,12 @@
+disable_clock: false
+am_pm_clock: false
+disable_welcome_message: false
+v2_mode: false
+disable_sensor_graph: false
+invert_cover: false
+weather_entity: weather.forecast_home
+alarm_entity: ''
+# Disable problematic navigation features
+disable_navigation_card: true
+# Use simple navigation instead
+simple_navigation: true

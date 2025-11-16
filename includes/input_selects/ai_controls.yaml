@@ -1,0 +1,9 @@
+file_preview:
+  name: File Preview Selection
+  options:
+    - "Current Session"
+    - "Recent Changes" 
+    - "System Status"
+    - "Fix Sheet"
+    - "AI Exec Log"
+  initial: "Current Session"

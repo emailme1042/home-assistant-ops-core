@@ -1,0 +1,7 @@
+zigbee_repair_protocol:
+  alias: "Zigbee Repair Protocol"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bridge/request/device/remove"
+        payload: "{ \"device\": \"0x00124b0026abcdef\" }"

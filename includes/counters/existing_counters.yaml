@@ -1,0 +1,13 @@
+gpt_requests:
+  name: GPT Requests
+  initial: 0
+  restore: true
+  step: 1
+  icon: mdi:robot
+  
+vscode_disconnects_today:
+  name: VSCode Disconnects Today
+  initial: 0
+  restore: false
+  step: 1
+  icon: mdi:connection

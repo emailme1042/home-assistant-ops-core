@@ -1,0 +1,17 @@
+# AI Self-Healing Shell Commands
+# Commands for OpenAI repair bridge and auto-patching
+
+openai_repair_bridge: >
+  python3 /config/python_scripts/openai_repair_bridge.py "{{ file_path | default('configuration.yaml') }}" "{{ error_description | default('Configuration validation failed') }}"
+
+ai_config_validate: >
+  python3 -c "import yaml; yaml.safe_load(open('/config/configuration.yaml'))" 2>&1 || echo "YAML validation failed"
+
+ai_auto_patch: >
+  /config/AI_WORKSPACE/auto_patch_config.bat
+
+ai_backup_config: >
+  cp /config/configuration.yaml /config/AI_WORKSPACE/backups/configuration_backup_$(date +%Y%m%d_%H%M%S).yaml
+
+ai_emergency_validation: >
+  python3 /config/AI_WORKSPACE/Scripts/yaml_sanity_check.py /config

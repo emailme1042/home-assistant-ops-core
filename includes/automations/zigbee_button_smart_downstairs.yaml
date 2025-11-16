@@ -1,0 +1,154 @@
+automation:
+  - alias: "Zigbee Button - Smart Downstairs Off + Hall Light"
+    id: zigbee_button_smart_downstairs_off
+    description: "Intelligently turn off only ON downstairs devices, avoid Apple TV, hall light 10s"
+    trigger:
+      # Primary trigger: MQTT messages directly from Zigbee2MQTT
+      - platform: mqtt
+        topic: "zigbee2mqtt/Button Zigbee"
+      
+      # Backup trigger: Device trigger if available  
+      - platform: device
+        device_id: "19e81c87689f2f54852d74b3d933eaff"
+        domain: mqtt
+        type: action
+        subtype: single
+          
+    condition: []
+        
+    action:
+      # Step 1: Hall light on immediately (bright)
+      - service: light.turn_on
+        target:
+          entity_id: light.hallway  # Using working entity from sonoff automation
+        data:
+          brightness: 255
+          color_temp: 300  # Warm white
+          
+      # Step 2: Turn off lights ONLY if they're currently on (exclude kitchen - not smart, include loo)
+      - repeat:
+          for_each:
+            - light.lounge
+            - light.lounge_ceiling_light  
+            - light.lounge_light
+            - light.lounge_tv_strip_lights
+            - light.hue_living_room
+            - light.dining_light_5
+            - light.reading_light
+            - light.loo  # Include loo as sometimes manual switch affects automation
+            - light.wiz_rgbw_tunable_2606be
+            - light.wiz_rgbw_tunable_2609a6
+          sequence:
+            - condition: state
+              entity_id: "{{ repeat.item }}"
+              state: "on"
+            - service: light.turn_off
+              target:
+                entity_id: "{{ repeat.item }}"
+                
+      # Step 3: Turn off media players ONLY if playing (avoid Apple TV if off, kitchen_nest stays untouched)
+      - repeat:
+          for_each:
+            - media_player.lounge
+            - media_player.kitchen_alexa
+            - media_player.lounge_alexa
+          sequence:
+            - condition: template
+              value_template: "{{ states(repeat.item) in ['playing', 'paused', 'on'] }}"
+            - service: media_player.turn_off
+              target:
+                entity_id: "{{ repeat.item }}"
+                
+      # Step 4: Turn on bedroom lamp with time-based brightness (using time integration)
+      - service: light.turn_on
+        target:
+          entity_id: light.brown_lamp  # Bedroom lamp
+        data:
+          brightness: >
+            {% set current_time = states('sensor.time') %}
+            {% if current_time >= '22:00' or current_time <= '06:00' %}
+              26  # 10% brightness for late night/early morning
+            {% else %}
+              51  # 20% brightness for normal hours
+            {% endif %}
+          color_temp: >
+            {% set current_time = states('sensor.time') %}
+            {% if current_time >= '22:00' or current_time <= '06:00' %}
+              454  # Extra warm for night (2200K)
+            {% else %}
+              500  # Warm for normal hours (2000K)
+            {% endif %}
+          
+      # Step 5: Turn off switches ONLY if they're on
+      - repeat:
+          for_each:
+            - switch.wax_warmer
+            - switch.lounge_loudness
+            - switch.lounge_speech_enhancement
+          sequence:
+            - condition: state
+              entity_id: "{{ repeat.item }}"
+              state: "on"
+            - service: switch.turn_off
+              target:
+                entity_id: "{{ repeat.item }}"
+                
+      # Step 6: Check garden/outdoor status and announce if needed (only during reasonable hours)
+      - choose:
+          - conditions:
+              - condition: and
+                conditions:
+                  - condition: time
+                    after: "07:00:00"
+                    before: "22:00:00"
+                  - condition: or
+                    conditions:
+                      - condition: state
+                        entity_id: light.garden_lights
+                        state: "on"
+                      - condition: state
+                        entity_id: binary_sensor.back_door_contact
+                        state: "on"
+                      - condition: state
+                        entity_id: binary_sensor.shed_door_contact
+                        state: "on"
+                      - condition: state
+                        entity_id: binary_sensor.side_gate_contact
+                        state: "on"
+            sequence:
+              - service: notify.mobile_app_plop
+                data:
+                  title: "🏡 Garden Status Check"
+                  message: >
+                    Garden check at {{ states('sensor.time') }}: 
+                    {% if is_state('light.garden_lights', 'on') %}Garden lights on. {% endif %}
+                    {% if is_state('binary_sensor.back_door_contact', 'on') %}Back door open. {% endif %}
+                    {% if is_state('binary_sensor.shed_door_contact', 'on') %}Shed door open. {% endif %}
+                    {% if is_state('binary_sensor.side_gate_contact', 'on') %}Side gate open. {% endif %}
+                    Check if you want to turn off garden lights.
+              # Note: Garden lights stay on unless manually confirmed - no auto-off
+                
+      # Step 7: Wait exactly 10 seconds
+      - delay:
+          seconds: 10
+          
+      # Step 8: Turn off hall light
+      - service: light.turn_off
+        target:
+          entity_id: light.hallway
+          
+      # Step 9: Set up bedroom lamp timer (time-based duration)
+      - service: timer.start
+        target:
+          entity_id: timer.bedroom_lamp_auto_off
+        data:
+          duration: >
+            {% set current_time = states('sensor.time') %}
+            {% if current_time >= '22:00' or current_time <= '06:00' %}
+              "00:10:00"  # 10 minutes during night hours
+            {% else %}
+              "00:15:00"  # 15 minutes during normal hours
+            {% endif %}
+          
+    mode: restart  # Restart mode prevents overlapping runs and ensures completion
+    max_exceeded: silent

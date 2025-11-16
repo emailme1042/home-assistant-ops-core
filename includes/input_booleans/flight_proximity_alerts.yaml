@@ -1,0 +1,5 @@
+# Flight Proximity Alerts Control
+flight_proximity_alerts:
+  name: "Flight Proximity Alerts"
+  icon: mdi:airplane-alert
+  initial: true

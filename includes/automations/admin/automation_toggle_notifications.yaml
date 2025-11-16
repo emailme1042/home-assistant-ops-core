@@ -1,0 +1,31 @@
+# Optional: Notify on automation group toggles
+# This will send mobile notifications when you use the toggle switches
+
+- id: notify_on_automation_group_toggle
+  alias: Admin – Notify on automation group toggles
+  trigger:
+    - platform: state
+      entity_id:
+        - input_boolean.quiet_gpt_automations
+        - input_boolean.quiet_noise_automations
+  mode: single
+  action:
+    - service: notify.persistent_notification
+      data:
+        title: "🧠 Automation Group Changed"
+        message: >-
+          **{{ trigger.to_state.attributes.friendly_name }}** set to {{ trigger.to_state.state }}.
+          
+          **Current Status:**
+          - Off: {{ states.automation | selectattr('state','equalto','off') | list | count }}
+          - Unavailable: {{ states.automation | selectattr('state','equalto','unavailable') | list | count }}
+          - Total: {{ states.automation | list | count }}
+    
+    # Optional: Also send to mobile if you have the app set up
+    # - service: notify.mobile_app_your_device_name
+    #   data:
+    #     title: "Automation group changed"
+    #     message: >-
+    #       {{ trigger.to_state.attributes.friendly_name }} set to {{ trigger.to_state.state }}.
+    #       Off: {{ states.automation | selectattr('state','equalto','off') | list | count }}
+    #       Unavailable: {{ states.automation | selectattr('state','equalto','unavailable') | list | count }}

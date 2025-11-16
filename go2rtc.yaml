@@ -1,0 +1,14 @@
+streams:
+  front:
+    - rtsp://587:758@192.168.1.164:8554/ch1
+  garden:
+    - rtsp://217:305@192.168.1.254:8554/ch1
+  side:
+    - rtsp://349:369@192.168.1.113:8554/ch1
+
+api:
+  listen: ":1984"
+rtsp:
+  listen: ":8554"
+webrtc:
+  listen: ":2020"

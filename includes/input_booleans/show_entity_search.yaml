@@ -1,0 +1,3 @@
+show_entity_search:
+  name: show entity search.Value.ToUpper() show entity search
+  icon: mdi:toggle-switch

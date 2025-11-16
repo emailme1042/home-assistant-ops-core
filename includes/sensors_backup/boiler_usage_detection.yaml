@@ -1,0 +1,128 @@
+# Boiler Usage Detection Sensors
+# Distinguishes between heating and hot water usage for Ideal boiler
+
+binary_sensor:
+  - platform: template
+    sensors:
+      heating_demand_active:
+        friendly_name: "Heating Demand Active"
+        device_class: heat
+        value_template: >
+          {# Check multiple heating demand indicators #}
+          {% set trv_demand = false %}
+          {% set thermostat_vibration = false %}
+
+          {# TRV position check (if available) #}
+          {% if states('sensor.trv_lounge_position') | int(0) > 10 or
+                states('sensor.trv_bedroom_position') | int(0) > 10 or
+                states('sensor.trv_office_position') | int(0) > 10 or
+                states('sensor.trv_bathroom_position') | int(0) > 10 or
+                states('sensor.trv_dining_position') | int(0) > 10 or
+                states('sensor.trv_kitchen_position') | int(0) > 10 %}
+            {% set trv_demand = true %}
+          {% endif %}
+
+          {# Thermostat vibration check (if sensors added) #}
+          {% if states('binary_sensor.thermostat_upstairs_vibration') == 'on' or
+                states('binary_sensor.thermostat_downstairs_vibration') == 'on' %}
+            {% set thermostat_vibration = true %}
+          {% endif %}
+
+          {# Return true if any heating demand detected #}
+          {{ trv_demand or thermostat_vibration or
+             is_state('climate.lounge', 'heat') or
+             is_state('climate.bedroom', 'heat') }}
+
+sensor:
+  - platform: template
+    sensors:
+      boiler_hot_water_flow:
+        friendly_name: "Boiler Hot Water Flow"
+        unit_of_measurement: "L/min"
+        icon_template: mdi:water-pump
+        value_template: >
+          {# Priority: Use actual flow sensor if available #}
+          {% if states('sensor.hot_water_flow_rate') not in ['unknown', 'unavailable', ''] %}
+            {{ states('sensor.hot_water_flow_rate') | float(0) }}
+          {% elif states('sensor.hot_water_flow') not in ['unknown', 'unavailable', ''] %}
+            {{ states('sensor.hot_water_flow') | float(0) }}
+          {% else %}
+            {# Fallback: Estimate based on short cycles without heating demand #}
+            {% if is_state('input_boolean.boiler_running_status', 'on') %}
+              {% set start_time = states('input_datetime.boiler_last_start') %}
+              {% if start_time not in ['unknown', 'unavailable', ''] %}
+                {% set start = strptime(start_time, '%Y-%m-%d %H:%M:%S') %}
+                {% set duration = (now() - start).total_seconds() %}
+                {# Assume hot water if cycle < 5 minutes and no heating demand #}
+                {% if duration < 300 and not is_state('binary_sensor.heating_demand_active', 'on') %}
+                  8.5  {# Typical shower flow rate #}
+                {% else %}
+                  0
+                {% endif %}
+              {% else %}
+                0
+              {% endif %}
+            {% else %}
+              0
+            {% endif %}
+          {% endif %}
+
+      boiler_hot_water_runtime_today:
+        friendly_name: "Boiler Hot Water Runtime Today"
+        unit_of_measurement: 'h'
+        icon_template: mdi:water-pump
+        value_template: >
+          {% set total_runtime = states('sensor.boiler_runtime_today') | float(0) %}
+          {% set heating_runtime = states('sensor.boiler_heating_runtime_today') | float(0) %}
+          {{ (total_runtime - heating_runtime) | round(2) }}
+
+      # Aqara E1 TRV Position Sensors (update entity IDs when MQTT is available)
+      trv_lounge_position:
+        friendly_name: "TRV Lounge Position"
+        unit_of_measurement: "%"
+        icon_template: mdi:radiator
+        value_template: >
+          {# Replace with actual Aqara E1 TRV position sensor entity #}
+          {# Example: states('sensor.aqara_e1_lounge_position') | int(0) #}
+          {{ 0 }}
+
+      trv_bedroom_position:
+        friendly_name: "TRV Bedroom Position"
+        unit_of_measurement: "%"
+        icon_template: mdi:radiator
+        value_template: >
+          {# Replace with actual Aqara E1 TRV position sensor entity #}
+          {{ 0 }}
+
+      trv_office_position:
+        friendly_name: "TRV Office Position"
+        unit_of_measurement: "%"
+        icon_template: mdi:radiator
+        value_template: >
+          {# Replace with actual Aqara E1 TRV position sensor entity #}
+          {{ 0 }}
+
+      trv_bathroom_position:
+        friendly_name: "TRV Bathroom Position"
+        unit_of_measurement: "%"
+        icon_template: mdi:radiator
+        value_template: >
+          {# Replace with actual Aqara E1 TRV position sensor entity #}
+          {{ 0 }}
+
+      trv_dining_position:
+        friendly_name: "TRV Dining Position"
+        unit_of_measurement: "%"
+        icon_template: mdi:radiator
+        value_template: >
+          {# Replace with actual Aqara E1 TRV position sensor entity #}
+          {{ 0 }}
+
+      trv_kitchen_position:
+        friendly_name: "TRV Kitchen Position"
+        unit_of_measurement: "%"
+        icon_template: mdi:radiator
+        value_template: >
+          {# Replace with actual Aqara E1 TRV position sensor entity #}
+          {{ 0 }}
+<parameter name="filePath">s:/includes/sensors/boiler_usage_detection.yaml

@@ -1,0 +1,9 @@
+tts_test_script:
+  alias: TTS Test Script
+  sequence:
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "This is a test message from Jamie's AI system. TTS integration is working correctly."
+        data:
+          type: tts
+  mode: single

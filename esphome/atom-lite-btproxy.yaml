@@ -1,0 +1,66 @@
+esphome:
+  name: atom-lite-btproxy
+  friendly_name: atom-lite-btproxy
+
+esp32:
+  board: m5stack-atom
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "KTQSZXo2p05jLFeml6pwiPb7nki2G693tjboO60HV50="
+
+ota:
+- platform: esphome
+
+wifi:
+  ssid: "Bogey Icecream 4U"
+  password: "Fartbum10.11"
+  manual_ip:
+    static_ip: 192.168.1.129
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1  # your router
+    dns2: 8.8.8.8      # Google DNS
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Atom-Lite-Btproxy"
+    password: "iaAGiqhQ0A67"
+
+improv_serial:
+
+captive_portal:
+
+esp32_ble_tracker:
+  id: ble_tracker
+  scan_parameters:
+    interval: 1600ms
+    window: 1200ms
+
+bluetooth_proxy:
+  active: true
+
+text_sensor:
+  - platform: template
+    name: "BLE Proxy Status"
+    lambda: |-
+      return std::string("Active");
+    update_interval: 60s
+
+  - platform: template
+    name: "Scanner Location"
+    lambda: |-
+      return std::string("Hallway");
+    update_interval: 60s
+
+ble_client:
+  mac_address: 90:15:06:fa:dc:38
+  id: bt_m5
+
+sensor: !include includes/sensors_atom_btproxy.yaml

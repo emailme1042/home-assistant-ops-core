@@ -1,0 +1,6 @@
+# Debug Controls for Sonoff Button Testing
+# Purpose: Manual triggers for testing button automation components
+
+test_individual_lights:
+  name: "Test Individual Lights"
+  icon: mdi:lightbulb-on

@@ -1,0 +1,19 @@
+- platform: template
+  sensors:
+    mqtt_last_message_age_motion_lounge:
+      friendly_name: "MQTT Last Message Age - Motion Lounge"
+      value_template: >
+        {{ (as_timestamp(now()) - as_timestamp(states('sensor.motion_lounge') | default(now))) | int }}
+      unit_of_measurement: seconds
+
+    mqtt_last_message_age_temperature_hall:
+      friendly_name: "MQTT Last Message Age - Temperature Hall"
+      value_template: >
+        {{ (as_timestamp(now()) - as_timestamp(states('sensor.temperature_hall') | default(now))) | int }}
+      unit_of_measurement: seconds
+
+    mqtt_last_message_age_door_front:
+      friendly_name: "MQTT Last Message Age - Door Front"
+      value_template: >
+        {{ (as_timestamp(now()) - as_timestamp(states('sensor.door_front') | default(now))) | int }}
+      unit_of_measurement: seconds

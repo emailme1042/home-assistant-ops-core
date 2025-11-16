@@ -1,0 +1,26 @@
+type: custom:mushroom-chips-card
+chips:
+  - type: template
+    icon: mdi:map-outline
+    content: Areas
+    card_mod:
+      style: |
+        ha-card { background-color: #ffe082; }
+  - type: template
+    icon: mdi:floor-plan
+    content: Rooms
+    card_mod:
+      style: |
+        ha-card { background-color: #ffecb3; }
+  - type: template
+    icon: mdi:link-variant
+    content: Devices
+    card_mod:
+      style: |
+        ha-card { background-color: #ffccbc; }
+  - type: template
+    icon: mdi:note-text-outline
+    content: Notes
+    card_mod:
+      style: |
+        ha-card { background-color: #fff9c4; }

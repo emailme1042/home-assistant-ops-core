@@ -1,0 +1,11 @@
+- mqtt_motion_lounge_stale:
+  name: MQTT Motion Lounge Stale
+  initial: off
+
+- mqtt_temperature_hall_stale:
+  name: MQTT Temperature Hall Stale
+  initial: off
+
+- mqtt_door_front_stale:
+  name: MQTT Door Front Stale
+  initial: off

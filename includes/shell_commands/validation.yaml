@@ -1,0 +1,22 @@
+# YAML Validation Shell Commands
+
+# Main YAML validation
+validate_yaml: >
+  python3 /config/scripts/validate_yaml.py /config > /config/fix_sheet.yaml 2>> /config/fix_errors.log &&
+  echo "$(date) - YAML validation complete." >> /config/fix_sheet.yaml
+
+# Validate includes directory only
+validate_includes_yaml: >
+  python3 /config/python_scripts/validate_includes_yaml.py /config/includes
+
+# Automation-specific validation (GPT requested)
+validate_automations: >
+  AUTOMATIONS_PATH=/config/automations.yaml LOG_PATH=/config/validation_logs/automation_validation.md \
+  python3 /config/python_scripts/validate_automations.py
+
+# Complete validation (YAML + Automations)
+validate_all_yaml: >
+  python3 /config/scripts/validate_yaml.py /config > /config/fix_sheet.yaml &&
+  AUTOMATIONS_PATH=/config/automations.yaml LOG_PATH=/config/fix_sheet.yaml \
+  python3 /config/python_scripts/validate_automations.py &&
+  echo "$(date) - Full YAML + Automation validation complete." >> /config/fix_sheet.yaml

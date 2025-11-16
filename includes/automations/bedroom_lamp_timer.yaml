@@ -1,0 +1,31 @@
+# Turn off bedroom lamp when timer finishes (from Zigbee button)
+- id: bedroom_lamp_auto_off_timer
+  alias: "Bedroom Lamp Auto-Off (Zigbee Button Timer)"
+  description: "Turn off bedroom lamp after 15 minutes from Zigbee button press"
+  trigger:
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.bedroom_lamp_auto_off
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.brown_lamp
+    # Only send notification if it's not late night hours (avoid 11pm-6am)
+    - choose:
+        - conditions:
+            - condition: time
+              after: "06:00:00"
+              before: "23:00:00"
+          sequence:
+            - service: notify.mobile_app_plop
+              data:
+                title: "🛏️ Bedroom Lamp Auto-Off"
+                message: "Bedroom lamp automatically turned off after 15 minutes"
+      default:
+        # Silent during late night hours - just turn off lamp
+  # Removed logbook.log action
+          data:
+            name: "Bedroom Lamp Timer"
+            message: "Bedroom lamp auto-off (silent during night hours)"
+  mode: single

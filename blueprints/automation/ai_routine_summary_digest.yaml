@@ -1,0 +1,80 @@
+# 🌙 AI Routine Summary Digest
+# Version: 2025.11.01 | Works with Phase Timer
+# Creates a daily summary of phase durations and logs results.
+
+blueprint:
+  name: AI Routine Summary Digest
+  description: >
+    Generates a nightly summary of daily routine durations. Sends
+    digest to notification target and appends to log file.
+  domain: automation
+
+  input:
+    phase_timer_entities:
+      name: Phase Duration Sensors
+      selector:
+        object: {}
+    notify_target:
+      name: Notification Target
+      selector:
+        target:
+          entity:
+            domain: notify
+    digest_log_file:
+      name: Log File Path
+      default: "/config/www/ai_routine_summary.md"
+    reset_time:
+      name: Daily Reset Time
+      default: "23:59:00"
+
+automation:
+  - id: ai_routine_summary_digest
+    alias: AI Routine Summary Digest
+    trigger:
+      - platform: time
+        at: !input reset_time
+    variables:
+      morning: "{{ states((!input phase_timer_entities)['Morning']) }}"
+      focus: "{{ states((!input phase_timer_entities)['Focus']) }}"
+      evening: "{{ states((!input phase_timer_entities)['Evening']) }}"
+      sleep: "{{ states((!input phase_timer_entities)['Sleep']) }}"
+      total: >
+        {{ (morning | float(0)) + (focus | float(0)) + (evening | float(0)) + (sleep | float(0)) }}
+    action:
+      - service: notify.send_message
+        target: !input notify_target
+        data:
+          title: "🌙 Daily Routine Summary"
+          message: >
+            🧭 **AI Routine Report — {{ now().strftime('%Y-%m-%d') }}**  
+            Morning: {{ morning }} min  
+            Focus: {{ focus }} min  
+            Evening: {{ evening }} min  
+            Sleep: {{ sleep }} min  
+            — Total: {{ total | round(1) }} min
+      - service: file.write
+        data:
+          path: !input digest_log_file
+          content: |
+            ### 🧭 AI Routine Report — {{ now().strftime('%Y-%m-%d') }}
+            - Morning: {{ morning }} min
+            - Focus: {{ focus }} min
+            - Evening: {{ evening }} min
+            - Sleep: {{ sleep }} min
+            **Total:** {{ total | round(1) }} min
+      - service: input_number.set_value
+        data:
+          entity_id: "{{ (!input phase_timer_entities)['Morning'] }}"
+          value: 0
+      - service: input_number.set_value
+        data:
+          entity_id: "{{ (!input phase_timer_entities)['Focus'] }}"
+          value: 0
+      - service: input_number.set_value
+        data:
+          entity_id: "{{ (!input phase_timer_entities)['Evening'] }}"
+          value: 0
+      - service: input_number.set_value
+        data:
+          entity_id: "{{ (!input phase_timer_entities)['Sleep'] }}"
+          value: 0

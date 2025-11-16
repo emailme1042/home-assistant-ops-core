@@ -1,0 +1,8 @@
+alias: "Speak AI response to Alexa"
+trigger:
+  platform: event
+  event_type: speak_ai_response
+action:
+  - service: notify.alexa_media_kitchen_alexa  # Logical TTS target — update if entity changes
+    data:
+      message: "{{ trigger.event.data.message }}"

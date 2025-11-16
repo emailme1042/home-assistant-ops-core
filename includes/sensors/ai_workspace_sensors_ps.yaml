@@ -1,0 +1,32 @@
+# PowerShell-based sensors for Windows environments
+# DISABLED FOR PERFORMANCE - PowerShell command sensors causing high load
+# DISABLED FOR PERFORMANCE - PowerShell command sensors causing high load
+# - platform: command_line
+#   name: AI Exec Log Recent
+#   command: powershell -Command "if (Test-Path -Path 'C:\config\AI_WORKSPACE\ai_exec_log.md') { (Get-Content -Path 'C:\config\AI_WORKSPACE\ai_exec_log.md' -Tail 5) -join ' | ' } else { 'no-log' }"
+#   scan_interval: 60
+
+# - platform: command_line
+#   name: YAML Validation Status
+#   command: powershell -Command "if (Test-Path -Path 'C:\config\fix_sheet.yaml' -PathType Leaf) { if ((Get-Item 'C:\config\fix_sheet.yaml').Length -gt 0) { 'issues' } else { 'ok' } } else { 'unknown' }"
+#   scan_interval: 60
+
+# - platform: command_line
+#   name: Includes Validation Status
+#   command: powershell -Command "if (Test-Path -Path 'C:\config\includes_validation_result.txt' -PathType Leaf) { if ((Get-Item 'C:\config\includes_validation_result.txt').Length -gt 0) { 'issues' } else { 'ok' } } else { 'unknown' }"
+#   scan_interval: 60
+
+# - platform: command_line
+#   name: Automation Validation Status
+#   command: powershell -Command "if (Test-Path -Path 'C:\config\validation_logs\automation_validation.md' -PathType Leaf) { if ((Get-Item 'C:\config\validation_logs\automation_validation.md').Length -gt 0) { 'issues' } else { 'ok' } } else { 'unknown' }"
+#   scan_interval: 60
+
+- platform: command_line
+  name: Last Validation Check
+  command: powershell -Command "if (Test-Path -Path 'C:\config\fix_sheet.yaml') { (Get-Item 'C:\config\fix_sheet.yaml').LastWriteTime.ToString('yyyy-MM-dd HH:mm:ss') } elseif (Test-Path -Path 'C:\config\validation_logs\automation_validation.md') { (Get-Item 'C:\config\validation_logs\automation_validation.md').LastWriteTime.ToString('yyyy-MM-dd HH:mm:ss') } else { 'never' }"
+  scan_interval: 60
+
+- platform: command_line
+  name: Local Flask Status Code
+  command: powershell -Command "try { $r=(Invoke-WebRequest -Uri 'http://localhost:5006/run_gpt' -UseBasicParsing -Method GET -TimeoutSec 5).StatusCode.value__; $r } catch { '000' }"
+  scan_interval: 30

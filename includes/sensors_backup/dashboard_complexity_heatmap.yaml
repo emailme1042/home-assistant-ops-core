@@ -1,0 +1,78 @@
+# Dashboard Complexity Heatmap Sensors
+# Individual complexity sensors for dashboard heatmap visualization
+# Uses enhanced complexity_score.py with per-dashboard analysis
+
+# Core System Dashboards
+- platform: command_line
+  name: "Dashboard Complexity Score AI Workspace"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py ai_workspace"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+- platform: command_line
+  name: "Dashboard Complexity Score Recovery"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py recovery"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+- platform: command_line
+  name: "Dashboard Complexity Score System Overview"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py system_overview"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+# User Interface Dashboards
+- platform: command_line
+  name: "Dashboard Complexity Score User Dashboard"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py user_dashboard"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+- platform: command_line
+  name: "Dashboard Complexity Score Network Diagnostics"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py network_diagnostics"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+- platform: command_line
+  name: "Dashboard Complexity Score Entity Reference"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py entity_reference"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+# Admin & Operations Dashboards
+- platform: command_line
+  name: "Dashboard Complexity Score Main Admin"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py main_admin"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+- platform: command_line
+  name: "Dashboard Complexity Score Automation Audit"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py automation_audit"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline
+
+- platform: command_line
+  name: "Dashboard Complexity Score Ops Main"
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py ops_main"
+  scan_interval: 600
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "points"
+  icon: mdi:chart-box-outline

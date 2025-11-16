@@ -1,0 +1,121 @@
+{
+    "folders": [
+        {
+            "name": "🏠 HA Production",
+            "path": "S:\\"
+        },
+        {
+            "name": "☁️ iCloud Workspace", 
+            "path": "C:\\Users\\email\\iCloudDrive\\HA-AI-Collaboration\\HOME_ASSISTANT_5_AI"
+        },
+        {
+            "name": "📝 OneNote AI Hub",
+            "path": "C:\\Users\\email\\OneDrive\\HomeAssistant"
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "*.yaml": "home-assistant",
+            "*.yml": "home-assistant",
+            "*.one": "plaintext"
+        },
+        "yaml.schemas": {
+            "https://raw.githubusercontent.com/home-assistant/core/dev/homeassistant/helpers/config_validation.py": [
+                "configuration.yaml",
+                "includes/**/*.yaml",
+                "dashboards/**/*.yaml"
+            ]
+        },
+        "yaml.validate": true,
+        "yaml.completion": true,
+        "files.watcherExclude": {
+            "**/node_modules/**": true,
+            "**/.git/objects/**": true,
+            "**/.git/subtree-cache/**": true,
+            "**/tmp/**": true
+        },
+        "files.watcherInclude": [
+            "**/*.one",
+            "**/*.yaml",
+            "**/*.yml",
+            "**/*.md"
+        ],
+        "explorer.fileNesting.enabled": true,
+        "explorer.fileNesting.patterns": {
+            "*.yaml": "${capture}.yaml.backup",
+            "*.yml": "${capture}.yml.backup",
+            "*.one": "${capture}.md, ${capture}.txt"
+        },
+        "workbench.iconTheme": "vscode-icons",
+        "files.autoSave": "afterDelay",
+        "files.autoSaveDelay": 1000
+    },
+    "extensions": {
+        "recommendations": [
+            "keesschollaart.vscode-home-assistant",
+            "redhat.vscode-yaml", 
+            "ms-vscode.powershell",
+            "yzhang.markdown-all-in-one",
+            "ms-vscode.vscode-json"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "🔄 Sync iCloud to Production",
+                "type": "shell",
+                "command": "powershell.exe",
+                "args": [
+                    "-ExecutionPolicy", "Bypass",
+                    "-File", "${workspaceFolder:🏠 HA Production}\\AI_WORKSPACE\\sync_icloud_to_production.ps1",
+                    "-BackupFirst", "-ValidateFirst"
+                ],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared"
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "📝 Extract OneNote to Markdown",
+                "type": "shell", 
+                "command": "powershell.exe",
+                "args": [
+                    "-Command",
+                    "Write-Host 'OneNote file detected: ${input:oneNoteFile}'; Write-Host 'Manual extraction required - copy content to AI_WORKSPACE/SHARED_CONTEXT/'"
+                ],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always"
+                }
+            },
+            {
+                "label": "✅ Validate HA Configuration",
+                "type": "shell",
+                "command": "powershell.exe", 
+                "args": [
+                    "-Command",
+                    "Write-Host 'Validating Home Assistant configuration...'; ha core check"
+                ],
+                "group": "test",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always"
+                }
+            }
+        ],
+        "inputs": [
+            {
+                "id": "oneNoteFile",
+                "description": "OneNote file path",
+                "default": "C:\\Users\\email\\OneDrive\\HomeAssistant\\HAOS - 5 x Ai's.one",
+                "type": "promptString"
+            }
+        ]
+    }
+}

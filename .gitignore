@@ -1,0 +1,23 @@
+# Exclude sensitive files and large data
+secrets.yaml
+*.db
+*.log
+.storage/
+.cloud/
+.vscode/settings.json
+home-assistant.log*
+zigbee.db
+*.db-wal
+*.db-shm
+www/snapshots/
+archive/
+tests/
+.continue/
+.force_refresh
+*.pyc
+__pycache__/
+node_modules/
+*.tmp
+*.cache
+*.bak
+*.backup

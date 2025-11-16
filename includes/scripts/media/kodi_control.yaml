@@ -1,0 +1,20 @@
+chatgpt_kodi_command_handler:
+  alias: "Kodi AI Command Handler"
+  mode: single
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.kodi_command_status
+      data:
+        value: "Processing..."
+    - service: script.chatgpt_user_query
+      data:
+        prompt: >
+          Control Kodi using this input: {{ states('input_text.kodi_command_prompt') }}
+    - delay:
+        seconds: 2
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.kodi_command_status
+      data:
+        value: "Response received"

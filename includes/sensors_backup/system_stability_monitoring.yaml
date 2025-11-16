@@ -1,0 +1,146 @@
+# System Stability Monitoring Sensors
+# Purpose: Proactive monitoring to prevent crashes and detect instability patterns
+
+- platform: template
+  sensors:
+    system_stability_score:
+      friendly_name: "System Stability Score"
+      icon_template: >
+        {% set score = states('sensor.system_stability_score') | int(0) %}
+        {% if score >= 90 %}
+          mdi:shield-check
+        {% elif score >= 70 %}
+          mdi:shield-alert
+        {% elif score >= 50 %}
+          mdi:shield-half-full
+        {% else %}
+          mdi:shield-off
+        {% endif %}
+      value_template: >
+        {% set uptime_hours = (states('sensor.uptime') | as_timestamp | int(0)) / 3600 %}
+        {% set cpu_usage = states('sensor.processor_use') | float(0) %}
+        {% set memory_free = states('sensor.memory_free') | float(0) %}
+        {% set unavailable_count = states('sensor.unavailable_entities') | int(0) %}
+        
+        {# Base score starts at 100 #}
+        {% set base_score = 100 %}
+        
+        {# Deduct for high CPU usage #}
+        {% if cpu_usage > 80 %}
+          {% set cpu_penalty = 30 %}
+        {% elif cpu_usage > 60 %}
+          {% set cpu_penalty = 15 %}
+        {% elif cpu_usage > 40 %}
+          {% set cpu_penalty = 5 %}
+        {% else %}
+          {% set cpu_penalty = 0 %}
+        {% endif %}
+        
+        {# Deduct for low memory #}
+        {% if memory_free < 100 %}
+          {% set memory_penalty = 25 %}
+        {% elif memory_free < 300 %}
+          {% set memory_penalty = 10 %}
+        {% else %}
+          {% set memory_penalty = 0 %}
+        {% endif %}
+        
+        {# Deduct for too many unavailable entities #}
+        {% if unavailable_count > 1000 %}
+          {% set unavailable_penalty = 20 %}
+        {% elif unavailable_count > 500 %}
+          {% set unavailable_penalty = 10 %}
+        {% else %}
+          {% set unavailable_penalty = 0 %}
+        {% endif %}
+        
+        {# Bonus for good uptime (more than 1 hour) #}
+        {% if uptime_hours > 24 %}
+          {% set uptime_bonus = 5 %}
+        {% elif uptime_hours > 1 %}
+          {% set uptime_bonus = 2 %}
+        {% else %}
+          {% set uptime_bonus = 0 %}
+        {% endif %}
+        
+        {% set final_score = base_score - cpu_penalty - memory_penalty - unavailable_penalty + uptime_bonus %}
+        {{ [final_score, 0] | max | int }}
+      unit_of_measurement: "%"
+
+    crash_risk_level:
+      friendly_name: "Crash Risk Assessment"
+      icon_template: >
+        {% set risk = states('sensor.crash_risk_level') %}
+        {% if risk == 'Low' %}
+          mdi:check-circle
+        {% elif risk == 'Medium' %}
+          mdi:alert-circle
+        {% elif risk == 'High' %}
+          mdi:alert
+        {% else %}
+          mdi:help-circle
+        {% endif %}
+      value_template: >
+        {% set stability = states('sensor.system_stability_score') | int(0) %}
+        {% set cpu = states('sensor.processor_use') | float(0) %}
+        {% set memory = states('sensor.memory_free') | float(0) %}
+        {% set uptime_hours = (states('sensor.uptime') | as_timestamp | int(0)) / 3600 %}
+        
+        {# High risk conditions #}
+        {% if stability < 50 or cpu > 85 or memory < 50 or uptime_hours < 0.1 %}
+          High
+        {# Medium risk conditions #}
+        {% elif stability < 75 or cpu > 60 or memory < 200 or uptime_hours < 1 %}
+          Medium
+        {# Low risk - system stable #}
+        {% else %}
+          Low
+        {% endif %}
+
+    error_pattern_detector:
+      friendly_name: "Error Pattern Detection"
+      icon_template: mdi:alert-circle-check
+      value_template: >
+        {% set recent_errors = states('sensor.recent_log_errors') | int(0) %}
+        {% set persistent_notifications = states('persistent_notification') | list | length %}
+        
+        {% if recent_errors > 50 or persistent_notifications > 10 %}
+          Critical
+        {% elif recent_errors > 20 or persistent_notifications > 5 %}
+          Warning
+        {% elif recent_errors > 5 %}
+          Monitoring
+        {% else %}
+          Clean
+        {% endif %}
+
+    resource_trend_monitor:
+      friendly_name: "Resource Trend Monitor"
+      icon_template: mdi:trending-up
+      value_template: >
+        {% set cpu = states('sensor.processor_use') | float(0) %}
+        {% set memory = states('sensor.memory_free') | float(0) %}
+        
+        {# Simple trend logic - could be enhanced with historical data #}
+        {% if cpu > 70 and memory < 200 %}
+          Degrading
+        {% elif cpu > 50 or memory < 500 %}
+          Stable-Watch
+        {% else %}
+          Optimal
+        {% endif %}
+
+    integration_health_score:
+      friendly_name: "Integration Health Score"
+      icon_template: mdi:puzzle-check
+      value_template: >
+        {% set unavailable = states('sensor.unavailable_entities') | int(0) %}
+        {% set total_entities = states.sensor | list | length + states.binary_sensor | list | length + states.switch | list | length %}
+        
+        {% if total_entities > 0 %}
+          {% set availability_percent = ((total_entities - unavailable) / total_entities * 100) | round %}
+          {{ [availability_percent, 0] | max }}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: "%"

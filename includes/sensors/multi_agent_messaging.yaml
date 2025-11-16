@@ -1,0 +1,139 @@
+# Multi-Agent Messaging Matrix Sensors
+# Tracks communication between AI agents and routing logic
+
+- platform: template
+  sensors:
+    ai_messaging_status:
+      friendly_name: "AI Messaging System Status"
+      value_template: >
+        {% set agent_entities = [
+          'input_text.last_edge_action', 'input_text.last_vscode_action', 
+          'input_text.last_gpt_action', 'input_text.last_openai_action', 
+          'input_text.last_m365_action', 'input_text.last_siri_action'
+        ] %}
+        {% set active = agent_entities | map('states') | reject('in', ['unavailable', 'unknown', None, '']) | list | length %}
+        {% if active >= 4 %}Active
+        {% elif active >= 2 %}Partial
+        {% else %}Idle
+        {% endif %}
+      icon_template: >-
+        {% set agent_count = 6 %}
+        {% set routing_count = states('input_number.daily_routing_count') | int(0) %}
+        {% if routing_count >= 10 %}
+          mdi:network
+        {% elif routing_count >= 3 %}
+          mdi:network-outline
+        {% else %}
+          mdi:network-off
+        {% endif %}
+
+    current_agent_coordinator:
+      friendly_name: "Current Agent Coordinator"
+      value_template: >
+        {% set edge = states('input_text.last_edge_action') %}
+        {% set vscode = states('input_text.last_vscode_action') %}
+        {% set gpt = states('input_text.last_gpt_action') %}
+        {% set openai = states('input_text.last_openai_action') %}
+        {% set last_actions = [edge, vscode, gpt, openai] | reject('in', ['unknown', 'unavailable', None, '']) | list %}
+        {% if last_actions | length > 0 %}
+          {% if edge not in ['unknown', 'unavailable', None, ''] %}Edge Copilot
+          {% elif vscode not in ['unknown', 'unavailable', None, ''] %}VSCode Copilot
+          {% elif gpt not in ['unknown', 'unavailable', None, ''] %}Smart Home Ops
+          {% elif openai not in ['unknown', 'unavailable', None, ''] %}OpenAI API
+          {% else %}None
+          {% endif %}
+        {% else %}None
+        {% endif %}
+      icon_template: >
+        {% if states('input_text.last_edge_action') != 'unknown' %}mdi:microsoft-edge
+        {% elif states('input_text.last_vscode_action') != 'unknown' %}mdi:microsoft-visual-studio-code
+        {% elif states('input_text.last_gpt_action') != 'unknown' %}mdi:robot-outline
+        {% elif states('input_text.last_openai_action') != 'unknown' %}mdi:brain
+        {% else %}mdi:help-circle
+        {% endif %}
+
+    message_routing_health:
+      friendly_name: "Message Routing Health"
+      value_template: >
+        {% set routing_count = states('input_number.daily_routing_count') %}
+        {% set error_count = states('input_number.routing_error_count') %}
+        {% if routing_count in ['unknown', 'unavailable', None, ''] or error_count in ['unknown', 'unavailable', None, ''] %}
+          Poor
+        {% else %}
+          {% set routing_count = routing_count | int(0) %}
+          {% set error_count = error_count | int(0) %}
+          {% set success_rate = (routing_count - error_count) / routing_count * 100 if routing_count > 0 else 100 %}
+          {% if success_rate >= 95 %}Excellent
+          {% elif success_rate >= 85 %}Good
+          {% elif success_rate >= 70 %}Fair
+          {% else %}Poor
+          {% endif %}
+        {% endif %}
+      unit_of_measurement: "%"
+      icon_template: >
+        {% set routing_count = states('input_number.daily_routing_count') | int(0) %}
+        {% set error_count = states('input_number.routing_error_count') | int(0) %}
+        {% set success_rate = (routing_count - error_count) / routing_count * 100 if routing_count > 0 else 100 %}
+        {% if success_rate >= 95 %}mdi:check-circle
+        {% elif success_rate >= 85 %}mdi:check
+        {% elif success_rate >= 70 %}mdi:alert-circle
+        {% else %}mdi:alert
+        {% endif %}
+
+    agent_task_queue_status:
+      friendly_name: "Agent Task Queue Status"
+      value_template: >
+        {% set queue_items = [
+          states('input_text.edge_task_queue'),
+          states('input_text.vscode_task_queue'),
+          states('input_text.gpt_task_queue'),
+          states('input_text.openai_task_queue')
+        ] | reject('in', ['unknown', 'unavailable', None, '']) | list | length %}
+        {% if queue_items == 0 %}Empty
+        {% elif queue_items <= 2 %}Light
+        {% elif queue_items <= 4 %}Moderate
+        {% else %}Heavy
+        {% endif %}
+      icon_template: >
+        {% set queue_items = [
+          states('input_text.edge_task_queue'),
+          states('input_text.vscode_task_queue'),
+          states('input_text.gpt_task_queue'),
+          states('input_text.openai_task_queue')
+        ] | reject('equalto', 'unknown') | reject('equalto', '') | list | length %}
+        {% if queue_items == 0 %}mdi:inbox
+        {% elif queue_items <= 2 %}mdi:inbox-arrow-down
+        {% elif queue_items <= 4 %}mdi:inbox-multiple
+        {% else %}mdi:inbox-full
+        {% endif %}
+
+    onenote_integration_status:
+      friendly_name: "OneNote Integration Status"
+      value_template: >
+        {% set sync_time = states('input_datetime.last_onenote_sync') %}
+        {% if sync_time in ['unknown', 'unavailable', None, ''] %}
+          Never Synced
+        {% else %}
+          {% set sync_datetime = None %}
+          {% if sync_time | length == 19 %}
+            {% set sync_datetime = strptime(sync_time, '%Y-%m-%d %H:%M:%S') %}
+          {% endif %}
+          {% if sync_datetime %}
+            {% set hours_ago = (now() - sync_datetime).total_seconds() / 3600 %}
+            {% if hours_ago < 24 %}Recent
+            {% elif hours_ago < 168 %}Stale
+            {% else %}Outdated
+            {% endif %}
+          {% else %}Never Synced
+          {% endif %}
+        {% endif %}
+      icon_template: >
+        {% if is_state('input_datetime.last_onenote_sync', 'unknown') %}mdi:note-off
+        {% elif states('input_datetime.last_onenote_sync') not in ['unknown', 'unavailable', None, ''] %}
+          {% set hours_ago = (now() - strptime(states('input_datetime.last_onenote_sync'), '%Y-%m-%d %H:%M:%S')).total_seconds() / 3600 %}
+          {% if hours_ago < 24 %}mdi:microsoft-onenote
+          {% elif hours_ago < 168 %}mdi:note-alert
+          {% else %}mdi:note-remove
+          {% endif %}
+        {% else %}mdi:note-off
+        {% endif %}

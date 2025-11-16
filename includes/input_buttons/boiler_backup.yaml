@@ -1,0 +1,6 @@
+# Boiler Backup Controls
+# Manual trigger buttons for backup operations
+
+backup_boiler_stats:
+  name: "Backup Boiler Stats"
+  icon: mdi:cloud-upload

@@ -1,0 +1,4 @@
+enable_performance_monitoring:
+  name: Enable Performance Monitoring
+  initial: off
+  icon: mdi:chart-bar

@@ -1,0 +1,76 @@
+- id: teddy_cube_color_control
+  alias: "Teddy Cube Color Control"
+  description: "Changes teddy strip light colors based on cube actions"
+  mode: single
+  trigger:
+    - platform: mqtt
+      topic: "zigbee2mqtt/Teddy Cube/action"
+  action:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.payload == 'shake' }}"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_strip_light
+              data:
+                color_name: "red"
+                brightness: 255
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.payload == 'flip90' }}"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_strip_light
+              data:
+                color_name: "blue"
+                brightness: 255
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.payload == 'flip180' }}"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_strip_light
+              data:
+                color_name: "green"
+                brightness: 255
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.payload == 'rotate_left' }}"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_strip_light
+              data:
+                color_name: "yellow"
+                brightness: 255
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.payload == 'rotate_right' }}"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_strip_light
+              data:
+                color_name: "purple"
+                brightness: 255
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.payload == 'slide' }}"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.teddys_strip_light
+              data:
+                color_name: "orange"
+                brightness: 255
+      default:
+        - service: light.turn_on
+          target:
+            entity_id: light.teddys_strip_light
+          data:
+            color_name: "white"
+            brightness: 128

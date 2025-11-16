@@ -1,0 +1,11 @@
+  - platform: ffmpeg
+    name: Front Door Cam
+    input: rtsp://192.168.1.217:8554/front_door
+
+  - platform: ffmpeg
+    name: Rear Cam
+    input: rtsp://192.168.1.217:8554/rear
+
+  # - platform: generic
+  #   name: Rear Cam Snapshot
+  #   still_image_url: http://192.168.1.217:1984/frame.jpeg?src=rear

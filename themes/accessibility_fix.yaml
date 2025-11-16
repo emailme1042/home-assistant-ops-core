@@ -1,0 +1,11 @@
+# Custom theme for improved compatibility
+# Note: lang attribute cannot be set via theme (HA Core limitation)
+
+custom_accessibility_fix:
+  # Theme color for better browser support
+  meta-theme-color: "#03a9f4"  # HA blue
+  
+  # Custom styling for better compatibility
+  card-background-color: "rgba(255, 255, 255, 0.1)"
+  primary-text-color: "#ffffff"
+  secondary-text-color: "#cccccc"

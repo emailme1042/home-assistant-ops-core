@@ -1,0 +1,93 @@
+# Configuration Health Dashboard Card
+# Displays configuration.yaml health metrics and restart safety
+
+type: vertical-stack
+cards:
+  - type: markdown
+    content: |
+      # 🔧 Configuration Health Monitor
+      **Real-time monitoring of configuration.yaml health and restart safety**
+
+  - type: grid
+    columns: 2
+    cards:
+      - type: gauge
+        entity: sensor.restart_safety_score
+        name: "Restart Safety"
+        min: 0
+        max: 100
+        needle: true
+        severity:
+          green: 80
+          yellow: 60
+          red: 0
+
+      - type: gauge
+        entity: sensor.configuration_include_count
+        name: "Include Files"
+        min: 0
+        max: 50
+        needle: true
+        severity:
+          green: 10
+          yellow: 30
+          red: 45
+
+  - type: entities
+    title: "📊 Configuration Health Details"
+    show_header_toggle: false
+    entities:
+      - entity: sensor.configuration_health_status
+        name: "Overall Status"
+        icon: mdi:check-circle
+      - entity: sensor.lovelace_resource_count
+        name: "Lovelace Resources"
+        icon: mdi:view-dashboard
+      - entity: sensor.configuration_include_count
+        name: "Total Includes"
+        icon: mdi:file-tree
+      - entity: sensor.restart_safety_score
+        name: "Restart Safety"
+        icon: mdi:restart
+
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "🔍 Check Configuration"
+        icon: mdi:file-check
+        tap_action:
+          action: call-service
+          service: homeassistant.check_config
+        hold_action:
+          action: more-info
+
+      - type: button
+        name: "🔄 Reload Core Config"
+        icon: mdi:reload
+        tap_action:
+          action: call-service
+          service: homeassistant.reload_core_config
+        hold_action:
+          action: more-info
+        
+      - type: button
+        name: "📋 Validate YAML"
+        icon: mdi:code-tags-check
+        tap_action:
+          action: call-service
+          service: shell_command.validate_yaml
+        hold_action:
+          action: more-info
+
+  - type: markdown
+    content: |
+      ### 🎯 Health Criteria
+      - **🟢 Healthy (100%)**: No errors, includes loaded properly
+      - **🟡 Warning (60-80%)**: Minor issues or missing includes
+      - **🟥 Critical (<60%)**: Configuration errors detected
+      
+      ### 📈 Current Configuration Stats
+      - **Include Strategy**: Modular `!include_dir_merge_*` approach
+      - **Resource Management**: Ultra-minimal 6-card stable set
+      - **Performance Optimizations**: Recorder exclusions active
+      - **Security**: Trusted networks and bypass login configured

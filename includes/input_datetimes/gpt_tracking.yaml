@@ -1,0 +1,4 @@
+last_gpt_success:
+  name: "Last GPT Success Time"
+  has_date: true
+  has_time: true

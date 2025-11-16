@@ -1,0 +1,39 @@
+# Dashboard Performance Analysis Scripts
+# Wrapper scripts for shell commands to enable button integration
+
+run_dashboard_analysis:
+  alias: Run Dashboard Performance Analysis
+  description: Execute comprehensive dashboard performance analysis
+  
+  sequence:
+    - service: shell_command.run_dashboard_performance_analysis
+    - service: persistent_notification.create
+      data:
+        title: "📊 Dashboard Analysis Running"
+        message: "Performance analysis started. Check AI_WORKSPACE for results in 1-2 minutes."
+        notification_id: dashboard_analysis_running
+
+audit_system_health:
+  alias: Quick System Health Audit
+  description: Run quick health audit and log results
+  
+  sequence:
+    - service: shell_command.audit_dashboard_health
+    - service: persistent_notification.create
+      data:
+        title: "🏥 Health Audit Complete"
+        message: "System health audit completed. Check AI_WORKSPACE/dashboard_health_audit.log for results."
+        notification_id: health_audit_complete
+
+generate_performance_report:
+  alias: Generate Performance Report
+  description: Generate performance report for session notes
+  
+  sequence:
+    - service: shell_command.generate_performance_report
+    - delay: "00:00:05"
+    - service: persistent_notification.create
+      data:
+        title: "📈 Performance Report Ready"
+        message: "Performance report generated and ready for copilot session notes."
+        notification_id: performance_report_ready

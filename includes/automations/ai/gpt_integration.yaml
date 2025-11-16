@@ -1,0 +1,164 @@
+- alias: Send GPT Prompt from Direct Input
+  id: gpt_direct_input_trigger
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_boolean.gpt_direct_send_trigger
+      to: "on"
+  action:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_text_prompt
+        value: "{{ states('input_text.gpt_direct_input') }}"
+    - service: shell_command.run_chatgpt_user_reply
+    - delay: "00:00:01"
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.gpt_direct_send_trigger
+
+- alias: Run GPT when prompt changes
+  id: gpt_prompt_change_trigger
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.chatgpt_prompt
+  action:
+    - service: script.chatgpt_user_query
+
+- alias: Mark GPT as Sent
+  id: gpt_mark_sent
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.chatgpt_prompt
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | length > 1 }}"
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_status_flag
+      data:
+        value: "Sent to GPT"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_last_sent_prompt
+      data:
+        value: "{{ states('input_text.chatgpt_prompt') }}"
+    - service: rest_command.run_nas_script
+      data:
+        prompt: "{{ states('input_text.chatgpt_prompt') }}"
+
+- alias: Admin GPT Mark as Sent
+  id: gpt_admin_mark_sent
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.chatgpt_prompt
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | length > 1 }}"
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_status_flag
+      data:
+        value: "Sent to Admin GPT"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_last_sent_prompt
+      data:
+        value: "{{ states('input_text.chatgpt_prompt') }}"
+    - service: rest_command.run_nas_script
+      data:
+        prompt: "{{ states('input_text.chatgpt_prompt') }}"
+
+- alias: Admin GPT Reply Complete
+  id: gpt_admin_reply_ready
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.gpt_result_core
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | length > 5 }}"
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.gpt_status_flag
+      data:
+        value: "Reply Ready"
+
+- alias: GPT Conversational Text Trigger
+  id: gpt_convo_trigger
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.gpt_text_prompt
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | length > 5 }}"
+  action:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_status_flag
+        value: "Submitting..."
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_last_sent_prompt
+        value: "{{ states('input_text.gpt_text_prompt') }}"
+    - service: script.chatgpt_query
+    - delay: "00:00:02"
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.gpt_status_flag
+        value: "Done"
+
+- alias: Announce GPT reply
+  id: gpt_reply_tts
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.gpt_result_core
+  action:
+    - service: notify.mobile_app_plop
+      data:
+        message: "{{ states('input_text.gpt_result_core') }}"
+        type: tts
+
+- alias: Push GPT reply to mobile
+  id: gpt_reply_mobile
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.gpt_result_core
+  action:
+    - service: notify.alexa_media_kitchen_alexa
+      data:
+        message: "{{ states('input_text.gpt_result_core') }}"
+
+- alias: React to GPT Context Change
+  id: gpt_context_change_notify
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.gpt_context_file
+  action:
+    - service: notify.persistent_notification
+      data:
+        message: "Context file updated to {{ states('input_text.gpt_context_file') }}"
+
+- alias: Log GPT Context Change
+  id: gpt_context_log
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_text.gpt_context_file
+  condition:
+    - condition: template
+      value_template: "{{ states('input_text.gpt_context_file') != 'unknown' }}"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "GPT Context Updated"
+        message: "New context file: {{ states('input_text.gpt_context_file') }}"

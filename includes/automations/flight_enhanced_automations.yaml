@@ -1,0 +1,92 @@
+# ADS-B Enhanced Automations
+# Proximity alerts and flight tracking automations
+
+- id: flight_proximity_alert
+  alias: "Flight Proximity Alert System"
+  description: "Alerts when aircraft come within specified distance"
+  trigger:
+    - platform: state
+      entity_id: sensor.aircraft_proximity_alert
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.flight_proximity_alerts
+      state: "on"
+  action:
+    - service: notify.mobile_app_plop
+      data:
+        title: "Aircraft Proximity Alert"
+        message: >
+          Aircraft within {{ states('input_number.flight_alert_distance_km') }}km!
+          Closest: {{ states('sensor.closest_aircraft_distance') }}km
+          Check dashboard for details.
+        data:
+          ttl: 0
+          priority: high
+    - service: tts.google_say
+      data:
+        entity_id: media_player.lounge_echo
+        message: "Aircraft proximity alert! Check the flight radar dashboard for details."
+    - service: logbook.log
+      data:
+        name: "Flight Alert"
+        message: >
+          Proximity alert triggered - aircraft within {{ states('input_number.flight_alert_distance_km') }}km
+        entity_id: sensor.aircraft_proximity_alert
+
+- id: flight_signal_quality_monitor
+  alias: "ADS-B Signal Quality Monitor"
+  description: "Monitors ADS-B receiver signal quality and alerts on degradation"
+  trigger:
+    - platform: state
+      entity_id: sensor.adsb_receiver_status
+      to: "Poor"
+      for:
+        minutes: 5
+    - platform: state
+      entity_id: sensor.adsb_receiver_status
+      to: "No Signal"
+      for:
+        minutes: 2
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "ADS-B Signal Warning"
+        message: >
+          ADS-B receiver signal quality: {{ states('sensor.adsb_receiver_status') }}
+          Signal strength: {{ states('sensor.adsb_signal_strength') }} dBm
+          Aircraft detected: {{ states('sensor.aircraft_count') }}
+        notification_id: adsb_signal_warning
+    - service: logbook.log
+      data:
+        name: "ADS-B Monitor"
+        message: >
+          Signal quality degraded: {{ states('sensor.adsb_receiver_status') }}
+        entity_id: sensor.adsb_receiver_status
+
+- id: flight_activity_summary
+  alias: "Daily Flight Activity Summary"
+  description: "Provides daily summary of flight activity"
+  trigger:
+    - platform: time
+      at: "22:00:00"
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Daily Flight Summary"
+        message: >
+          Today's flight activity:
+          - Max concurrent flights: {{ states('sensor.flightradar24_current_in_area') }}
+          - Total entries: {{ states('sensor.flightradar24_entered_area') }}
+          - Total exits: {{ states('sensor.flightradar24_exited_area') }}
+          - Lowest altitude: {{ states('sensor.lowest_aircraft_altitude') }}ft
+          - Average speed: {{ states('sensor.aircraft_average_speed') }}kts
+        notification_id: daily_flight_summary
+    - service: logbook.log
+      data:
+        name: "Flight Summary"
+        message: >
+          Daily flight summary logged - {{ states('sensor.flightradar24_entered_area') }} entries, {{ states('sensor.flightradar24_exited_area') }} exits
+        entity_id: sensor.flightradar24_current_in_area

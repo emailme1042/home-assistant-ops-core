@@ -1,0 +1,95 @@
+esphome:
+  name: newesp
+  friendly_name: New ESP
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: "Bogey Icecream 4U"
+  password: "Fartbum10.11"
+  manual_ip:
+    static_ip: 192.168.1.183
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
+    dns2: 8.8.8.8
+
+logger:
+
+api:
+  encryption:
+    key: "Y8nYmlmMt+jvp1hIs1cvovDCdG43CAgHZm6NgSKgY54="
+
+ota:
+  platform: esphome
+
+esp32_ble_tracker:
+  id: ble_tracker
+  scan_parameters:
+    interval: 1600ms
+    window: 1200ms
+    active: true
+
+bluetooth_proxy:
+  active: true
+
+binary_sensor:
+  - platform: status
+    name: "New ESP Online"
+
+text_sensor:
+  - platform: template
+    name: "BLE Proxy Scan Status"
+    lambda: |-
+      if (bluetooth_proxy::is_active()) return "Active";
+      else return "Inactive";
+
+  - platform: template
+    name: "BLE Tracker Status"
+    lambda: |-
+      if (id(ble_tracker).is_active()) return "Scanning";
+      else return "Idle";
+
+  - platform: template
+    name: "Scanner Location"
+    lambda: |-
+      return "Office";
+    update_interval: 60s
+
+  - platform: template
+    name: "New ESP Boot Time"
+    icon: mdi:clock-start
+    entity_category: diagnostic
+    lambda: |-
+      char str[32];
+      time_t now = ::time(nullptr);
+      strftime(str, sizeof(str), "%Y-%m-%d %H:%M:%S", localtime(&now));
+      return str;
+
+  - platform: template
+    name: "New ESP Wi-Fi Signal"
+    icon: mdi:wifi
+    entity_category: diagnostic
+    update_interval: 60s
+    lambda: |-
+      return to_string(WiFi.RSSI()) + " dBm";
+
+  - platform: template
+    name: "BLE Proxy Status"
+    lambda: |-
+      if (bluetooth_proxy::is_active()) return "Active";
+      else return "Inactive";
+
+  - platform: template
+    name: "Tracked Devices Count"
+    lambda: |-
+      return to_string(esp32_ble_tracker::get_device_count());
+
+ble_client:
+  mac_address: f4:65:0b:2d:e1:d0
+  id: new_esp
+
+sensor: !include includes/sensors_atom_btproxy.yaml

@@ -1,0 +1,5 @@
+# Bubble Card Modules Configuration
+# This file is required for Bubble Card to load modules
+# See: https://github.com/Clooos/Bubble-Card#modules
+
+modules: []

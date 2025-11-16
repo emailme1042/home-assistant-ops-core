@@ -1,0 +1,23 @@
+---
+- platform: template
+  sensors:
+    disabled_automations_count:
+      friendly_name: "Disabled Automations Count"
+      unique_id: disabled_automations_count
+      value_template: >
+        {{ states.automation | selectattr('state', 'eq', 'off') | list | length | int(0) }}
+      icon_template: "mdi:robot-off"
+      attribute_templates:
+        disabled_automations: >
+          {{ states.automation | selectattr('state', 'eq', 'off') | map(attribute='entity_id') | list }}
+        critical_disabled: >
+          {% set critical = ['automation.multi_agent_message_router', 'automation.onenote_file_watcher', 'automation.system_stability_monitor', 'automation.dashboard_watchdog'] %}
+          {% set disabled = states.automation | selectattr('state', 'eq', 'off') | map(attribute='entity_id') | list %}
+          {{ critical | select('in', disabled) | list }}
+        status: >
+          {% set critical_disabled = state_attr('sensor.disabled_automations_count', 'critical_disabled') %}
+          {% set critical_count = critical_disabled | length if critical_disabled else 0 %}
+          {% if critical_count == 0 %}✅ All critical automations enabled
+          {% elif critical_count <= 1 %}⚠️ Minor critical automation disabled
+          {% else %}🔴 Multiple critical automations disabled
+          {% endif %}

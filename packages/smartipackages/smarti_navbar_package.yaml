@@ -1,0 +1,174 @@
+sensor:
+  - platform: template
+    sensors:
+      smarti_active_motion_sensors:
+        friendly_name: "SMARTi Active Motion Sensors"
+        value_template: >
+          {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'motion') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_motion_sensors') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_motion_sensors')|int > 0 %}
+              mdi:motion-sensor
+            {% else %}
+              mdi:motion-sensor-off
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_lights:
+        friendly_name: "SMARTi Active Lights"
+        value_template: >
+          {{ states.light | selectattr('state','eq','on') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_lights') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_lights')|int > 0 %}
+              mdi:lightbulb-on
+            {% else %}
+              mdi:lightbulb-off
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_doors:
+        friendly_name: "SMARTi Active Doors"
+        value_template: >
+          {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'door') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_doors') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_doors')|int > 0 %}
+              mdi:door-open
+            {% else %}
+              mdi:door-closed
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_windows:
+        friendly_name: "SMARTi Active Windows"
+        value_template: >
+          {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'window') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_windows') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_windows')|int > 0 %}
+              mdi:window-open
+            {% else %}
+              mdi:window-closed
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_locks:
+        friendly_name: "SMARTi Active Locks"
+        value_template: >
+          {%- set locks_count = namespace(count=0) %}
+
+          {# Count unlocked lock entities #}
+          {%- for state in states.lock | selectattr('state', 'eq', 'unlocked') %}
+            {%- set locks_count.count = locks_count.count + 1 %}
+          {%- endfor %}
+
+          {# Count active lock binary sensors (state 'on') #}
+          {%- for state in states.binary_sensor | selectattr('attributes.device_class', 'eq', 'lock') | selectattr('state', 'eq', 'on') %}
+            {%- set locks_count.count = locks_count.count + 1 %}
+          {%- endfor %}
+
+          {{ locks_count.count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_locks')|int > 0 %}
+            mdi:lock-open
+          {% else %}
+            mdi:lock
+          {% endif %}              
+
+      smarti_active_water_sensors:
+        friendly_name: "SMARTi Active Water Sensors"
+        value_template: >
+          {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'moisture') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_water_sensors') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_water_sensors')|int > 0 %}
+              mdi:water-alert
+            {% else %}
+              mdi:water-off
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_gas_sensors:
+        friendly_name: "SMARTi Active Gas Sensors"
+        value_template: >
+          {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'gas') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_gas_sensors') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_gas_sensors')|int > 0 %}
+              mdi:smoke-detector-variant-alert
+            {% else %}
+              mdi:smoke-detector-variant-off
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_smoke_detectors:
+        friendly_name: "SMARTi Active Smoke Detectors"
+        value_template: >
+          {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'smoke') | list | count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_smoke_detectors') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_smoke_detectors')|int > 0 %}
+              mdi:fire-alert
+            {% else %}
+              mdi:fire-off
+            {% endif %}
+          {% else %}
+            mdi:alert-circle-outline  # or any default icon for unknown state
+          {% endif %}
+
+      smarti_active_low_battery_devices_count:
+        friendly_name: "SMARTi Active Low Battery Devices Count"
+        value_template: >
+          {%- set low_battery_devices_count = namespace(count=0) %}
+
+          {# Filter sensors #}
+          {%- for state in states.sensor | selectattr('attributes.device_class', 'eq', 'battery') %}
+            {% set entity_id = state.entity_id %}
+            {% set include = entity_id.startswith('sensor.') and (entity_id.endswith('_battery') or entity_id.endswith('.battery_state')) %}
+            {% set exclude = state.state in ['unavailable', '-', 'unknown', 'none', 'medium', 'high', 'charging', 'discharging', 'off', 'None'] or
+                              entity_id in ['sensor.campainha_ring_mqtt_battery', 'sensor.campainha_battery'] or
+                              'phone' in entity_id or 'browser' in entity_id or 'watch' in entity_id or 'pad' in entity_id or 'tablet' in entity_id or
+                              (state.state.isnumeric() and state.state | int >= 20) or
+                              (state.state == "0,0") %}
+            {% if include and not exclude and state.state.isnumeric() and 0 <= state.state | int <= 20 %}
+              {%- set low_battery_devices_count.count = low_battery_devices_count.count + 1 %}
+            {% endif %}
+          {%- endfor %}
+
+          {# Filter binary sensors #}
+          {%- for state in states.binary_sensor | selectattr('attributes.device_class', 'eq', 'battery') %}
+            {% set entity_id = state.entity_id %}
+            {% set include = entity_id.startswith('binary_sensor.') and 'battery_low' in entity_id %}
+            {% set exclude = state.state in ['unavailable', '-', 'unknown', 'none', 'medium', 'high', 'charging', 'discharging', 'off', 'None'] or
+                              entity_id in ['sensor.campainha_ring_mqtt_battery', 'sensor.campainha_battery'] or
+                              'phone' in entity_id or 'browser' in entity_id or 'watch' in entity_id or 'pad' in entity_id or 'tablet' in entity_id or
+                              (state.state == "0,0") %}
+            {% if include and not exclude and state.state == 'on' %}
+              {%- set low_battery_devices_count.count = low_battery_devices_count.count + 1 %}
+            {% endif %}
+          {%- endfor %}
+
+          {{ low_battery_devices_count.count }}
+        icon_template: >
+          {% if states('sensor.smarti_active_low_battery_devices_count')|int > 0 %}
+            mdi:battery-alert
+          {% else %}
+            mdi:battery
+          {% endif %}
+
+input_text:
+  default_dashboard:
+    name: "SMARTi Default Dashboard Sensor Storage"

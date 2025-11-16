@@ -1,0 +1,14 @@
+# Dashboard Performance Profiler Commands
+run_dashboard_performance_analysis: >-
+  python3 /config/AI_WORKSPACE/Scripts/dashboard_performance_profiler.py /config > /config/AI_WORKSPACE/dashboard_performance_report.txt 2>&1 && 
+  echo "Dashboard performance analysis complete. Report saved to AI_WORKSPACE/" >> /config/AI_WORKSPACE/dashboard_performance_report.txt
+
+audit_dashboard_health: >-
+  echo "=== Dashboard Health Audit $(date) ===" > /config/AI_WORKSPACE/dashboard_health_audit.log &&
+  echo "Frontend Errors: $(cat /config/.storage/core.restore_state | grep -o 'input_number.frontend_errors' | wc -l)" >> /config/AI_WORKSPACE/dashboard_health_audit.log &&
+  echo "System CPU: $(cat /config/.storage/core.restore_state | grep -o 'sensor.home_assistant_core_cpu_percent' | head -1)" >> /config/AI_WORKSPACE/dashboard_health_audit.log &&
+  echo "Dashboard audit complete" >> /config/AI_WORKSPACE/dashboard_health_audit.log
+
+generate_performance_report: >-
+  python3 /config/AI_WORKSPACE/Scripts/dashboard_performance_profiler.py /config &&
+  echo "Performance report generated and ready for session notes"

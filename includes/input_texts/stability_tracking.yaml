@@ -1,0 +1,29 @@
+# ================================================
+# STABILITY TIMELINE TEXT ENTITIES
+# ================================================
+# Purpose: Store crash details, VSCode actions, detection methods
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+crash_detection_method:
+  name: "Crash Detection Method"
+  max: 255
+  initial: "None"
+  icon: mdi:magnify
+
+last_vscode_action_description:
+  name: "Last VSCode Action Description"
+  max: 255
+  initial: "None"
+  icon: mdi:code-tags-check
+
+last_timeline_event_type:
+  name: "Last Timeline Event Type"
+  max: 100
+  initial: "None"
+  icon: mdi:timeline-text
+
+stability_timeline_log:
+  name: "Stability Timeline Log"
+  max: 255
+  initial: "Stability monitoring initialized"
+  icon: mdi:timeline-help
