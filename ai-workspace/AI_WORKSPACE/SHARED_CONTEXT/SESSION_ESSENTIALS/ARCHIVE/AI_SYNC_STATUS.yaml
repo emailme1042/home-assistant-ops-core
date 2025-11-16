@@ -1,0 +1,37 @@
+# AI Workspace Sync Status Sensor
+# Version: 2025-11-01
+# Purpose: Show AI workspace sync health (10-file limit) in Home Assistant dashboard
+
+sensor:
+  - name: AI Workspace Sync Status
+    unique_id: ai_workspace_sync_status
+    state: >
+      {% set active_files = [
+        'current_session.md',
+        'LIVE_AI_HANDOFF_MESSAGE.md',
+        'AI_OPERATIONS_REFERENCE.md',
+        'AI_DASHBOARD_GUIDE.md',
+        'VSCode_Edge_Integration_Guide.md',
+        'merge_map.yaml',
+        'copilot_session_notes.md',
+        'AI_VALIDATION_SUMMARY.md',
+        'HAOS_Restart_Safe_Checklist.md',
+        'AI_README.md'
+      ] %}
+      {% set synced = namespace(count=0) %}
+      {% for file in active_files %}
+        {% if file in state_attr('sensor.ai_workspace_file_list', 'files') %}
+          {% set synced.count = synced.count + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if synced.count == 10 %}
+        '✅ Synced'
+      {% elif synced.count < 10 %}
+        '⚠️ Out of scope'
+      {% else %}
+        '⏳ Updating'
+      {% endif %}
+    attributes:
+      files_expected: 10
+      files_synced: "{{ synced.count }}"
+      files_list: "{{ state_attr('sensor.ai_workspace_file_list', 'files') }}"

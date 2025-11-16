@@ -1,0 +1,98 @@
+# 🧠 Home Assistant YAML Schema Template for GitHub Copilot
+# Use this structure to ensure all generated YAML is valid and production-ready.
+
+# -------------------------------
+# 🔧 Shell Commands
+# -------------------------------
+shell_command:
+  run_dashboard_performance_analysis: >-
+    python3 /config/AI_WORKSPACE/Scripts/dashboard_performance_profiler.py /config > /config/AI_WORKSPACE/dashboard_performance_report.txt 2>&1 && echo "Dashboard performance analysis complete. Report saved to AI_WORKSPACE/" >> /config/AI_WORKSPACE/dashboard_performance_report.txt
+
+  generate_performance_report: >-
+    python3 /config/AI_WORKSPACE/Scripts/dashboard_performance_profiler.py /config && echo "Performance report generated and ready for session notes"
+
+  audit_dashboard_health: >-
+    echo "=== Dashboard Health Audit $(date) ===" > /config/AI_WORKSPACE/dashboard_health_audit.log && echo "Frontend Errors: $(cat /config/.storage/core.restore_state | grep -o 'input_number.frontend_errors' | wc -l)" >> /config/AI_WORKSPACE/dashboard_health_audit.log && echo "System CPU: $(cat /config/.storage/core.restore_state | grep -o 'sensor.home_assistant_core_cpu_percent' | head -1)" >> /config/AI_WORKSPACE/dashboard_health_audit.log && echo "Dashboard audit complete" >> /config/AI_WORKSPACE/dashboard_health_audit.log
+
+# -------------------------------
+# 🧩 Lovelace Dashboards
+# -------------------------------
+lovelace:
+  mode: yaml
+  resources: !include resources.yaml
+  dashboards:
+    recovery-dash:
+      mode: yaml
+      title: "🛡️ Recovery"
+      icon: "mdi:shield-check"
+      show_in_sidebar: true
+      filename: dashboards/recovery/recovery_dashboard.yaml
+
+    ai-workspace-overview:
+      mode: yaml
+      title: "AI Workspace"
+      icon: "mdi:robot"
+      show_in_sidebar: true
+      filename: dashboards/AI_WORKSPACE/ai_workspace_overview.yaml
+
+# -------------------------------
+# 📦 Lovelace Resources
+# -------------------------------
+# File: resources.yaml
+- url: /hacsfiles/button-card/button-card.js
+  type: module
+- url: /hacsfiles/mushroom/mushroom.js
+  type: module
+- url: /local/custom-card.js
+  type: module
+
+# -------------------------------
+# 🧱 Dashboard Fragment
+# -------------------------------
+# File: dashboards/recovery/recovery_dashboard.yaml
+title: "🛡️ Recovery"
+views:
+  - title: "Safe Mode"
+    path: safe
+    icon: mdi:shield
+    cards:
+      - type: entities
+        entities:
+          - sensor.uptime
+          - sensor.cpu_usage
+          - sensor.memory_free
+
+  - title: "Emergency Controls"
+    path: emergency
+    icon: mdi:alert
+    cards:
+      - type: button
+        name: "Restart HA"
+        icon: mdi:restart
+        tap_action:
+          action: call-service
+          service: homeassistant.restart
+
+# -------------------------------
+# 🧪 Automation Template
+# -------------------------------
+automation:
+  - alias: "Notify on frontend error"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.frontend_error_count
+        above: 0
+    action:
+      - service: notify.mobile_app_yourdevice
+        data:
+          message: "Frontend error detected. Check Recovery Dashboard."
+
+# -------------------------------
+# 🧠 Template Sensor
+# -------------------------------
+sensor:
+  - platform: template
+    sensors:
+      frontend_error_count:
+        friendly_name: "Frontend Error Count"
+        value_template: "{{ states('input_number.frontend_errors') }}"

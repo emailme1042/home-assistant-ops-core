@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: Home Assistant GPT Actions
+  version: "1.0"
+  description: OpenAPI spec for triggering Home Assistant shell commands and automations from GPT.
+
+paths:
+  /shell_command/run_generate_yaml_ai:
+    post:
+      summary: Run the Home Assistant shell command: run_generate_yaml_ai
+      operationId: shell_command_run_generate_yaml_ai
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/run_chatgpt_python:
+    post:
+      summary: Run the Home Assistant shell command: run_chatgpt_python
+      operationId: shell_command_run_chatgpt_python
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/run_orchestrator_ai_ops:
+    post:
+      summary: Run the Home Assistant shell command: run_orchestrator_ai_ops
+      operationId: shell_command_run_orchestrator_ai_ops
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/run_deploy_dashboard:
+    post:
+      summary: Run the Home Assistant shell command: run_deploy_dashboard
+      operationId: shell_command_run_deploy_dashboard
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  
+  # (Below this should be your existing shell_command entries)
+  # Example of an existing one:
+  /shell_command/cleanup_zone_identifier:
+    post:
+      summary: Run the Home Assistant shell command: cleanup_zone_identifier
+      operationId: shell_command_cleanup_zone_identifier
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/write_gpt_response:
+    post:
+      summary: Run the Home Assistant shell command: write_gpt_response
+      operationId: shell_command_write_gpt_response
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/write_changelog_entry:
+    post:
+      summary: Run the Home Assistant shell command: write_changelog_entry
+      operationId: shell_command_write_changelog_entry
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  
+  /shell_command/sync_to_live:
+    post:
+      summary: Run the Home Assistant shell command: sync_to_live
+      operationId: shell_command_sync_to_live
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/sync_from_live:
+    post:
+      summary: Run the Home Assistant shell command: sync_from_live
+      operationId: shell_command_sync_from_live
+      responses:
+        '200':
+          description: Shell command executed successfully
+
+  /shell_command/sync_ha_bidirectional:
+    post:
+      summary: Run the Home Assistant shell command: sync_ha_bidirectional
+      operationId: shell_command_sync_ha_bidirectional
+      responses:
+        '200':
+          description: Shell command executed successfully

@@ -1,0 +1,127 @@
+      - type: markdown
+        title: 🧠 AI Workspace Sync Monitor
+        content: |
+          **Sync Status:** {{ states('sensor.ha_sync_status') }}
+          **System Load:** {{ states('sensor.system_load_status') }}
+          **Last Merge Summary:** {{ states('sensor.ai_merge_last_status') }}
+          ---
+          
+          ### 🎯 Quick Actions
+          
+          - [Run Validation](/developer-tools/yaml)
+          - [Check Logs](/config/logs)
+          - [AI Workspace Dashboard](/ai-workspace/ai-overview)
+          - [System Overview Dashboard](/system-overview/0)
+title: AI Workspace Navigation
+views:
+  - title: AI Workspace
+    path: ai-navigation
+    icon: mdi:robot
+    badges: []
+    cards:
+      - type: markdown
+        content: |
+          ## 🤖 AI Workspace Navigation
+          
+          Use this dashboard to find your way back to current work and context.
+          
+          ---
+          
+          ### 📍 Where Am I? (Current Work)
+          
+          **Current Session** → `S:\AI_WORKSPACE\SHARED_CONTEXT\current_session.md`
+          
+          ---
+          
+          ### 📝 What Have We Done? (Recent Activity)
+          
+          - **Recent Changes** → `S:\AI_WORKSPACE\SHARED_CONTEXT\recent_changes.md`
+          - **Execution Log** → `S:\AI_WORKSPACE\ai_exec_log.md`
+          - **Session Notes** → `S:\AI_WORKSPACE\copilot_session_notes.md`
+          
+          ---
+          
+          ### 🚨 What Needs Attention? (Action Items)
+          
+          - **Active Issues & Questions** → `S:\AI_WORKSPACE\SHARED_CONTEXT\active_issues.md`
+          - **System Status** → `S:\AI_WORKSPACE\SHARED_CONTEXT\system_status.md`
+          
+          ---
+          
+          ### 📚 How Do Things Work? (Protocols & References)
+          
+          - **AI Protocol Guide** → `S:\AI_WORKSPACE\AI_README.md`
+          - **OpenAI Setup Guide** → `S:\AI_WORKSPACE\SHARED_CONTEXT\openai_setup_guide.md`
+          - **Session Template** → `S:\AI_WORKSPACE\copilot_session_template.md`
+          - **Mount Map** → `S:\AI_WORKSPACE\mount_map.yaml`
+          
+          ---
+          
+          ### 🎯 Quick Actions
+          
+          - [Run Validation](/developer-tools/yaml)
+          - [Check Logs](/config/logs)
+          - [AI Workspace Dashboard](/ai-workspace/ai-overview)
+          - [System Overview Dashboard](/system-overview/0)
+          
+          ---
+
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 📤 Share Context with Other AIs
+              
+              **To share files with GPT/Edge Copilot:**
+              1. Copy the file path above (e.g., `S:\AI_WORKSPACE\SHARED_CONTEXT\current_session.md`)
+              2. Open Windows Explorer and paste the path in address bar
+              3. Drag the file from Explorer to your GPT/Edge Copilot chat
+              
+              **Quick Access:** Press `Win + E` then `Ctrl + L` to open Explorer address bar
+              
+          - type: entities
+            entities:
+              - entity: input_text.ai_context_note
+                name: Quick Note to AIs
+            title: Context Sharing Helper
+          
+          - type: button
+            name: "🎙️ TTS Test"
+            tap_action:
+              action: call-service
+              service: script.tts_test_script
+            icon: mdi:speaker-message
+            
+          - type: button
+            name: "🤖 OpenAI Quick Test"
+            tap_action:
+              action: call-service
+              service: script.openai_quick_test
+            icon: mdi:robot-outline
+            
+          - type: button
+            name: "🎙️🤖 Combined Voice Test"
+            tap_action:
+              action: call-service
+              service: script.combined_voice_test
+            icon: mdi:microphone-message
+            
+      - type: markdown
+        content: |
+          ## 🧭 AI Agent Quick Reference
+          
+          | Symbol | Agent | Best For |
+          |--------|-------|----------|
+          | ⚙️ | **GitHub Copilot (VSCode)** | Editing files, running scripts, validation |
+          | 🧠 | **Smart Home Ops Assistant (GPT)** | Logic validation, HA compatibility, architecture questions |
+          | 💬 | **Microsoft Copilot (Edge)** | Live docs, community forums, bug tracking |
+          
+          ---
+          
+          ### 🤔 Who Do I Ask?
+          
+          - **SYSTEM_OVERVIEW patterns** → 🧠 GPT
+          - **Fallback validators / troubleshooting** → 🧠 GPT + 💬 Edge Copilot
+          - **File editing / scaffolding** → ⚙️ GitHub Copilot
+          - **Live community searches** → 💬 Edge Copilot
+          - **Dashboard design** → 🧠 GPT

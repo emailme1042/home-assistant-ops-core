@@ -1,0 +1,65 @@
+# Recovery Dashboard - Safe Fallback UI
+# No custom cards, minimal dependencies
+# Use this when main dashboards are broken
+
+title: "🚑 Recovery Dashboard"
+views:
+  - title: "Emergency Access"
+    path: "recovery"
+    icon: mdi:medical-bag
+    cards:
+      - type: markdown
+        content: |
+          ## 🚑 Recovery Mode Active
+          
+          **Status**: Emergency fallback dashboard
+          **Time**: {{ states('sensor.time') }}
+          **Date**: {{ states('sensor.date') }}
+          
+          ---
+          
+          ### 🎯 Recovery Steps
+          1. ✅ Custom components disabled
+          2. 🔄 Frontend rebuild attempted  
+          3. 📊 System status check
+          4. 🚀 Gradual component restoration
+          
+      - type: entities
+        title: "System Health"
+        entities:
+          - sensor.time
+          - sensor.date
+          - binary_sensor.updater
+        
+      - type: entities  
+        title: "Essential Controls"
+        entities:
+          - light.office
+          - light.lounge
+          - switch.kitchen_alexa
+          
+      - type: button
+        name: "Reload Core Config"
+        icon: mdi:refresh
+        tap_action:
+          action: call-service
+          service: homeassistant.reload_core_config
+          
+      - type: button
+        name: "Restart HA"
+        icon: mdi:restart
+        tap_action:
+          action: call-service
+          service: homeassistant.restart
+          
+      - type: markdown
+        content: |
+          ---
+          
+          ### 📁 Recovery Files Available
+          - `rebuild_frontend.bat` - Frontend rebuild
+          - `disable_custom_components.bat` - Disable all custom
+          - `restore_custom_components.bat` - Restore custom
+          
+          ### 🔗 Direct Access
+          All recovery tools in: `S:\AI_WORKSPACE\RECOVERY_TOOLS\`

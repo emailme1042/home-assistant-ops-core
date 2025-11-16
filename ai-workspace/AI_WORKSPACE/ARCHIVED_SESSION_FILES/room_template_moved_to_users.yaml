@@ -1,0 +1,195 @@
+title: Lounge
+path: lounge
+icon: mdi:sofa
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: 🛋️ Lounge
+      - type: custom:button-card
+        icon: mdi:home
+        name: ← Home
+        styles:
+          card:
+            - margin-left: auto
+        tap_action:
+          action: navigate
+          navigation_path: /dac-home-db/home
+      - type: picture
+        image: /api/image/serve/lounge_image/original
+        aspect_ratio: 1
+        tap_action:
+          action: none
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: template
+        content: "👤 Logged in as: {{ user }}"
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    filter:
+      include:
+        - area: Lounge
+          domain: light
+      exclude:
+        - state: unavailable
+    card_param: cards
+    show_empty: false
+    template: |
+      - type: custom:mushroom-light-card
+        entity: {{ entity_id }}
+        show_color_control: true
+        show_brightness_control: true
+        show_temperature_control: true
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    filter:
+      include:
+        - area: Lounge
+          domain: select
+          entity_id: "*scene*"
+        - area: Lounge
+          domain: light
+          entity_id: "*strip*"
+      exclude:
+        - state: unavailable
+    card_param: cards
+    show_empty: false
+    template: |
+      - type: custom:mushroom-select-card
+        entity: {{ entity_id }}
+        name: Strip Scene
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    filter:
+      include:
+        - area: Lounge
+          domain: fan
+      exclude:
+        - state: unavailable
+    card_param: cards
+    show_empty: false
+    template: |
+      - type: custom:mushroom-fan-card
+        entity: {{ entity_id }}
+        show_oscillate_control: true
+        show_percentage_control: true
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    filter:
+      include:
+        - area: Lounge
+          domain: switch
+          entity_id: "*humidifier*"
+      exclude:
+        - state: unavailable
+    card_param: cards
+    show_empty: false
+    template: |
+      - type: custom:mushroom-entity-card
+        entity: {{ entity_id }}
+        name: Humidifier
+  - type: entities
+    title: 💡 Lights & Switches
+    entities:
+      - type: custom:fold-entity-row
+        open: false
+        head:
+          type: section
+          label: Smart Switches & Plugs
+        entities:
+          - type: custom:auto-entities
+            card:
+              type: entities
+            filter:
+              include:
+                - area: Lounge
+                  domain: light
+                - area: Lounge
+                  domain: switch
+            exclude:
+              - state: unavailable
+            show_empty: false
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Media Players
+    filter:
+      include:
+        - area: Lounge
+          domain: media_player
+      exclude:
+        - state: unavailable
+    show_empty: false
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Covers
+    filter:
+      include:
+        - area: Lounge
+          domain: cover
+      exclude:
+        - state: unavailable
+    show_empty: false
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Cameras
+    filter:
+      include:
+        - area: Lounge
+          domain: camera
+      exclude:
+        - state: unavailable
+    show_empty: false
+  - type: entities
+    title: 🧰 Device Health
+    entities:
+      - type: custom:fold-entity-row
+        open: false
+        head:
+          type: section
+          label: Diagnostics
+        entities:
+          - type: custom:auto-entities
+            card:
+              type: entities
+            filter:
+              include:
+                - area: Lounge
+                  domain: sensor
+                  entity_id: "*battery*"
+                - area: Lounge
+                  domain: sensor
+                  entity_id: "*signal*"
+                - area: Lounge
+                  domain: sensor
+                  entity_id: "*voltage*"
+                - area: Lounge
+                  domain: sensor
+                  entity_id: "*power*"
+                - area: Lounge
+                  domain: sensor
+                  entity_id: "*energy*"
+              exclude:
+                - state: unavailable
+            show_empty: false
+  - type: entities
+    title: 📦 All Room Entities
+    entities:
+      - type: custom:fold-entity-row
+        open: false
+        head:
+          type: section
+          label: Entity Dump
+        entities:
+          - type: custom:auto-entities
+            card:
+              type: entities
+            filter:
+              include:
+                - area: Lounge

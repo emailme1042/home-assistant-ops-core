@@ -1,0 +1,120 @@
+# 🧱 SYSTEM_OVERVIEW Status: 🟦 confirmed | Last Updated: 2025-10-27 | Source: copilot+gpt
+# Tags: dashboard, system-monitor, ai-integration, status-tracking
+
+views:
+  - title: SYSTEM_OVERVIEW
+    path: system-overview
+    icon: mdi:map-search
+    panel: false
+    cards:
+      # 🏥 System Health Tab (Direct Implementation)
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            title: "🏥 System Health"
+            content: |
+              ## System Health Overview
+              
+          # ✅ Core Health Indicators
+          - type: entities
+            title: System Health
+            icon: mdi:heart-pulse
+            entities:
+              - entity: sensor.system_health_summary
+                name: System Resource Summary
+              - entity: sensor.reload_status
+                name: YAML Reload Status
+              - entity: binary_sensor.mqtt_connection
+                name: MQTT Connection Status
+
+          # ✅ Validation Tools
+          - type: entities
+            title: Validation Tools
+            icon: mdi:file-check-outline
+            entities:
+              - entity: sensor.yaml_validation_status
+                name: YAML Validation Status
+              - entity: sensor.includes_validation_status
+                name: Includes Validation Status
+              - entity: input_boolean.run_validation_test
+                name: Run Validation Test
+
+          # ✅ Network Monitoring Panel
+          - type: entities
+            title: Network Health
+            icon: mdi:server-network
+            entities:
+              - entity: sensor.speedtest_download
+                name: Download Speed
+              - entity: sensor.network_latency
+                name: Network Latency
+              - entity: binary_sensor.mqtt_connection
+                name: MQTT Status
+
+          # ✅ OpenAI Response
+          - type: entity
+            entity: input_text.openai_response
+            name: Last OpenAI Response
+
+          # 🔧 VS Code Extension Health (CP Suggested)
+          - type: markdown
+            title: "VS Code HA Extension Status"
+            content: |
+              **Extension Version**: keesschollaart.vscode-home-assistant@2.1.0
+              **Connection Status**: ✅ WebSocket Connected (auth issues persist)
+              **Entity Suggestions**: ❌ Dropdown not working (single suggestions only)
+              **Language Mode**: ✅ Home Assistant YAML recognition working
+              **Last Token Refresh**: 2025-10-27 22:40
+              **Validation**: ✅ Real-time schema checking active
+              
+              **Current Issues**:
+              - WebSocket authentication loop (see troubleshooting guide)
+              - Entity dropdown limited to single suggestions
+              - F12 navigation shows loading but doesn't jump
+              
+              **Workarounds Available**:
+              - Manual entity lookup via `/entity-reference` dashboard
+              - Schema validation working properly
+              - Command palette HA commands functional
+
+          # 🗺️ Dashboard Overview
+          - type: vertical-stack
+            title: "Dashboard Overview"
+            cards:
+              - type: markdown
+                title: Dashboard Status
+                content: |
+                  - ✅ Admin Dashboard (active)
+                  - 🕵️ Hidden Admin (active, scoped)
+                  - ⚠️ Recovery Tab (preview only)
+                  - ❌ Dwains Dashboard (partial logic)
+                  - ❓ AI Workspace (GPT flow unclear)
+                  - ❓ Teddy Central (device logic unclear)
+
+              - type: entities
+                title: GPT Session Status
+                entities:
+                  - entity: input_boolean.ai_script_toggle_1
+                    name: AI Script Toggle 1
+                  - entity: input_boolean.ai_script_toggle_2  
+                    name: AI Script Toggle 2
+                  - entity: sensor.gpt_status
+                    name: GPT Status
+                  - entity: sensor.gpt_last_prompt
+                    name: Last GPT Prompt
+                  - entity: sensor.gpt_context_file
+                    name: GPT Context File
+
+          # 📊 System Monitoring
+          - type: markdown
+            title: "System Monitoring"
+            content: |
+              **Live System Status**
+              - Dashboard Health: Monitoring active
+              - Entity Registry: Checking for orphaned entities
+              - Automation Status: All systems operational
+              
+              **Recent Activity**
+              - Last Validation: {{ now().strftime('%Y-%m-%d %H:%M') }}
+              - Configuration Status: Checking...
+

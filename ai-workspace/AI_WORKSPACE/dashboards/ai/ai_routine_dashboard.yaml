@@ -1,0 +1,131 @@
+# 🧠 AI Routine Dashboard
+# Version: 2025.11.01 | Full Integration with AI Workspace
+# Combines Lifecycle Tracker, Timer, and Summary Digest blueprints
+# into a single adaptive dashboard view.
+
+title: AI Routine Dashboard
+path: ai-routine
+icon: mdi:home-clock
+theme: Backend-selected
+type: custom:vertical-stack
+badges: []
+
+views:
+  - title: 🧭 Routine Overview
+    path: overview
+    type: vertical-stack
+    cards:
+      - type: markdown
+        title: 🌅 Routine Lifecycle Status
+        content: |
+          **Current Phase:** {{ states('input_select.ai_routine_state') }}
+          **Last Sync:** {{ states('sensor.ha_sync_status') }}
+          **Last Change:** {{ state_attr('input_select.ai_routine_state', 'last_changed') }}
+          **AI Sync:** {{ states('sensor.ai_workspace_status') }}
+
+      - type: entities
+        title: 🧩 Active Routine Parameters
+        entities:
+          - entity: input_select.ai_routine_state
+            name: Current Routine Phase
+          - entity: sensor.ha_sync_status
+            name: Sync Status
+          - entity: group.all_persons
+            name: Presence Group
+          - entity: automation.ai_scene_mood_selector
+            name: Mood Selector Automation
+          - entity: automation.ai_sleep_mode_routine_extended
+            name: Sleep Routine Automation
+
+      - type: horizontal-stack
+        cards:
+          - type: gauge
+            name: Morning Duration
+            entity: input_number.ai_timer_morning
+            min: 0
+            max: 600
+          - type: gauge
+            name: Focus Duration
+            entity: input_number.ai_timer_focus
+            min: 0
+            max: 600
+          - type: gauge
+            name: Evening Duration
+            entity: input_number.ai_timer_evening
+            min: 0
+            max: 600
+          - type: gauge
+            name: Sleep Duration
+            entity: input_number.ai_timer_sleep
+            min: 0
+            max: 600
+
+      - type: markdown
+        title: 🌙 Daily Summary
+        content: |
+          🧭 **AI Routine Report — {{ now().strftime('%Y-%m-%d') }}**
+          - Morning: {{ states('input_number.ai_timer_morning') }} min  
+          - Focus: {{ states('input_number.ai_timer_focus') }} min  
+          - Evening: {{ states('input_number.ai_timer_evening') }} min  
+          - Sleep: {{ states('input_number.ai_timer_sleep') }} min  
+          ---
+          **Total:** {{
+            (states('input_number.ai_timer_morning') | float(0)) +
+            (states('input_number.ai_timer_focus') | float(0)) +
+            (states('input_number.ai_timer_evening') | float(0)) +
+            (states('input_number.ai_timer_sleep') | float(0))
+          }} min
+
+  - title: 🎨 Mood & Media Sync
+    path: mood
+    type: vertical-stack
+    cards:
+      - type: markdown
+        title: 🎵 Mood Scene Overview
+        content: |
+          Current Mood Scene: {{ states('scene.current_mood') }}
+          Weather: {{ states('weather.home') }}
+          Phase: {{ states('input_select.ai_routine_state') }}
+      - type: entities
+        title: 🎚️ Active Mood Controllers
+        entities:
+          - entity: automation.ai_scene_mood_selector
+          - entity: media_player.living_room
+          - entity: light.living_room
+          - entity: light.bedroom
+      - type: button
+        name: Trigger Mood Update
+        icon: mdi:palette
+        tap_action:
+          action: call-service
+          service: automation.trigger
+          service_data:
+            entity_id: automation.ai_scene_mood_selector
+
+  - title: 📊 Analytics & Logs
+    path: analytics
+    type: vertical-stack
+    cards:
+      - type: history-graph
+        title: Routine Phase History
+        entities:
+          - entity: input_select.ai_routine_state
+          - entity: input_number.ai_timer_morning
+          - entity: input_number.ai_timer_focus
+          - entity: input_number.ai_timer_evening
+          - entity: input_number.ai_timer_sleep
+        hours_to_show: 24
+        refresh_interval: 300
+
+      - type: markdown
+        title: 🧾 Digest Log File
+        content: |
+          **Digest Path:** `/config/www/ai_routine_summary.md`
+          Use File Editor or VSCode integration to open this file.
+
+      - type: entities
+        title: ⚙️ System Entities
+        entities:
+          - entity: sensor.ai_workspace_status
+          - entity: sensor.ha_sync_status
+          - entity: sensor.uptime

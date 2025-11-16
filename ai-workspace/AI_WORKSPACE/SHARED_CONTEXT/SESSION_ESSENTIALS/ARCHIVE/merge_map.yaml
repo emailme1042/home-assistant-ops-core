@@ -1,0 +1,33 @@
+# 🧠 AI Markdown Merge Map
+# Used by GitHub Copilot to automate multi-file consolidation
+
+merge_targets:
+  AI_OPERATIONS_REFERENCE.md:
+    output_path: S:\AI_WORKSPACE\SHARED_CONTEXT\SESSION_ESSENTIALS\
+    includes:
+      - AI_README.md
+      - AI_Monitoring_Report.md
+      - copilot_session_notes.md
+      - AI_AGENT_REFERENCE.md
+      - AI_EXEC_LOG.md
+      - MULTI_AI_PROTOCOL.md
+
+  AI_DASHBOARD_GUIDE.md:
+    output_path: S:\AI_WORKSPACE\SHARED_CONTEXT\SESSION_ESSENTIALS\
+    includes:
+      - ai_workspace_overview.yaml
+      - ai_navigation.yaml
+      - dashboard_index.md
+      - context_snapshot_index.md
+      - template_sensors.yaml
+      - fix_sheet.yaml
+      - validation_notes.md
+
+  VSCode_Edge_Integration_Guide.md:
+    output_path: S:\AI_WORKSPACE\SHARED_CONTEXT\SESSION_ESSENTIALS\
+    includes:
+      - vscode_setup.md
+      - edge_integration.md
+      - powershell_commands.md
+      - extension_stack.md
+      - copilot_setup.md

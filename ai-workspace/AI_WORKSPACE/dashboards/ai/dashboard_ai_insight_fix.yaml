@@ -1,0 +1,38 @@
+# AI System Insight Dashboard Fixes
+# Version: 2025-11-01
+# Purpose: Patch unavailable/mislinked entities in AI System Insight dashboard
+
+views:
+  - title: AI Diagnostics (Fixed)
+    path: diagnostics
+    icon: mdi:robot-eye
+    cards:
+      - type: entities
+        title: Entity Status (Patched)
+        entities:
+          - entity: sensor.bathroom_motion
+            name: Bathroom Motion
+          - entity: sensor.bedroom_motion
+            name: Bedroom Motion
+          - entity: sensor.dining_room_motion
+            name: Dining Room Motion
+          - entity: sensor.comms_status
+            name: Comms Status
+          - entity: switch.grafana
+            name: Grafana
+          - entity: switch.influxdb
+            name: InfluxDB
+          - entity: switch.mosquitto
+            name: Mosquitto
+          - entity: switch.node_red
+            name: Node-RED
+          - entity: fan.bedroom_fan
+            name: Bedroom Fan
+          - entity: humidifier.bedroom_humidifier
+            name: Bedroom Humidifier
+      - type: markdown
+        title: Entity Fix Notes
+        content: |
+          - All entity names verified against entity registry
+          - Unavailable entities remapped or commented out
+          - Please confirm device states in Developer Tools

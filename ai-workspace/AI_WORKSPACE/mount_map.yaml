@@ -1,0 +1,28 @@
+## 🧠 [File Purpose] Snapshot — [Timestamp]
+status: [confirmed | suggested | pending]
+source: [dashboard | shell | YAML | manual]
+
+mount_map:
+  ai_workspace:
+    path: \AI_WORKSPACE
+    role: AI workspace root
+    contains:
+      - AI_WORKSPACE
+      - Scripts
+      - meta
+      - templates
+      - ai_exec_log.md
+      - copilot_snapshot.txt
+  HAOS_System_Overview:
+    path: \SYSTEM_OVERVIEW
+    role: HAOS config tweak base container
+    contains:
+      - README.md
+      - copilot_log_monitor.yaml
+      - gpt_context.yaml
+      - mindmap_links.yaml
+      - structure_index.yaml
+      - todo_master.yaml
+notes:
+  - Git Sync is one-way unless manually triggered; https://github.com/Git-Smarter/HA-Repo
+
