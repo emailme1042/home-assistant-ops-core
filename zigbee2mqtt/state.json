@@ -79,7 +79,7 @@
         "battery": 100,
         "voltage": 3100,
         "temperature": 11.7,
-        "humidity": 94.9,
+        "humidity": 94.8,
         "temperature_units": "celsius",
         "temperature_calibration": 0,
         "humidity_calibration": 0,
@@ -91,7 +91,7 @@
     },
     "0xa4c13801d40cffff": {
         "current": 0,
-        "voltage": 237.76,
+        "voltage": 241.76,
         "power": 0,
         "outlet_control_protect": false,
         "overload_protection": {
@@ -179,3 +179,4 @@
         "last_seen": "2025-11-13T20:58:17.251Z",
         "linkquality": 63
     }
+}
