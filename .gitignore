@@ -21,3 +21,14 @@ node_modules/
 *.cache
 *.bak
 *.backup
+
+# Exclude OAuth tokens and API keys
+*_token.json
+*token*.json
+client_secret.json
+*_secret.json
+*secret*.json
+
+# Exclude archived sensitive data
+AI_WORKSPACE/SYSTEM_DATA/
+archieve or delete/
