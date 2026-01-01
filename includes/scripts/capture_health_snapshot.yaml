@@ -1,0 +1,12 @@
+alias: Capture Health Snapshot
+sequence:
+  - service: logbook.log
+    data:
+      name: "System Health Snapshot"
+      message: "Captured restart snapshot at {{ now() }}"
+      entity_id: sensor.system_health_score
+  - service: persistent_notification.create
+    data:
+      title: "System Snapshot"
+      message: "Health snapshot captured and logged."
+mode: single

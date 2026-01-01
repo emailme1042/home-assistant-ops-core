@@ -36,9 +36,9 @@
     - name: "System Health Score"
       unique_id: system_health_score
       state: >
-        {% set total_entities = states | count %}
+        {% set total_entities = states | selectattr('domain','defined') | list | count %}
         {% set unavailable = states | selectattr('state','in',['unavailable','unknown']) | list | count %}
-          {% if total_entities > 0 %}
+        {% if total_entities > 0 %}
           {{ (((total_entities - unavailable) / total_entities) * 100) | round(1) }}
         {% else %}
           0
@@ -48,3 +48,7 @@
         total_entities: "{{ states | count }}"
         unavailable_entities: "{{ states | selectattr('state','in',['unavailable','unknown']) | list | count }}"
         healthy_entities: "{{ states | rejectattr('state','in',['unavailable','unknown']) | list | count }}"
+        unavailable_entities: >
+          {{ states | selectattr('state','in',['unavailable','unknown']) | list | count }}
+        entity_id:
+          - sensor.unavailable_entity_count
