@@ -3,40 +3,40 @@ voice_monkey_door_alert:
   method: get
 
 gpt_chatgpt_query:
-  url: "http://192.168.1.203:5001/api/chatgpt_query"
+  url: "http://192.168.0.203:5001/api/chatgpt_query"
   method: POST
   content_type: "application/json"
   payload: '{"prompt": "{{ prompt }}"}'
 
 gpt_create_backup:
-  url: "http://192.168.1.203:5001/api/backup"
+  url: "http://192.168.0.203:5001/api/backup"
   method: POST
   content_type: "application/json"
   payload: '{"label": "{{ label }}"}'
 
 gpt_reload_automations:
-  url: "http://192.168.1.203:5001/api/reload_automations"
+  url: "http://192.168.0.203:5001/api/reload_automations"
   method: POST
 
 gpt_reload_scripts:
-  url: "http://192.168.1.203:5001/api/reload_scripts"
+  url: "http://192.168.0.203:5001/api/reload_scripts"
   method: POST
 
 collect_ha_metrics:
-  url: "http://192.168.1.217:8123/api/states"
+  url: "http://192.168.0.217:8123/api/states"
   method: GET
   headers:
     Authorization: "Bearer {{ states('input_text.ha_token') }}"
     Content-Type: "application/json"
 
 gpt_set_input_text:
-  url: "http://192.168.1.203:5001/api/input_text"
+  url: "http://192.168.0.203:5001/api/input_text"
   method: POST
   content_type: "application/json"
   payload: '{"entity_id": "{{ entity_id }}", "value": "{{ value }}"}'
 
 gpt_get_entity_state:
-  url: "http://192.168.1.203:5001/api/entity_state?entity_id={{ entity_id }}"
+  url: "http://192.168.0.203:5001/api/entity_state?entity_id={{ entity_id }}"
   method: GET
 
 ask_openai:
@@ -61,11 +61,11 @@ jit_plugin_call:
   payload: "{{ payload }}"
 
 jit_get_file_contents:
-  url: "http://192.168.1.203:5001/jit_plugin/get_file_contents?path={{ path }}"
+  url: "http://192.168.0.203:5001/jit_plugin/get_file_contents?path={{ path }}"
   method: GET
 
 jit_list_folder:
-  url: "http://192.168.1.203:5001/jit_plugin/list_folder?path={{ path }}"
+  url: "http://192.168.0.203:5001/jit_plugin/list_folder?path={{ path }}"
   method: GET
 
 run_nas_script:

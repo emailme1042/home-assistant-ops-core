@@ -11,10 +11,10 @@ wifi:
   ssid: "Bogey Icecream 4U"
   password: "Fartbum10.11"
   manual_ip:
-    static_ip: 192.168.1.183
-    gateway: 192.168.1.1
+    static_ip: 192.168.0.183
+    gateway: 192.168.0.1
     subnet: 255.255.255.0
-    dns1: 192.168.1.1
+    dns1: 192.168.0.1
     dns2: 8.8.8.8
 
 logger:

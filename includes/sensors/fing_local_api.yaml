@@ -1,10 +1,11 @@
+# Fing Local API Integration
 # Requires Fing Desktop or Agent running locally
 # API Key obtained from Fing app settings (enable Local API)
 
 sensor:
   - platform: rest
     name: "Fing Network Devices"
-    resource: "http://192.168.1.200:49090/1/devices"
+    resource: "http://192.168.0.200:49090/1/devices"
     method: GET
     params:
       auth: !secret fing_api_key
@@ -17,7 +18,7 @@ sensor:
 
   - platform: rest
     name: "Fing People"
-    resource: "http://192.168.1.200:49090/1/people"
+    resource: "http://192.168.0.200:49090/1/people"
     method: GET
     params:
       auth: !secret fing_api_key
