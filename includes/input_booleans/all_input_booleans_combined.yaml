@@ -1,0 +1,93 @@
+show_entity_search:
+  name: Show Entity Search
+  initial: off
+  icon: mdi:magnify
+
+dashboard_admin_nav:
+  name: Admin Navigation
+  initial: true
+dashboard_chatgpt:
+  name: ChatGPT Dashboard
+  initial: true
+dashboard_pokemon_lab:
+  name: Pokémon Lab
+  initial: true
+dashboard_alexa_test:
+  name: Alexa Test
+  initial: true
+dashboard_fire_tv:
+  name: Fire TV Dashboard
+  initial: true
+dashboard_kiosk:
+  name: Kiosk Mode
+  initial: true
+dashboard_temp:
+  name: Temperature Dashboard
+  initial: true
+dashboard_dashboards_hub:
+  name: Dashboards Hub
+  initial: true
+dashboard_smart_core:
+  name: Smart Core
+  initial: true
+dashboard_media_control:
+  name: Media Control
+  initial: true
+dashboard_lights_presence:
+  name: Lights & Presence
+  initial: true
+dashboard_sensor_lab:
+  name: Sensor Lab
+  initial: true
+dashboard_garden_flow:
+  name: Garden Flow
+  initial: true
+dashboard_security_panel:
+  name: Security Panel
+  initial: true
+dashboard_teddys_room:
+  name: Teddy's Room
+  initial: true
+dashboard_recovery:
+  name: Recovery
+  initial: true
+admin_dashboard_entities:
+  name: Entities Dashboard Enabled
+  icon: mdi:format-list-bulleted
+  initial: true
+admin_dashboard_helpers:
+  name: Helpers Dashboard Enabled
+  icon: mdi:account-cog
+  initial: true
+admin_dashboard_root:
+  name: Root Dashboard Enabled
+  icon: mdi:home
+  initial: true
+automatic_update_notifications:
+  name: Automatic Update Notifications
+  initial: true
+chatgpt_query_running:
+  name: GPT Query Running
+  icon: mdi:robot
+scan_summary_running:
+  name: Scan & Summary Running
+  icon: mdi:file-search
+include_system_summary:
+  name: Include Admin System Summary in GPT Prompt
+  icon: mdi:database-plus
+  initial: false
+force_yaml_check:
+  name: Force YAML Check
+  initial: off
+  icon: mdi:file-alert
+gpt_direct_send_trigger:
+  name: Send GPT Input Trigger
+  initial: false
+run_validation_now:
+  name: Run Validation Now
+  initial: false
+  icon: mdi:file-check
+run_verbose_validation:
+  name: Run Verbose Validation
+  icon: mdi:file-check
+

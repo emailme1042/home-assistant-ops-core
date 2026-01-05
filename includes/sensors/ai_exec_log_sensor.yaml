@@ -1,0 +1,6 @@
+- platform: file
+  name: ai_exec_log
+  file_path: /config/AI_WORKSPACE/ai_exec_log.md
+  value_template: >
+    {{ value }}
+  scan_interval: 60

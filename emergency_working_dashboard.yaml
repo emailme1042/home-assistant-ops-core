@@ -1,0 +1,39 @@
+# Emergency Working Dashboard - Core Cards Only
+# No custom cards, no includes, minimal dependencies
+
+title: Emergency Dashboard
+views:
+  - title: System Status
+    path: status
+    cards:
+      - type: entities
+        title: System Health
+        entities:
+          - sun.sun
+          - sensor.date
+          - sensor.time
+      
+      - type: glance
+        title: Quick Status
+        entities:
+          - sun.sun
+          - sensor.date
+        
+  - title: Recovery
+    path: recovery
+    cards:
+      - type: markdown
+        content: |
+          ## 🛡️ System Recovery Dashboard
+          
+          **Status**: Emergency dashboard loaded successfully
+          
+          ### Quick Actions:
+          - Use SSH Terminal: `ha core restart`
+          - Check logs: `ha core logs`
+          - Validate config: `ha core check`
+          
+          ### Next Steps:
+          1. Fix Lovelace configuration conflict
+          2. Test individual dashboards
+          3. Restore full UI functionality

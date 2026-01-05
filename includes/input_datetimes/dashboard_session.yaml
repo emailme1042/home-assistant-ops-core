@@ -1,0 +1,5 @@
+# Dashboard Session Tracking
+session_start_time:
+  name: Dashboard Session Start Time
+  has_date: true
+  has_time: true

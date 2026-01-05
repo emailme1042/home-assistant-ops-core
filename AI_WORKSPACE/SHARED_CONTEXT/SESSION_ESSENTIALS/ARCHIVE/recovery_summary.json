@@ -1,0 +1,30 @@
+﻿{
+    "Recommendations":  [
+                            "Restart HA via web interface or hardware button",
+                            "Consider temporarily disabling non-essential custom components",
+                            "UI Lovelace Minimalist successfully removed",
+                            "Check HA logs via Settings -\u003e System -\u003e Logs",
+                            "Validate config via Settings -\u003e System -\u003e Check Configuration"
+                        ],
+    "Timestamp":  "2025-11-04 02:45:29",
+    "HAAccessible":  false,
+    "DisabledComponents":  1,
+    "ActiveComponents":  32,
+    "ConfigFiles":  {
+                        "configuration.yaml":  {
+                                                   "Exists":  true,
+                                                   "Size":  877
+                                               },
+                        "ui-lovelace.yaml":  {
+                                                 "Exists":  true,
+                                                 "Size":  2363
+                                             },
+                        "secrets.yaml":  {
+                                             "Exists":  true,
+                                             "Size":  3698
+                                         }
+                    },
+    "YAMLIssues":  [
+
+                   ]
+}

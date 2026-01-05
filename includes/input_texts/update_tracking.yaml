@@ -1,0 +1,23 @@
+last_update_type:
+  name: "Last Update Type"
+  max: 100
+  initial: "system_check"
+  icon: mdi:update
+
+last_update_author:
+  name: "Last Update Author"
+  max: 100
+  initial: "VSCode Copilot"
+  icon: mdi:account
+
+last_update_confirmed_by:
+  name: "Last Update Confirmed By"
+  max: 100
+  initial: "Jamie"
+  icon: mdi:account-check
+
+last_update_timestamp:
+  name: "Last Update Timestamp"
+  max: 50
+  initial: "2025-10-26"
+  icon: mdi:clock

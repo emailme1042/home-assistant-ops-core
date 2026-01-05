@@ -1,0 +1,31 @@
+# Automation Health Audit Shell Commands
+# These commands support CP's automation health audit framework
+
+scan_orphaned_triggers: >
+  python3 /config/AI_WORKSPACE/Scripts/scan_automations.py --scan-type orphaned_triggers --output /config/AI_WORKSPACE/audit_orphaned_triggers.json
+
+scan_unused_automation_ids: >
+  python3 /config/AI_WORKSPACE/Scripts/scan_automations.py --scan-type unused_ids --output /config/AI_WORKSPACE/audit_unused_ids.json
+
+scan_legacy_conditions: >
+  python3 /config/AI_WORKSPACE/Scripts/scan_automations.py --scan-type legacy_conditions --output /config/AI_WORKSPACE/audit_legacy_conditions.json
+
+generate_automation_audit_report: >
+  python3 /config/AI_WORKSPACE/Scripts/generate_audit_report.py --input-dir /config/AI_WORKSPACE --output /config/AI_WORKSPACE/automation_audit_report.md
+
+add_session_tags_to_automations: >
+  python3 /config/AI_WORKSPACE/Scripts/add_session_tags.py --automation-dir /config/includes/automations --session-tag "audit_2025_10_27"
+
+# Fallback trigger testing commands
+test_extension_fallback: >
+  python3 /config/AI_WORKSPACE/Scripts/test_fallbacks.py --test-type extension --log-file /config/AI_WORKSPACE/fallback_test_extension.log
+
+test_entity_fallback: >
+  python3 /config/AI_WORKSPACE/Scripts/test_fallbacks.py --test-type entity --log-file /config/AI_WORKSPACE/fallback_test_entity.log
+
+test_dashboard_fallback: >
+  python3 /config/AI_WORKSPACE/Scripts/test_fallbacks.py --test-type dashboard --log-file /config/AI_WORKSPACE/fallback_test_dashboard.log
+
+# Quick automation health check
+automation_health_check: >
+  find /config/includes/automations -name "*.yaml" -exec python3 /config/AI_WORKSPACE/Scripts/quick_automation_check.py {} \; > /config/AI_WORKSPACE/automation_health_summary.txt

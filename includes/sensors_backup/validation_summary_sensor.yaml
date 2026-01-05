@@ -1,0 +1,4 @@
+- platform: command_line
+  name: Validation Summary
+  command: powershell -Command "if (Test-Path -Path 'C:\config\AI_WORKSPACE\validation_summary.txt') { Get-Content -Path 'C:\config\AI_WORKSPACE\validation_summary.txt' -Raw } elseif (Test-Path -Path '/config/AI_WORKSPACE/validation_summary.txt') { Get-Content -Path '/config/AI_WORKSPACE/validation_summary.txt' -Raw } else { 'No summary available' }"
+  scan_interval: 300

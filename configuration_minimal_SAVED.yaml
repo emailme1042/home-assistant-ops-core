@@ -1,0 +1,44 @@
+# Emergency Minimal Configuration - No Custom Components
+# Created: 2025-11-03 Nuclear Fix Emergency
+
+# Core required sections only
+api: {}
+python_script: {}
+default_config: {}
+
+# Basic sensor
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+
+# Minimal frontend - NO custom cards
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Simple logger - NO custom component references  
+logger:
+  default: warning
+  logs:
+    homeassistant.core: info
+
+# Basic TTS
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+# Essential only - NO HACS references
+lovelace:
+  mode: yaml
+  
+# Simple home page
+ui-lovelace.yaml: |
+  title: Emergency Home Assistant
+  views:
+    - title: Home
+      cards:
+        - type: entities
+          entities:
+            - sensor.time
+            - sensor.date

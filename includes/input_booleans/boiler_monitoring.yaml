@@ -1,0 +1,3 @@
+boiler_running_status:
+  name: "Boiler Running Status"
+  icon: mdi:water-boiler

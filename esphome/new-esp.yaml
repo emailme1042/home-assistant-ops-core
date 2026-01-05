@@ -1,0 +1,103 @@
+esphome:
+  name: newesp
+  friendly_name: New ESP
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+esp32_ble:
+  max_connections: 4
+
+wifi:
+  ssid: "Bogey Pie WiFi"
+  password: "Fartbum10.11"
+  manual_ip:
+    static_ip: 192.168.0.183
+    gateway: 192.168.0.1
+    subnet: 255.255.255.0
+    dns1: 192.168.0.1
+    dns2: 8.8.8.8
+
+logger:
+
+api:
+  encryption:
+    key: "Y8nYmlmMt+jvp1hIs1cvovDCdG43CAgHZm6NgSKgY54="
+
+ota:
+  platform: esphome
+
+esp32_ble_tracker:
+  id: ble_tracker
+  scan_parameters:
+    interval: 1600ms
+    window: 1200ms
+    active: true
+
+bluetooth_proxy:
+  active: true
+
+binary_sensor:
+  - platform: status
+    name: "New ESP Online"
+
+text_sensor:
+  # Commented out due to removed API: bluetooth_proxy::is_active() no longer exists in ESPHome 2025
+  # - platform: template
+  #   name: "BLE Proxy Scan Status"
+  #   lambda: |-
+  #     if (bluetooth_proxy::is_active()) return optional<string>("Active");
+  #     else return optional<string>("Inactive");
+
+  # Commented out due to removed API: id(ble_tracker).is_active() no longer exists in ESPHome 2025
+  # - platform: template
+  #   name: "BLE Tracker Status"
+  #   lambda: |-
+  #     if (id(ble_tracker).is_active()) return optional<string>("Scanning");
+  #     else return optional<string>("Idle");
+
+  - platform: template
+    name: "Scanner Location"
+    lambda: |-
+      return optional<std::string>("Office");
+    update_interval: 60s
+
+  - platform: template
+    name: "New ESP Boot Time"
+    icon: mdi:clock-start
+    entity_category: diagnostic
+    lambda: |-
+      char str[32];
+      time_t now = ::time(nullptr);
+      strftime(str, sizeof(str), "%Y-%m-%d %H:%M:%S", localtime(&now));
+      return optional<std::string>(str);
+
+  # Commented out: WiFi.RSSI() not available in ESP-IDF framework
+  # - platform: template
+  #   name: "New ESP Wi-Fi Signal"
+  #   icon: mdi:wifi
+  #   entity_category: diagnostic
+  #   update_interval: 60s
+  #   lambda: |-
+  #     return optional<string>(to_string(WiFi.RSSI()) + " dBm");
+
+  # Commented out due to removed API: bluetooth_proxy::is_active() no longer exists in ESPHome 2025
+  # - platform: template
+  #   name: "BLE Proxy Status"
+  #   lambda: |-
+  #     if (bluetooth_proxy::is_active()) return optional<string>("Active");
+  #     else return optional<string>("Inactive");
+
+  # Commented out due to removed API: esp32_ble_tracker::get_device_count() no longer exists in ESPHome 2025
+  # - platform: template
+  #   name: "Tracked Devices Count"
+  #   lambda: |-
+  #     return optional<string>(to_string(esp32_ble_tracker::get_device_count()));
+
+ble_client:
+  mac_address: f4:65:0b:2d:e1:d0
+  id: new_esp
+
+sensor: !include includes/sensors_atom_btproxy.yaml

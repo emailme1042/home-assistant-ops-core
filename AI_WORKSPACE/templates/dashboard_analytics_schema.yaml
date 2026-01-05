@@ -1,0 +1,74 @@
+# 🧠 DASHBOARD ANALYTICS SYSTEM — YAML SCHEMA FOR GITHUB COPILOT
+
+# -------------------------------
+# 📊 Complexity Score Sensor
+# -------------------------------
+sensor:
+  - platform: command_line
+    name: "Dashboard Complexity Score"
+    command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py"
+    scan_interval: 300
+    unit_of_measurement: "pts"
+    icon: mdi:chart-bell-curve
+
+# -------------------------------
+# 🧠 Frontend Error Count Sensor
+# -------------------------------
+input_number:
+  frontend_errors:
+    name: "Frontend Error Count"
+    initial: 0
+    min: 0
+    max: 100
+    step: 1
+
+# -------------------------------
+# 🧪 Audit Freshness Sensor
+# -------------------------------
+sensor:
+  - platform: command_line
+    name: "Audit Log Freshness (min)"
+    command: "python3 /config/AI_WORKSPACE/Scripts/audit_freshness.py"
+    scan_interval: 300
+    unit_of_measurement: "min"
+    icon: mdi:clock-alert
+
+# -------------------------------
+# 🛡️ Recovery Readiness Binary Sensor
+# -------------------------------
+binary_sensor:
+  - platform: template
+    sensors:
+      recovery_ready:
+        friendly_name: "Recovery Dashboard Ready"
+        value_template: >-
+          {{ is_state('sensor.dashboard_complexity_score', '0') == false and
+             is_state('sensor.audit_log_freshness', 'unknown') == false }}
+        icon_template: mdi:shield-check
+
+# -------------------------------
+# 📈 Trend Tracker (Errors)
+# -------------------------------
+sensor:
+  - platform: statistics
+    name: "Frontend Error Trend"
+    entity_id: input_number.frontend_errors
+    sampling_size: 20
+    max_age:
+      minutes: 60
+
+# -------------------------------
+# 🧠 Optimization Recommendation Template
+# -------------------------------
+template:
+  - sensor:
+      - name: "Dashboard Optimization Tip"
+        state: >-
+          {% if states('sensor.dashboard_complexity_score')|int > 80 %}
+            Simplify views with heavy custom cards or nested stacks.
+          {% elif states('sensor.frontend_error_trend')|float > 1 %}
+            Investigate dashboards with frequent reloads or missing entities.
+          {% else %}
+            System is stable. No action needed.
+          {% endif %}
+        icon: mdi:lightbulb-on-outline

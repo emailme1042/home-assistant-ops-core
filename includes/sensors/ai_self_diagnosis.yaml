@@ -1,0 +1,86 @@
+# AI Self-Diagnosis Sensors
+# Monitors YAML error rate, frontend health, restart safety
+
+# DISABLED FOR PERFORMANCE - AI self-diagnosis sensors causing high CPU load
+# - platform: template
+#   sensors:
+#     ai_system_health_score:
+#       friendly_name: "AI System Health Score"
+#       value_template: >
+#         {% set config_errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+#         {% set frontend_errors = states('input_number.frontend_errors') | int(0) %}
+#         {% set total_entities = states | count %}
+#         {% set unavailable_entities = states | selectattr('state', 'eq', 'unavailable') | list | count %}
+#         {% set unavailable_percent = (unavailable_entities / total_entities * 100) if total_entities > 0 else 0 %}
+#         
+#         {% set score = 100 %}
+#         {% set score = score - (config_errors * 20) %}
+#         {% set score = score - (frontend_errors * 5) %}
+#         {% set score = score - (unavailable_percent * 2) %}
+#         {{ [score, 0] | max | int }}
+#       unit_of_measurement: "%"
+#   # icon: mdi:heart-pulse
+
+    ai_diagnostic_status:
+      friendly_name: "AI Diagnostic Status"
+      value_template: >
+        {% set score = states('sensor.ai_system_health_score') | int(0) %}
+        {% if score >= 80 %}
+          Healthy
+        {% elif score >= 60 %}
+          Warning
+        {% elif score >= 40 %}
+          Critical
+        {% else %}
+          Emergency
+        {% endif %}
+      # icon: >
+      #   {% set score = states('sensor.ai_system_health_score') | int(0) %}
+      #   {% if score >= 80 %}
+      #     mdi:check-circle
+      #   {% elif score >= 60 %}
+      #     mdi:alert-circle
+      #   {% elif score >= 40 %}
+      #     mdi:alert-octagon
+      #   {% else %}
+      #     mdi:alert-circle-outline
+      #   {% endif %}
+
+    # ai_invalid_dashboard_cards:
+    #   friendly_name: "Invalid Dashboard Cards Detected"
+    #   value_template: >
+    #     {% set frontend_errors = states('input_number.frontend_errors') | int(0) %}
+    #     {{ 'True' if frontend_errors > 5 else 'False' }}
+    # # icon: mdi:card-off
+
+    # ai_unsafe_config_includes:
+    #   friendly_name: "Unsafe Config Includes Detected"
+    #   value_template: >
+    #     {% set config_errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+    #     {{ 'True' if config_errors > 0 else 'False' }}
+    # # icon: mdi:file-alert
+
+    # ai_restart_safety_level:
+    #   friendly_name: "AI Restart Safety Level"
+    #   value_template: >
+    #     {% set restart_safety = states('sensor.restart_safety_score') | int(0) %}
+    #     {% if restart_safety >= 90 %}
+    #       Safe
+    #     {% elif restart_safety >= 70 %}
+    #       Caution
+    #     {% elif restart_safety >= 50 %}
+    #       Risky
+    #     {% else %}
+    #       Unsafe
+    #     {% endif %}
+    #   # icon: >
+    #   #   {% set restart_safety = states('sensor.restart_safety_score') | int(0) %}
+    #   #   {% if restart_safety >= 90 %}
+    #   #     mdi:shield-check
+    #   #   {% elif restart_safety >= 70 %}
+    #   #     mdi:shield-alert
+    #   #   {% elif restart_safety >= 50 %}
+    #   #     mdi:shield-remove
+    #   #   {% else %}
+    #   #     mdi:shield-off
+    #   #   {% endif %}

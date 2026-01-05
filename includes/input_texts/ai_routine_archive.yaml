@@ -1,0 +1,5 @@
+ai_archive_log:
+  name: "AI Archive Log"
+  max: 255
+  initial: "AI Routine Archive Log Started"
+  icon: mdi:text-box-multiple

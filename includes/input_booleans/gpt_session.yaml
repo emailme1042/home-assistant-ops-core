@@ -1,0 +1,4 @@
+gpt_session_active:
+  name: GPT Session Active
+  initial: off
+  icon: mdi:robot

@@ -1,0 +1,30 @@
+ai_context_note:
+  name: Context Note for AI Agents
+  initial: "Drag SHARED_CONTEXT files to Edge Copilot or GPT chat"
+  max: 255
+  icon: mdi:message-arrow-right
+
+ai_file_preview:
+  name: AI File Preview
+  icon: mdi:file-search
+  max: 255
+
+ai_session_notes:
+  name: AI Session Notes
+  icon: mdi:note-text
+  max: 255
+
+ai_workspace_context:
+  name: AI Workspace Context  
+  icon: mdi:folder-information
+  max: 255
+
+update_tracking:
+  name: Update Tracking
+  icon: mdi:update
+  max: 255
+
+ai_validation_output:
+  name: AI Validation Output
+  icon: mdi:check-decagram
+  max: 255

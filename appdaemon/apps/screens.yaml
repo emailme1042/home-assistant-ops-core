@@ -1,0 +1,33 @@
+screens:
+  - type: cardEntities
+    heading: Climate
+    entities:
+      - entity: climate.lounge
+        name: Lounge
+      - entity: climate.bedroom
+        name: Bedroom
+
+  - type: cardGrid
+    heading: Lights
+    entities:
+      - entity: light.lounge_main
+        name: Lounge
+        icon: mdi:lightbulb
+      - entity: light.bedroom_main
+        name: Bedroom
+        icon: mdi:lamp
+
+  - type: cardMedia
+    heading: Music
+    entity: media_player.spotify
+
+  - type: cardAlarm
+    heading: Security
+    entity: alarm_control_panel.home_alarm
+
+  - type: cardPower
+    heading: Energy
+    entities:
+      - entity: sensor.energy_usage
+        name: Usage
+

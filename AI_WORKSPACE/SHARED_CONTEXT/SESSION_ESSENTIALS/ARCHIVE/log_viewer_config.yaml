@@ -1,0 +1,4 @@
+ssl: true
+certfile: fullchain.pem
+keyfile: privkey.pem
+logfile: /config/www/crash_trap_log.txt

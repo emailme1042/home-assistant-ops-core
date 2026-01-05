@@ -1,0 +1,69 @@
+template:
+  - sensor:
+      # Discovery Stats
+      - name: "MQTT Discovery Entities"
+        unique_id: mqtt_discovery_entity_count
+        state: >-
+          {{ states.sensor 
+             | selectattr('entity_id', 'match', '.*discovery.*') 
+             | list | count }}
+      
+      - name: "MQTT Synced Entities"
+        unique_id: mqtt_synced_entities
+        state: >-
+          {{ states.sensor 
+             | selectattr('attributes.restored', 'eq', false) 
+             | selectattr('entity_id', 'match', 'sensor.mqtt_.*')
+             | list | count }}
+             
+      - name: "MQTT Unsynced Entities"
+        unique_id: mqtt_unsynced_entities
+        state: >-
+          {{ states.sensor 
+             | selectattr('attributes.restored', 'eq', true)
+             | selectattr('entity_id', 'match', 'sensor.mqtt_.*')
+             | list | count }}
+
+      # Topic Watchdog
+      - name: "MQTT Missing Topics"
+        unique_id: mqtt_missing_topics
+        state: >-
+          {% set topics = states | selectattr('attributes.restored', 'eq', true) 
+             | selectattr('entity_id', 'match', 'sensor.mqtt_.*')
+             | map(attribute='entity_id') | list %}
+          {{ topics | join(', ') if topics else '0' }}
+      
+      - name: "MQTT Messages Per Minute"
+        unique_id: mqtt_messages_per_minute
+        unit_of_measurement: "msg/min"
+        state: >-
+          {% set now = now() %}
+          {% set last_min = now - timedelta(minutes=1) %}
+          {{ states.sensor.mqtt_messages_received.attributes.last_reset | 
+             timestamp_custom('%Y-%m-%d %H:%M:%S') 
+             if states('sensor.mqtt_messages_received') != 'unknown' else '0' }}
+
+binary_sensor:
+  - platform: template
+    sensors:
+      # Discovery & Sync Status
+      mqtt_entity_sync:
+        friendly_name: "MQTT Entity Sync Status"
+        value_template: >-
+          {{ states('sensor.mqtt_unsynced_entities')|int(0) == 0 }}
+
+      # Topic Watchdog
+      mqtt_topic_watchdog:
+        friendly_name: "MQTT Topic Watchdog"
+        value_template: >-
+          {% set missing = states('sensor.mqtt_missing_topics') %}
+          {{ missing == '0' or missing == '' }}
+        
+      # Auto-Discovery Validation
+      mqtt_discovery_valid:
+        friendly_name: "MQTT Discovery Valid"
+        value_template: >-
+          {% set discovery_count = states('sensor.mqtt_discovery_entity_count')|int(0) %}
+          {% set synced_count = states('sensor.mqtt_synced_entities')|int(0) %}
+          {{ discovery_count > 0 and synced_count > 0 and
+             discovery_count == synced_count }}

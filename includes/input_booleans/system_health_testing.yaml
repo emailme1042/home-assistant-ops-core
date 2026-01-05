@@ -1,0 +1,6 @@
+# System Health Testing Controls
+# Purpose: Manual triggers for testing health monitoring automation
+
+test_system_health_ga:
+  name: "Test System Health GA"
+  icon: mdi:test-tube

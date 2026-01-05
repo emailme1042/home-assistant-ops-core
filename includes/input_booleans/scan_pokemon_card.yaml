@@ -1,0 +1,3 @@
+scan_pokemon_card:
+  name: scan pokemon card.Value.ToUpper() scan pokemon card
+  icon: mdi:toggle-switch

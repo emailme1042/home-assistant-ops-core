@@ -1,0 +1,53 @@
+gpt_text_prompt:
+  name: GPT Text Prompt
+  initial: ""
+  max: 255
+  icon: mdi:message-text
+
+chatgpt_prompt:
+  name: ChatGPT Prompt
+  initial: ""
+  max: 255
+  icon: mdi:robot
+
+gpt_result_core:
+  name: GPT Result
+  initial: ""
+  max: 255
+  icon: mdi:message-reply-text
+
+gpt_status_flag:
+  name: GPT Status
+  initial: "Idle"
+  max: 255
+  icon: mdi:state-machine
+
+gpt_last_sent_prompt:
+  name: GPT Last Sent Prompt
+  initial: ""
+  max: 255
+  icon: mdi:history
+
+gpt_direct_input:
+  name: GPT Direct Input
+  initial: ""
+  max: 255
+  icon: mdi:keyboard
+
+gpt_context_file:
+  name: GPT Context File
+  initial: ""
+  max: 255
+  icon: mdi:file-document
+
+openai_query:
+  name: OpenAI Query
+  initial: ""
+  max: 255
+  icon: mdi:brain
+
+openai_response:
+  name: OpenAI Response
+  initial: ""
+  max: 255
+  icon: mdi:comment-quote

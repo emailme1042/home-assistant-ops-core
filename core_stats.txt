@@ -1,0 +1,8 @@
+blk_read: 0
+blk_write: 0
+cpu_percent: 46.51
+memory_limit: 4113866752
+memory_percent: 22.23
+memory_usage: 914649088
+network_rx: 0
+network_tx: 0

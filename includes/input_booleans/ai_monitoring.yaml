@@ -1,0 +1,19 @@
+ai_sync_healthy:
+  name: AI Sync Healthy
+  icon: mdi:sync
+
+validation_passed:
+  name: Validation Passed  
+  icon: mdi:check-circle
+
+ai_workspace_active:
+  name: AI Workspace Active
+  icon: mdi:robot
+
+session_tracking_enabled:
+  name: Session Tracking Enabled
+  icon: mdi:timeline-clock
+
+integration_health_monitoring:
+  name: Integration Health Monitoring
+  icon: mdi:heart-pulse

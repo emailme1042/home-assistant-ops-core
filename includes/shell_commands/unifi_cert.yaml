@@ -1,0 +1,3 @@
+add_unifi_cert: "cp /config/unifi_cert.pem /usr/local/share/ca-certificates/unifi.crt && update-ca-certificates"
+check_unifi_cert: "ls -la /usr/local/share/ca-certificates/unifi.crt && echo 'Certificate installed'"
+test_unifi_connect: "curl -k -s -o /dev/null -w '%{http_code}' https://192.168.0.1:443/api/system"

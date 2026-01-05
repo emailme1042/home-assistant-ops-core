@@ -1,0 +1,28 @@
+- alias: "Entity Unavailable Audit"
+  id: entity_unavailable_audit
+  description: "Track and validate unavailable entities post-startup"
+  trigger:
+    - platform: homeassistant
+      event: start
+    - platform: time
+      at: "06:00:00"  # Daily audit at 6 AM
+  condition: []
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.system_health_log
+      data:
+        value: >
+          {{ now().strftime('%Y-%m-%d %H:%M') }}: Unavailable Audit - 
+          {{ states | selectattr('state','eq','unavailable') | list | count }} entities unavailable
+    - condition: template
+      value_template: "{{ (states | selectattr('state','eq','unavailable') | list | count) > 500 }}"
+    - service: persistent_notification.create
+      data:
+        title: "⚠️ High Unavailable Entity Count"
+        message: >
+          {{ states | selectattr('state','eq','unavailable') | list | count }} entities are unavailable.
+          Common patterns: CPU/Memory sensors from stopped containers.
+          Check MQTT, integrations, and container status.
+        notification_id: "unavailable_entities_alert"
+  mode: single

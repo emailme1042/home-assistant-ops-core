@@ -1,0 +1,82 @@
+- id: log_unavailable_entities_startup
+  alias: "🔍 Log Unavailable Entities at Startup"
+  description: "Log any unavailable or unknown entities at startup for debugging"
+  mode: single
+  
+  trigger:
+    - platform: homeassistant
+      event: start
+  
+  action:
+    # Log unavailable entities to system log
+    - service: system_log.write
+      data:
+        level: warning
+        message: >
+          Unavailable Entities at Startup:
+          {% set unavailable = states | selectattr("state", "in", ["unavailable", "unknown"]) | list %}
+          {% if unavailable | count > 0 %}
+            {% for entity in unavailable %}
+              - {{ entity.entity_id }}: {{ entity.state }}
+            {% endfor %}
+          {% else %}
+            All entities are available!
+          {% endif %}
+    
+    # Create persistent notification for UI visibility
+    - service: persistent_notification.create
+      data:
+        title: "Entity Health Report"
+        message: >
+          {% set unavailable = states | selectattr("state", "in", ["unavailable", "unknown"]) | list %}
+          Startup completed with {{ states | count }} total entities.
+          {% if unavailable | count > 0 %}
+          ⚠️ {{ unavailable | count }} entities unavailable:
+          {% for entity in unavailable[:10] %}
+          • {{ entity.entity_id }}
+          {% endfor %}
+          {% if unavailable | count > 10 %}
+          ... and {{ unavailable | count - 10 }} more
+          {% endif %}
+          {% else %}
+          ✅ All entities are available!
+          {% endif %}
+        notification_id: entity_health_startup
+
+- id: entity_health_monitor
+  alias: "📊 Entity Health Monitor"
+  description: "Continuous monitoring of entity availability"
+  mode: restart
+  
+  trigger:
+    - platform: time_pattern
+      minutes: "/15"  # Check every 15 minutes
+  
+  action:
+    # Update entity health sensor
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.entity_health_status
+      data:
+        value: >
+          {% set unavailable = states | selectattr("state", "in", ["unavailable", "unknown"]) | list %}
+          {{ now().strftime('%H:%M') }}: {{ unavailable | count }} unavailable of {{ states | count }} total
+
+    # Log critical entities that become unavailable
+    - service: system_log.write
+      data:
+        level: error
+        message: >
+          {% set critical_entities = [
+            'light.office_light',
+            'light.office_3', 
+            'binary_sensor.office_motion',
+            'light.hallway_5',
+            'switch.garden_lights',
+            'cover.kitchen_blinds',
+            'media_player.kitchen_alexa'
+          ] %}
+          {% set critical_unavailable = critical_entities | select('is_state', 'unavailable') | list %}
+          {% if critical_unavailable | count > 0 %}
+          Critical entities unavailable: {{ critical_unavailable | join(', ') }}
+          {% endif %}

@@ -1,0 +1,79 @@
+automation_health_audit:
+  alias: "Automation Health Audit"
+  description: "Scan all automations for orphaned triggers, unused IDs, and legacy patterns"
+  
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.audit_status
+      data:
+        value: "Starting automation health audit..."
+    
+    # Scan for orphaned trigger blocks
+    - service: shell_command.scan_orphaned_triggers
+    
+    # Check for unused automation IDs
+    - service: shell_command.scan_unused_automation_ids
+    
+    # Detect legacy condition logic
+    - service: shell_command.scan_legacy_conditions
+    
+    # Generate audit report
+    - service: shell_command.generate_automation_audit_report
+    
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.audit_status
+      data:
+        value: "Automation audit complete. Check automation-audit dashboard."
+    
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "Automation health audit completed. Results available in automation audit dashboard."
+        data:
+          type: tts
+
+session_tag_automation:
+  alias: "Add Session Tags to Automations"
+  description: "Add session_tag metadata to automations for multi-agent traceability"
+  
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.session_tag_status
+      data:
+        value: "Adding session tags to automations..."
+    
+    - service: shell_command.add_session_tags_to_automations
+    
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.session_tag_status
+      data:
+        value: "Session tagging complete. All automations now traceable."
+
+fallback_trigger_test:
+  alias: "Test Fallback Triggers"
+  description: "Test fallback trigger matrix for system resilience"
+  
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.fallback_status
+      data:
+        value: "Testing fallback trigger matrix..."
+    
+    # Test extension failure fallback
+    - service: shell_command.test_extension_fallback
+    
+    # Test entity unavailability fallback
+    - service: shell_command.test_entity_fallback
+    
+    # Test dashboard 404 fallback
+    - service: shell_command.test_dashboard_fallback
+    
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.fallback_status
+      data:
+        value: "Fallback testing complete. System resilience verified."

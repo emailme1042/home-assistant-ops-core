@@ -1,0 +1,99 @@
+- id: sonoff_button_downstairs_shutdown
+  alias: "🔘 Sonoff Button - Safe Downstairs Shutdown + Hall Light"
+  description: "Safe shutdown of downstairs devices when Sonoff button pressed, with hall light for 10 seconds"
+  mode: single
+  max_exceeded: silent
+  
+  trigger:
+    # Primary trigger: MQTT messages directly from Zigbee2MQTT
+    - platform: mqtt
+      topic: "zigbee2mqtt/Button Zigbee"
+    
+    # Backup trigger: Device trigger if available
+    - platform: device
+      device_id: "19e81c87689f2f54852d74b3d933eaff"
+      domain: mqtt
+      type: action
+      subtype: single
+
+  condition: []
+
+  action:
+    # First announce what we're doing
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Sonoff button pressed. Starting safe downstairs shutdown with hall light for 10 seconds."
+
+    # Turn on hall light first (using confirmed working entity)
+    - service: light.turn_on
+      target:
+        entity_id: light.hallway
+      data:
+        brightness: 255
+
+    # Safe shutdown of downstairs devices (only if they're currently on)
+    - repeat:
+        count: 1
+        sequence:
+          # Lights - only turn off if currently on (using verified entity names)
+          - service: light.turn_off
+            target:
+              entity_id:
+                - light.brown_lamp
+                - light.reading_light
+                - light.wiz_rgbw_tunable_2606be
+                - light.wiz_rgbw_tunable_2609a6
+                - light.lounge_tv_strip_lights
+                # Removed loo_5 and dining_light_5 - may not exist
+            continue_on_error: true
+          
+          # Switches - only turn off if currently on
+          - service: switch.turn_off
+            target:
+              entity_id:
+                - switch.wax_warmer
+                - switch.lounge_loudness
+                - switch.lounge_speech_enhancement
+                - switch.garden_lights
+                - switch.teddy_lamp
+                - switch.teddy_fan_2
+            continue_on_error: true
+          
+          # Media Players - use appropriate service for each type
+          - service: media_player.media_pause
+            target:
+              entity_id:
+                - media_player.lounge
+            continue_on_error: true
+          
+          - service: media_player.turn_off
+            target:
+              entity_id:
+                - media_player.kitchen_nest
+                # Specifically excluding media_player.apple_lounge per user request
+            continue_on_error: true
+
+    # Wait 10 seconds with hall light on
+    - delay:
+        seconds: 10
+
+    # Turn off hall light
+    - service: light.turn_off
+      target:
+        entity_id: light.hallway
+
+    # Final confirmation
+    - service: tts.google_say
+      target:
+        entity_id: media_player.kitchen_alexa
+      data:
+        message: "Downstairs shutdown complete. Hall light is now off."
+
+    # Log the action
+    - service: logbook.log
+      data:
+        name: "Sonoff Button Automation"
+        message: "Safe downstairs shutdown completed with hall light timing"
+        entity_id: sensor.button_zigbee_battery

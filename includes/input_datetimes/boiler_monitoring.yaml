@@ -1,0 +1,11 @@
+boiler_last_start:
+  name: "Boiler Last Start Time"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-start
+  
+boiler_last_stop:
+  name: "Boiler Last Stop Time"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-end

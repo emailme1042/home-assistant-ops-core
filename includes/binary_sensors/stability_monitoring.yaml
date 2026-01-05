@@ -1,0 +1,38 @@
+# ================================================
+# STABILITY MONITORING BINARY SENSORS
+# ================================================
+# Purpose: Monitor system availability for crash detection
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+# Frontend Reachability Monitor
+- platform: command_line
+  name: "Home Assistant Frontend Reachable"
+  command: 'curl -s -o /dev/null -w "%{http_code}" http://localhost:8123 | grep -q "200" && echo "ON" || echo "OFF"'
+  payload_on: "ON"
+  payload_off: "OFF"
+  scan_interval: 60
+  device_class: connectivity
+
+# Database Health Monitor
+- platform: command_line
+  name: "Database Health Check"
+  command: 'if [ -f /config/home-assistant_v2.db ]; then echo "ON"; else echo "OFF"; fi'
+  payload_on: "ON"
+  payload_off: "OFF"
+  scan_interval: 300
+  device_class: connectivity
+
+# Configuration Validity Monitor
+- platform: template
+  sensors:
+    configuration_valid:
+      friendly_name: "Configuration Valid"
+      value_template: >
+        {{ is_state('sensor.configuration_check_result', 'valid') }}
+      device_class: connectivity
+      icon_template: >
+        {% if is_state('sensor.configuration_check_result', 'valid') %}
+          mdi:check-circle
+        {% else %}
+          mdi:alert-circle
+        {% endif %}

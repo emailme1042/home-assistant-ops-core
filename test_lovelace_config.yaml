@@ -1,0 +1,24 @@
+lovelace:
+  mode: yaml
+  resources: !include resources.yaml
+  dashboards:
+    system-overview:
+      mode: yaml
+      title: SYSTEM_OVERVIEW
+      icon: mdi:map-search
+      show_in_sidebar: true
+      filename: dashboards/SYSTEM_OVERVIEW/SYSTEM_OVERVIEW.yaml
+
+    ai-navigation:
+      mode: yaml
+      title: AI Navigation
+      icon: mdi:robot-outline
+      show_in_sidebar: true
+      filename: dashboards/SYSTEM_OVERVIEW/ai_navigation.yaml
+
+    recovery-dash:
+      mode: yaml
+      title: 🛡️ Recovery
+      icon: mdi:shield-check
+      show_in_sidebar: true
+      filename: dashboards/ops/recovery_dashboard.yaml

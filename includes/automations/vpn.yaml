@@ -1,0 +1,11 @@
+- alias: Remind VPN on for streaming
+  id: remind_vpn_on_for_streaming
+  trigger:
+    - platform: state
+      entity_id: input_boolean.movie_night
+      to: "on"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Check VPN"
+        message: "Make sure Surfshark is connected before starting Movie Night!"

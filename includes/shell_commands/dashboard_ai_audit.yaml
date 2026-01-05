@@ -1,0 +1,34 @@
+# AI Dashboard Audit Shell Commands
+# Execute Python audit scripts for complexity analysis and optimization
+# Fixed format: Each command is a string, not a dictionary
+
+dashboard_complexity_audit: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 dashboard_audit.py > /config/AI_WORKSPACE/logs/dashboard_audit_$(date +%Y%m%d_%H%M%S).log 2>&1
+
+dashboard_weekly_audit: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 dashboard_weekly_audit.py > /config/AI_WORKSPACE/logs/weekly_audit_$(date +%Y%m%d_%H%M%S).log 2>&1
+
+ai_dashboard_audit: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 ai_dashboard_audit.py > /config/AI_WORKSPACE/logs/ai_audit_$(date +%Y%m%d_%H%M%S).log 2>&1
+
+config_cleanup_audit: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 config_cleanup_audit.py > /config/AI_WORKSPACE/logs/config_cleanup_$(date +%Y%m%d_%H%M%S).log 2>&1
+
+dashboard_optimization_analysis: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 -c "import dashboard_audit; score = dashboard_audit.calculate_complexity_score('/config/dashboards/'); rec = dashboard_audit.generate_optimization_recommendation(score, 5); print(f'Complexity: {score}, Recommendation: {rec}')" 2>&1
+
+dashboard_health_check: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 -c "import os, json; from datetime import datetime, timedelta; log_dir = '/config/AI_WORKSPACE/logs'; print('Checking dashboard health...'); logs = [f for f in os.listdir(log_dir) if f.startswith('dashboard_audit_')] if os.path.exists(log_dir) else []; print(f'Latest audit: {max(logs) if logs else \"None\"}'); dash_dir = '/config/dashboards'; count = len([f for f in os.listdir(dash_dir) if f.endswith('.yaml')]) if os.path.exists(dash_dir) else 0; print(f'Dashboard files: {count}')"
+
+dashboard_trend_analysis: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 -c "import json, os; from datetime import datetime, timedelta; trend_file = '/config/AI_WORKSPACE/logs/dashboard_trends.json'; trends = json.load(open(trend_file)) if os.path.exists(trend_file) else []; cutoff = datetime.now() - timedelta(days=7); recent = [t for t in trends if datetime.fromisoformat(t['timestamp']) > cutoff]; avg_complexity = sum(e['complexity_score'] for e in recent) / len(recent) if recent else 0; avg_errors = sum(e['frontend_errors'] for e in recent) / len(recent) if recent else 0; print(f'7-day averages - Complexity: {avg_complexity:.1f}, Errors: {avg_errors:.1f}, Entries: {len(recent)}')"
+
+dashboard_performance_summary: >-
+  cd /config/AI_WORKSPACE/Scripts && python3 -c "import dashboard_audit; complexity = dashboard_audit.calculate_complexity_score('/config/dashboards/'); errors = 0; grade = 'A+' if complexity < 50 and errors < 2 else 'A' if complexity < 80 and errors < 5 else 'B' if complexity < 120 and errors < 10 else 'C' if complexity < 160 and errors < 20 else 'D'; rec = dashboard_audit.generate_optimization_recommendation(complexity, errors); print(f'Grade: {grade}, Complexity: {complexity}, Errors: {errors}, Recommendation: {rec}')"
+
+# Safe GPT audit integration (manual trigger only, writes to log file)
+gpt_dashboard_audit_safe: >-
+  echo "GPT Dashboard Audit - Safe Mode" > /config/AI_WORKSPACE/logs/gpt_audit_request.txt && 
+  echo "Dashboard file for analysis:" >> /config/AI_WORKSPACE/logs/gpt_audit_request.txt && 
+  cat /config/dashboards/ai/ai_workspace_overview.yaml >> /config/AI_WORKSPACE/logs/gpt_audit_request.txt && 
+  echo "GPT audit request prepared. Check logs/gpt_audit_request.txt for content to analyze."

@@ -1,0 +1,93 @@
+# 📺 TV Schedule & Streaming Integrations Package
+# Replaces JustWatch functionality with HA-native solutions
+# Includes: TVMaze, BBC iPlayer, Watchlist (HACS), Upcoming Media Card
+
+# TVMaze Integration - For broadcast TV schedules
+# NOTE: Requires HACS installation of TVMaze integration
+# tvmaze:
+
+# BBC iPlayer Integration - UK TV schedules
+# NOTE: Requires HACS installation of BBC iPlayer integration
+# bbc_iplayer:
+
+# Watchlist Integration (requires HACS)
+# Install via HACS: https://github.com/thomasloven/hass-watchlist
+# watchlist:
+#   - platform: tmdb
+#     api_key: !secret tmdb_api_key
+#   - platform: trakt
+#     client_id: !secret trakt_client_id
+#     client_secret: !secret trakt_client_secret
+
+# Sensors for TV schedule monitoring
+sensor:
+  - platform: template
+    sensors:
+      tonight_tv_schedule:
+        friendly_name: "Tonight's TV Schedule"
+        value_template: >
+          {% set shows = states.calendar | selectattr('entity_id', 'search', 'tvmaze') | list %}
+          {{ shows | count }} shows scheduled
+        attribute_templates:
+          shows: >
+            {{ states.calendar | selectattr('entity_id', 'search', 'tvmaze') | map(attribute='attributes') | list }}
+
+      upcoming_episodes:
+        friendly_name: "Upcoming Episodes"
+        value_template: >
+          {% set cards = states | selectattr('entity_id', 'search', 'upcoming_media') | list %}
+          {{ cards | count }} upcoming items
+
+# Calendar integration for TV shows
+# NOTE: Requires TVMaze integration to be installed via HACS
+# calendar:
+#   - platform: tvmaze
+#     show_name: "The Traitors"
+#   - platform: tvmaze
+#     show_name: "The Night Manager"
+#   - platform: tvmaze
+#     show_name: "Happy Valley"
+
+# Binary sensors for show notifications
+binary_sensor:
+  - platform: template
+    sensors:
+      new_episode_available:
+        friendly_name: "New Episode Available"
+        device_class: update
+        value_template: >
+          {{ states('sensor.upcoming_episodes') | int > 0 }}
+
+# Automations for TV notifications
+automation:
+  - alias: "📺 Notify New Episodes"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.new_episode_available
+        to: "on"
+    action:
+      - service: notify.mobile_app_plop
+        data:
+          title: "📺 New Episode Available"
+          message: "Check your TV schedule for new episodes!"
+          data:
+            push:
+              sound: "default"
+
+  - alias: "📺 Daily TV Schedule Summary"
+    trigger:
+      - platform: time
+        at: "18:00:00"
+    condition:
+      - condition: state
+        entity_id: sensor.tonight_tv_schedule
+        state: "0"
+        operator: ">"
+    action:
+      - service: notify.mobile_app_plop
+        data:
+          title: "📺 Daily TV Schedule Summary"
+          message: "Tonight's lineup: {{ states('sensor.tonight_tv_schedule') }}"
+          data:
+            push:
+              sound: "default"

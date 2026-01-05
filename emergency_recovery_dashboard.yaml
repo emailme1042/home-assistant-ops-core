@@ -1,0 +1,86 @@
+title: 🛡️ Emergency Recovery Dashboard
+views:
+  - title: Emergency Recovery
+    path: emergency-recovery
+    icon: mdi:shield-check
+    cards:
+      - type: markdown
+        content: |
+          # 🚨 Emergency Recovery Dashboard
+          
+          **Home Assistant Core Only - No Custom Components**
+          
+          This dashboard uses **ZERO custom cards** to ensure maximum stability.
+          
+          ---
+          
+          ## 🏥 System Status
+          
+      - type: entities
+        title: 🔧 Core System Health
+        show_header_toggle: false
+        entities:
+          - entity: sensor.time
+            name: "Current Time"
+          - entity: sensor.date
+            name: "Current Date" 
+          - entity: sensor.uptime
+            name: "System Uptime"
+          - entity: binary_sensor.updater
+            name: "Update Available"
+            
+      - type: entities
+        title: 🌐 Network Connectivity
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.192_168_1_1
+            name: "Router Ping"
+          - entity: sensor.speedtest_download
+            name: "Internet Speed (Down)"
+          - entity: sensor.speedtest_upload
+            name: "Internet Speed (Up)"
+            
+      - type: markdown
+        content: |
+          ## 🔧 Recovery Actions
+          
+          **If HA is running but frontend broken:**
+          1. Check developer tools for custom card errors
+          2. Disable problematic HACS frontend components
+          3. Clear browser cache completely
+          
+          **If custom components cause issues:**
+          1. Run `emergency_custom_components_disable.bat`
+          2. Restart Home Assistant
+          3. Test with this recovery dashboard
+          4. Re-enable with `emergency_custom_components_restore.bat`
+          
+          ---
+          
+      - type: button
+        tap_action:
+          action: navigate
+          navigation_path: /config/integrations
+        name: "🔌 Integrations"
+        icon: mdi:puzzle
+        
+      - type: button
+        tap_action:
+          action: navigate
+          navigation_path: /config/logs
+        name: "📋 System Logs"
+        icon: mdi:text-box-outline
+        
+      - type: button
+        tap_action:
+          action: navigate
+          navigation_path: /developer-tools/yaml
+        name: "🔧 YAML Config Check"
+        icon: mdi:code-tags
+        
+      - type: button
+        tap_action:
+          action: navigate
+          navigation_path: /config/server_control
+        name: "🔄 Server Controls"
+        icon: mdi:server

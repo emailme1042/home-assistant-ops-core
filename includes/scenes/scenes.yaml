@@ -1,0 +1,49 @@
+- name: Movie Night
+  entities:
+    light.lounge_ceiling:
+      state: off
+    media_player.tv_lounge_tv:
+      state: on
+
+- id: bedroom_movie_night
+  name: Bedroom Movie Night
+  entities:
+    light.bedroom: off
+    light.bedroom_strip_lights:
+      state: on
+      brightness: 60
+      effect: "Movie"
+    media_player.bedroom:
+      state: off
+- id: bedroom_party_mode
+  name: Bedroom Party Mode
+  entities:
+    light.bedroom: on
+    light.bedroom_strip_lights:
+      state: on
+      effect: "Colorloop"
+      brightness: 100
+    media_player.bedroom:
+      state: on
+- id: bedroom_relax
+  name: Bedroom Relax
+  entities:
+    light.bedroom: on
+    light.bedroom_strip_lights:
+      state: on
+      brightness: 30
+      color_temp: 370
+    media_player.bedroom:
+      state: off
+- id: bedroom_bedtime
+  name: Bedroom Bedtime
+  entities:
+    light.bedroom: off
+    light.bedroom_strip_lights: off
+    media_player.fire_tv_adb: off
+- id: party_lights
+  name: Party Lights
+  entities:
+    light.living_room: on
+    light.dining_room: on
+    light.hallway: on

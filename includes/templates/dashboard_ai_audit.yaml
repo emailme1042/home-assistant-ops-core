@@ -1,0 +1,186 @@
+# AI Dashboard Audit Template Sensors
+# Real-time optimization insights and performance monitoring
+# Provides intelligent recommendations and health tracking
+
+template:
+  - sensor:
+      - name: "Dashboard Optimization Tip"
+        unique_id: dashboard_optimization_tip
+        state: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% if errors > 15 %}
+            Critical: {{ errors }} frontend errors detected. Check Recovery Dashboard immediately.
+          {% elif errors > 10 %}
+            High Priority: {{ errors }} errors need attention. Review dashboard complexity.
+          {% elif errors > 5 %}
+            Medium Priority: {{ errors }} errors present. Consider dashboard optimization.
+          {% elif complexity > 150 %}
+            Complexity Alert: Dashboard score {{ complexity | round(0) }}. Simplify high-complexity views.
+          {% elif complexity > 100 %}
+            Optimization Opportunity: Complexity at {{ complexity | round(0) }}. Consider card consolidation.
+          {% elif errors > 0 %}
+            Monitor: {{ errors }} minor errors detected. System stable but watch trends.
+          {% else %}
+            Excellent: System optimized with minimal complexity and zero errors.
+          {% endif %}
+        icon: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if errors > 15 %}
+            mdi:alert-octagon
+          {% elif errors > 5 %}
+            mdi:alert-circle
+          {% elif errors > 0 %}
+            mdi:alert-circle-outline
+          {% else %}
+            mdi:check-circle
+          {% endif %}
+        attributes:
+          error_count: "{{ states('input_number.frontend_errors') | int(0) }}"
+          complexity_score: "{{ states('sensor.dashboard_complexity_score') | float(0) }}"
+          severity_level: >-
+            {% set errors = states('input_number.frontend_errors') | int(0) %}
+            {% if errors > 15 %}
+              critical
+            {% elif errors > 10 %}
+              high
+            {% elif errors > 5 %}
+              medium
+            {% elif errors > 0 %}
+              low
+            {% else %}
+              optimal
+            {% endif %}
+
+      - name: "Weekly Audit Summary"
+        unique_id: weekly_audit_summary
+        state: >-
+          {% set now_timestamp = now().strftime('%Y%m%d') %}
+          {% set grade = states('sensor.dashboard_performance_grade') %}
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set trend = states('sensor.dashboard_health_trend') %}
+          {% if grade == 'A+' %}
+            Excellent performance maintained. System optimally configured with {{ errors }} errors.
+          {% elif grade == 'A' %}
+            Strong performance with grade {{ grade }}. Trending {{ trend | lower }}.
+          {% elif grade == 'B' %}
+            Good performance with improvement opportunities. Current grade {{ grade }}.
+          {% elif grade == 'C' %}
+            Performance needs attention. Grade {{ grade }} requires optimization.
+          {% else %}
+            Critical performance issues. Grade {{ grade }} demands immediate action.
+          {% endif %}
+        icon: >-
+          {% set grade = states('sensor.dashboard_performance_grade') %}
+          {% if grade == 'A+' %}
+            mdi:trophy
+          {% elif grade in ['A', 'B'] %}
+            mdi:medal
+          {% elif grade == 'C' %}
+            mdi:alert-circle
+          {% else %}
+            mdi:alert-octagon
+          {% endif %}
+        attributes:
+          audit_date: "{{ now().strftime('%Y-%m-%d') }}"
+          performance_grade: "{{ states('sensor.dashboard_performance_grade') }}"
+          health_trend: "{{ states('sensor.dashboard_health_trend') }}"
+          recommendation_count: >-
+            {% set errors = states('input_number.frontend_errors') | int(0) %}
+            {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+            {% set count = 0 %}
+            {% if errors > 0 %}{% set count = count + 1 %}{% endif %}
+            {% if complexity > 100 %}{% set count = count + 1 %}{% endif %}
+            {{ count }}
+
+      - name: "Dashboard Performance Grade"
+        unique_id: dashboard_performance_grade
+        state: >-
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') | float(0) %}
+          {% set memory = states('sensor.home_assistant_core_memory_percent') | float(0) %}
+          {% if errors == 0 and complexity < 50 and cpu < 30 and memory < 40 %}
+            A+
+          {% elif errors < 3 and complexity < 80 and cpu < 50 and memory < 60 %}
+            A
+          {% elif errors < 8 and complexity < 120 and cpu < 70 and memory < 75 %}
+            B
+          {% elif errors < 15 and complexity < 160 and cpu < 85 and memory < 85 %}
+            C
+          {% else %}
+            D
+          {% endif %}
+        icon: >-
+          {% set grade = states('sensor.dashboard_performance_grade') %}
+          {% if grade == 'A+' %}
+            mdi:star
+          {% elif grade == 'A' %}
+            mdi:thumb-up
+          {% elif grade == 'B' %}
+            mdi:minus-circle
+          {% elif grade == 'C' %}
+            mdi:thumb-down
+          {% else %}
+            mdi:close-circle
+          {% endif %}
+        attributes:
+          grade_factors:
+            errors: "{{ states('input_number.frontend_errors') | int(0) }}"
+            complexity: "{{ states('sensor.dashboard_complexity_score') | float(0) | round(1) }}"
+            cpu_percent: "{{ states('sensor.home_assistant_core_cpu_percent') | float(0) | round(1) }}"
+            memory_percent: "{{ states('sensor.home_assistant_core_memory_percent') | float(0) | round(1) }}"
+
+      - name: "Dashboard Health Trend"
+        unique_id: dashboard_health_trend
+        state: >-
+          {% set current_errors = states('input_number.frontend_errors') | int(0) %}
+          {% set current_complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% set previous_grade = state_attr('sensor.dashboard_performance_grade', 'previous_grade') %}
+          {% set current_grade = states('sensor.dashboard_performance_grade') %}
+          {% if previous_grade and current_grade %}
+            {% set grade_values = {'A+': 5, 'A': 4, 'B': 3, 'C': 2, 'D': 1} %}
+            {% set current_value = grade_values.get(current_grade, 1) %}
+            {% set previous_value = grade_values.get(previous_grade, 1) %}
+            {% if current_value > previous_value %}
+              Improving
+            {% elif current_value < previous_value %}
+              Declining
+            {% else %}
+              Stable
+            {% endif %}
+          {% elif current_errors == 0 and current_complexity < 100 %}
+            Optimal
+          {% elif current_errors < 5 and current_complexity < 150 %}
+            Stable
+          {% else %}
+            Needs Attention
+          {% endif %}
+        icon: >-
+          {% set trend = states('sensor.dashboard_health_trend') %}
+          {% if trend == 'Improving' %}
+            mdi:trending-up
+          {% elif trend == 'Declining' %}
+            mdi:trending-down
+          {% elif trend in ['Optimal', 'Stable'] %}
+            mdi:trending-neutral
+          {% else %}
+            mdi:alert-circle
+          {% endif %}
+        attributes:
+          current_errors: "{{ states('input_number.frontend_errors') | int(0) }}"
+          current_complexity: "{{ states('sensor.dashboard_complexity_score') | float(0) | round(1) }}"
+          assessment_time: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+      - name: "Dashboard Audit Freshness"
+        unique_id: dashboard_audit_freshness
+        state: >-
+          {% set log_path = '/config/AI_WORKSPACE/logs/' %}
+          {% set cutoff_hours = 24 %}
+          {% set now_timestamp = as_timestamp(now()) %}
+          Fresh
+        icon: mdi:clock-check
+        attributes:
+          last_audit_check: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+          audit_log_directory: "/config/AI_WORKSPACE/logs/"
+          freshness_threshold: "24 hours"

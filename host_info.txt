@@ -1,0 +1,14 @@
+arch: aarch64
+audio_input: null
+audio_output: null
+backups_exclude_database: false
+boot: true
+image: ghcr.io/home-assistant/green-homeassistant
+ip_address: 172.30.32.1
+machine: green
+port: 8123
+ssl: false
+update_available: false
+version: 2025.11.1
+version_latest: 2025.11.1
+watchdog: false

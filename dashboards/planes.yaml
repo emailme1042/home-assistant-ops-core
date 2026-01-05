@@ -1,0 +1,295 @@
+title: ✈️ Flight Radar HQ
+views:
+  - title: Live Tracking
+    path: flight-radar
+    icon: mdi:airplane
+    badges:
+      - sensor.flightradar24_current_in_area
+      - sensor.aircraft_proximity_alert
+    cards:
+      # Main flight counter with proximity alert
+      - type: entities
+        title: ✈️ Live Flight Activity
+        entities:
+          - sensor.flightradar24_current_in_area
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+          - sensor.aircraft_proximity_alert
+
+      # Visual gauges
+      - type: horizontal-stack
+        cards:
+          - type: gauge
+            entity: sensor.flightradar24_current_in_area
+            min: 0
+            max: 20
+            name: Flights Nearby
+            severity:
+              green: 0
+              yellow: 5
+              red: 10
+          - type: gauge
+            entity: sensor.aircraft_count
+            min: 0
+            max: 50
+            name: Aircraft Decoded
+          - type: gauge
+            entity: sensor.lowest_aircraft_altitude
+            min: 0
+            max: 10000
+            name: Lowest Altitude
+            unit: ft
+
+      # ADS-B Radar Map View
+      - type: map
+        title: 🗺️ ADS-B Radar View (2km/5km/10km Rings)
+        default_zoom: 10
+        entities:
+          - sensor.flightradar24_current_in_area
+        aspect_ratio: 16:9
+        hours_to_show: 0
+        dark_mode: true
+
+      # Activity chart
+      - type: history-graph
+        title: Flight Activity (Last 6 Hours)
+        entities:
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+        hours_to_show: 6
+
+      # Enhanced Bournemouth flights with telemetry
+      - type: markdown
+        title: ✈️ Bournemouth Airport Flights (Enhanced)
+        content: |
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% if flights %}
+            **Currently tracked flights to/from BOH:**
+            {% for f in flights %}
+              {% if 'BOH' in [f.airport_origin_icao, f.airport_destination_icao] or 'EGHH' in [f.airport_origin_icao, f.airport_destination_icao] %}
+              ---
+              ### ✈️ **{{ f.callsign or f.icao24 }}**
+              **Aircraft:** {{ f.aircraft_model or 'Unknown' }} ({{ f.aircraft_registration or 'N/A' }})
+              **Route:** {{ f.airport_origin_icao or 'Unknown' }} → {{ f.airport_destination_icao or 'Unknown' }}
+              **Altitude:** {{ f.altitude }}ft | **Speed:** {{ f.velocity }}kts
+              **Heading:** {{ f.heading }}° | **Vertical Rate:** {{ f.vertical_rate }}ft/min
+              **Distance:** ~{{ (f.distance or 0) | round(1) }}km | **ETA:** {{ ((f.distance or 0) / (f.velocity or 1) * 60) | round(0) }}min
+              {% if f.distance and f.distance < 5 %}🚨 **CLOSE APPROACH ALERT** 🚨{% endif %}
+              ---
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            No Bournemouth flights currently tracked.
+          {% endif %}
+
+  - title: Telemetry & Graphs
+    icon: mdi:chart-line
+    cards:
+      # Altitude vs Time Graph
+      - type: history-graph
+        title: 📊 Aircraft Altitude Tracking (Last Hour)
+        entities:
+          - sensor.lowest_aircraft_altitude
+        hours_to_show: 1
+        type: line
+
+      # Speed Tracking (if available)
+      - type: history-graph
+        title: 🏃 Aircraft Speed Tracking
+        entities:
+          - sensor.aircraft_count
+        hours_to_show: 2
+
+      # RSSI/Signal Strength (ADS-B receiver)
+      - type: gauge
+        entity: sensor.adsb_signal_strength
+        min: -100
+        max: 0
+        name: ADS-B Signal Strength
+        unit: dBm
+        severity:
+          green: -50
+          yellow: -70
+          red: -90
+
+      # Vertical Speed Indicator
+      - type: gauge
+        entity: sensor.aircraft_vertical_rate
+        min: -5000
+        max: 5000
+        name: Vertical Speed
+        unit: ft/min
+        severity:
+          green: -500
+          yellow: -1000
+          red: -2000
+
+      # Proximity Alert Panel
+      - type: conditional
+        conditions:
+          - entity: sensor.aircraft_proximity_alert
+            state: "on"
+        card:
+          type: markdown
+          title: 🚨 PROXIMITY ALERT
+          content: |
+            # 🚨 AIRCRAFT PROXIMITY ALERT 🚨
+
+            **Aircraft approaching within 5km!**
+
+            {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+            {% if flights %}
+              {% for f in flights %}
+                {% if f.distance and f.distance < 5 %}
+                - **{{ f.callsign or f.icao24 }}** at {{ f.distance | round(1) }}km
+                  - Altitude: {{ f.altitude }}ft
+                  - Speed: {{ f.velocity }}kts
+                  - ETA to closest point: {{ ((f.distance or 0) / (f.velocity or 1) * 60) | round(0) }} minutes
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+  - title: Historical Playback
+    icon: mdi:history
+    cards:
+      # Flight History Timeline
+      - type: history-graph
+        title: 📈 Flight History (Last 24 Hours)
+        entities:
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+          - sensor.aircraft_count
+        hours_to_show: 24
+
+      # Aircraft Entry/Exit Events
+      - type: logbook
+        title: ✈️ Recent Flight Events
+        entities:
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+        hours_to_show: 12
+
+      # Playback Controls (Conceptual - would need custom card)
+      - type: entities
+        title: 🎬 Historical Playback Controls
+        entities:
+          - input_select.flight_history_timeframe
+          - input_datetime.flight_playback_timestamp
+          - button.play_flight_history
+
+      # Top Aircraft by Frequency
+      - type: markdown
+        title: 🏆 Most Frequent Aircraft (Last 7 Days)
+        content: |
+          {% set most_tracked = states('sensor.flightradar24_most_tracked') %}
+          {% if most_tracked %}
+            **Most tracked aircraft this week:**
+            {{ most_tracked }}
+          {% else %}
+            No historical tracking data available.
+          {% endif %}
+
+  - title: Controls & Alerts
+    icon: mdi:cog
+    cards:
+      # Alert controls
+      - type: entities
+        title: 🚨 Flight Alert System
+        entities:
+          - automation.flight_proximity_alert
+          - input_boolean.flight_proximity_alerts
+          - input_number.flight_alert_distance_km
+          - sensor.aircraft_proximity_alert
+
+      # Manual tracking
+      - type: entities
+        title: 🎯 Manual Flight Tracking
+        entities:
+          - input_select.flight_history_timeframe
+          - input_datetime.flight_playback_timestamp
+          - input_button.play_flight_history
+
+      # Update controls
+      - type: entities
+        title: 🔄 Updates & Maintenance
+        entities:
+          - sensor.adsb_receiver_status
+          - sensor.adsb_signal_strength
+
+      # Alert buttons
+      - type: horizontal-stack
+        cards:
+          - type: button
+            name: 🔊 Announce Incoming
+            tap_action:
+              action: call-service
+              service: tts.google_say
+              data:
+                entity_id: media_player.lounge_echo
+                message: "Heads up! A noisy aircraft is approaching Bournemouth airspace."
+            icon: mdi:bullhorn
+          - type: button
+            name: 🚨 Proximity Alert
+            tap_action:
+              action: call-service
+              service: notify.mobile_app_plop
+              data:
+                title: "Aircraft Proximity Alert"
+                message: "Aircraft within alert distance! Check dashboard for details."
+            icon: mdi:airplane-alert
+
+  - title: Technical Data
+    icon: mdi:chart-line
+    cards:
+      # Technical sensors
+      - type: entities
+        title: 📊 Technical Flight Data
+        entities:
+          - sensor.adsb_receiver_status
+          - sensor.adsb_signal_strength
+          - sensor.aircraft_vertical_rate
+          - sensor.aircraft_average_speed
+          - sensor.closest_aircraft_distance
+          - sensor.flight_activity_trend
+          - sensor.aircraft_proximity_alert
+
+      # Altitude gauge
+      - type: gauge
+        entity: sensor.lowest_aircraft_altitude
+        min: 0
+        max: 40000
+        name: Lowest Altitude (ft)
+        unit: ft
+
+      # Signal Quality Indicators
+      - type: horizontal-stack
+        cards:
+          - type: gauge
+            entity: sensor.adsb_signal_strength
+            min: -100
+            max: 0
+            name: ADS-B RSSI
+            unit: dBm
+          - type: gauge
+            entity: sensor.aircraft_count
+            min: 0
+            max: 100
+            name: Aircraft/Min
+
+      # OpenSky link
+      - type: markdown
+        content: |
+          ### 🌐 External Flight Tracking
+          [OpenSky Network Map](https://map.opensky-network.org)
+          [Flightradar24 Web](https://www.flightradar24.com)
+          [ADS-B Exchange](https://globe.adsbexchange.com)
+
+          Real-time global flight tracking with detailed aircraft information.
+
+      # MQTT feed
+      - type: entities
+        title: 📡 MQTT Aircraft Feed
+        entities:
+          - sensor.aircraft_count
+          - sensor.lowest_aircraft_altitude
+          - sensor.adsb_receiver_status

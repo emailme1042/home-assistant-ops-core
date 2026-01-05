@@ -1,0 +1,40 @@
+# .yamllint config for Home Assistant + modular recovery
+extends: default
+
+rules:
+  # === Indentation & Formatting ===
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+  line-length:
+    max: 120
+    level: warning
+
+  # === Naming & Structure ===
+  key-ordering: disable  # HA config often needs custom ordering
+  truthy:
+    allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
+
+  # === Comments & Clarity ===
+  comments-indentation: enable
+  comments:
+    min-spaces-from-content: 1
+
+  # === Templating & Flexibility ===
+  trailing-spaces:
+    level: warning
+  empty-lines:
+    max: 2
+  document-start:
+    present: false  # Avoids requiring `---` at top of each file
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+
+  # === HA-Specific Relaxations ===
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  hyphens:
+    max-spaces-after: 1
+  new-line-at-end-of-file: enable

@@ -1,0 +1,59 @@
+# GPT Access Alert Automations
+# Purpose: Track and alert on GPT connectivity issues
+
+- id: gpt_access_status_alert
+  alias: "GPT Access Status Alert"
+  description: "Alert when GPT access fails or recovers"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.gpt_access_available
+      to: 'off'
+      for:
+        minutes: 5
+    - platform: state
+      entity_id: binary_sensor.gpt_access_available
+      to: 'on'
+      for:
+        minutes: 1
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.gpt_access_available
+              state: 'off'
+          sequence:
+            - service: persistent_notification.create
+              data:
+                title: "🤖 GPT Access Failed"
+                message: >
+                  GPT cannot access Home Assistant remotely.
+                  
+                  **Nabu Casa Status**: {{ states('sensor.nabu_casa_status') }}
+                  **Remote UI**: {{ states('binary_sensor.remote_ui') }}
+                  **Internet**: {{ states('binary_sensor.192_168_1_1') }}
+                  
+                  Check cloud connection and router status.
+                notification_id: gpt_access_failed
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.gpt_access_available
+              state: 'on'
+          sequence:
+            - service: persistent_notification.dismiss
+              data:
+                notification_id: gpt_access_failed
+            - service: input_datetime.set_datetime
+              target:
+                entity_id: input_datetime.last_gpt_success
+              data:
+                datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+- id: metrics_track_gpt_requests
+  alias: "Metrics – Track GPT Requests"
+  mode: single
+  trigger:
+    - platform: time_pattern
+      minutes: "/5"
+      seconds: "0"
+  action:
+    # Removed broken counter.increment action

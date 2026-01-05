@@ -1,0 +1,79 @@
+type: vertical-stack
+cards:
+  - type: markdown
+    content: |
+      # 🧯 Crash Monitoring System
+      **Real-time crash prevention and context logging**
+      
+      ---
+      
+  - type: entities
+    title: "🛡️ Crash Sentinel Status"
+    entities:
+      - entity: sensor.ha_crash_sentinel
+        name: "Last Check"
+      - entity: sensor.crash_context_summary
+        name: "System Status"
+      - entity: sensor.vertical_layout_tracker
+        name: "Vertical Layout Card"
+      - entity: sensor.last_card_loaded
+        name: "Last Card Status"
+      - entity: input_number.frontend_errors
+        name: "Frontend Errors"
+        
+  - type: grid
+    columns: 2
+    cards:
+      - type: gauge
+        entity: sensor.home_assistant_core_memory_percent
+        name: "Memory Usage"
+        min: 0
+        max: 100
+        severity:
+          green: 0
+          yellow: 70
+          red: 90
+      - type: gauge  
+        entity: sensor.home_assistant_core_cpu_percent
+        name: "CPU Usage"
+        min: 0
+        max: 100
+        severity:
+          green: 0
+          yellow: 70
+          red: 90
+          
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "View Crash Log"
+        icon: mdi:file-document-outline
+        tap_action:
+          action: call-service
+          service: shell_command.view_crash_log
+      - type: button
+        name: "Archive Log"
+        icon: mdi:archive
+        tap_action:
+          action: call-service
+          service: shell_command.archive_crash_log
+      - type: button
+        name: "Clear Log"
+        icon: mdi:delete
+        tap_action:
+          action: call-service
+          service: shell_command.clear_crash_log
+          
+  - type: markdown
+    content: |
+      ### 🔍 Crash Risk Assessment
+      **Current Risk Level:** {{ state_attr('sensor.crash_context_summary', 'crash_risk_level') }}
+      
+      **Recommended Action:** {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}
+      
+      **Last Context Log:** {{ state_attr('sensor.ha_crash_sentinel', 'log_timestamp') }}
+      
+      ---
+      **Active Automations:** {{ state_attr('sensor.ha_crash_sentinel', 'active_automations') }}/{{ state_attr('sensor.ha_crash_sentinel', 'total_automations') }}
+      
+      **System Uptime:** {{ state_attr('sensor.ha_crash_sentinel', 'system_uptime') }}

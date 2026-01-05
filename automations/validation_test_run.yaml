@@ -1,0 +1,21 @@
+- id: 'ai_validation_test_run'
+  alias: AI Workspace - Validation Test Run
+  description: Run validators when the test toggle is turned on
+  trigger:
+    - platform: state
+      entity_id: input_boolean.run_validation_test
+      to: 'on'
+  condition: []
+  action:
+    - service: shell_command.validate_all_yaml
+    - delay: '00:00:10'
+    - service: python_script.write_validation_summary
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.run_validation_test
+    - service: persistent_notification.create
+      data:
+        title: 'AI Validation'
+        message: 'Validation test completed. See Validation Summary on dashboard.'
+        notification_id: ai_validation_test_run
+  mode: single

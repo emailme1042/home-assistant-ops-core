@@ -1,0 +1,22 @@
+# HACS Component Testing Input Selects
+# Purpose: Test selection entities for HACS component demonstration
+
+test_state_switch:
+  name: "State Switch Test Options"
+  options:
+    - "option1"
+    - "option2"
+    - "option3"
+  initial: "option1"
+  icon: mdi:format-list-bulleted
+
+hacs_component_category:
+  name: "HACS Component Category"
+  options:
+    - "UI & Display"
+    - "Functionality" 
+    - "Testing & Development"
+    - "Media & Entertainment"
+    - "System & Network"
+  initial: "UI & Display"
+  icon: mdi:view-grid

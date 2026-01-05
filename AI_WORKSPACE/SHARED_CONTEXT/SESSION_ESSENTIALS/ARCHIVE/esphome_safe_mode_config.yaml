@@ -1,0 +1,27 @@
+# ESPHome Safe Mode Configuration Template
+# Purpose: Add to problematic ESPHome devices to resolve OTA issues
+# Usage: Add these lines to device YAML, compile, install
+
+# Recommended safe mode configuration for stuck OTA devices:
+api:
+  reboot_timeout: 0s   # prevents auto reboot if API lost during OTA
+
+ota:
+  safe_mode: true      # enables fallback mode if OTA fails
+
+logger:
+  level: DEBUG         # provides detailed logging for troubleshooting
+
+wifi:
+  fast_connect: true   # speeds up WiFi connection
+  reboot_timeout: 0s   # prevents reboot on WiFi issues during OTA
+
+# Optional: If device keeps disconnecting during updates
+# web_server:
+#   port: 80           # allows web-based troubleshooting
+  
+# Note: After adding these configs:
+# 1. Save device YAML
+# 2. Click "Install" 
+# 3. Try OTA again - should be more stable
+# 4. If still fails, use "Install → Wirelessly → Manual IP"

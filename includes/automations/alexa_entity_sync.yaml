@@ -1,0 +1,8 @@
+automation:
+  - alias: Alexa Entity Sync Monthly
+    trigger:
+      - platform: time
+        at: "02:30:00"
+    action:
+      - service: cloud.alexa_sync_entities
+    mode: single

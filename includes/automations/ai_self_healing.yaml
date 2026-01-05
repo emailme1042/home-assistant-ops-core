@@ -1,0 +1,52 @@
+# Self-Healing Automations for AI Monitoring
+- alias: Restart Zigbee2MQTT if mesh fails
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.zigbee_mesh_lqi
+      below: 20
+  action:
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/bridge/request/restart
+- alias: Restart MQTT Broker if offline
+  trigger:
+    - platform: state
+      entity_id: sensor.mqtt_status
+      to: 'offline'
+      for: '00:05:00'
+  action:
+    - service: shell_command.restart_mqtt_broker
+- alias: Notify if HACS integration fails
+  trigger:
+    - platform: state
+      entity_id: sensor.hacs_status
+      to: 'problem'
+      for: '00:10:00'
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "HACS Integration Issue"
+        message: "HACS integration is reporting a problem. Please check logs."
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "HACS integration needs attention."
+        data:
+          type: tts
+- alias: Re-pair Zigbee device if orphaned
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.watchman_orphans
+      above: 0
+      for: '24:00:00'
+  action:
+    - service: script.zigbee_repair_protocol
+- alias: Clear stale MQTT topics
+  trigger:
+    - platform: time_pattern
+      hours: '/6'
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('sensor.mqtt_status') == 'online' }}
+  action:
+    - service: shell_command.clear_mqtt_topics

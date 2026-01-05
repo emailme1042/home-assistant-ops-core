@@ -1,0 +1,35 @@
+## MQTT health sensor examples
+# These are example options — pick one that fits your install. They are intentionally
+# commented or templated so they don't break config when you manage MQTT via the UI.
+
+# Option A: command_line sensor that pings broker host (works if HA host can reach broker by ICMP)
+# Requires setting `mqtt_broker` in `secrets.yaml` or editing inline host.
+#
+# sensor:
+#   - platform: command_line
+#     name: "MQTT Broker Ping"
+#     command: "ping -n 1 {{ states('sensor.mqtt_broker_host') | default('192.168.1.10') }}"
+#     scan_interval: 60
+#     value_template: "{{ 'online' if value == 'Reply from' or 'bytes=' in value else 'offline' }}"
+
+# Option B: template binary_sensor that checks for the MQTT integration entity
+# If you added MQTT via the UI, you may have integration-specific entities; adjust to your environment.
+#
+binary_sensor:
+  - platform: template
+    sensors:
+      mqtt_integration_present:
+        friendly_name: "MQTT Integration Present"
+        value_template: >-
+          {% set has_mqtt_entity = states | selectattr('entity_id','search','^sensor\.|^binary_sensor\.|^switch\.|^light\.') | selectattr('entity_id','search','mqtt') | list | length > 0 %}
+          {{ has_mqtt_entity }}
+        device_class: connectivity
+
+# Option C: If you run a broker that exposes $SYS topics, you can create an mqtt sensor
+# (requires MQTT in YAML or an MQTT integration that exposes topics). Example (commented):
+#
+# sensor:
+#   - platform: mqtt
+#   topic: "$SYS/broker/uptime"
+#     name: "MQTT Broker Uptime"
+#     unit_of_measurement: "s"

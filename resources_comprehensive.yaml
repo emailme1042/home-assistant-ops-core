@@ -1,0 +1,75 @@
+# Comprehensive HACS Resources for Home Assistant
+# This file contains all commonly used HACS components
+# Copy this into configuration.yaml under lovelace: resources:
+
+# EXISTING (Currently Declared)
+- url: /hacsfiles/button-card/button-card.js
+  type: module
+- url: /hacsfiles/lovelace-mushroom/mushroom.js
+  type: module
+- url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+  type: module
+- url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+  type: module
+- url: /hacsfiles/lovelace-card-mod/card-mod.js
+  type: module
+- url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+  type: module
+- url: /hacsfiles/state-switch/state-switch.js
+  type: module
+- url: /hacsfiles/template-entity-row/template-entity-row.js
+  type: module
+- url: /hacsfiles/config-template-card/config-template-card.js
+  type: module
+- url: /hacsfiles/lovelace-layout-card/layout-card.js
+  type: module
+
+# COMMONLY USED ADDITIONS (High Priority)
+- url: /hacsfiles/bar-card/bar-card.js
+  type: module
+- url: /hacsfiles/custom-attributes/custom-attributes.js
+  type: module
+- url: /hacsfiles/mini-media-player/mini-media-player-bundle.js
+  type: module
+- url: /hacsfiles/simple-weather-card/simple-weather-card-bundle.js
+  type: module
+- url: /hacsfiles/decluttering-card/decluttering-card.js
+  type: module
+- url: /hacsfiles/scheduler-card/scheduler-card.js
+  type: module
+- url: /hacsfiles/hass-swipe-navigation/swipe-navigation.js
+  type: module
+
+# MEDIA & ENTERTAINMENT
+- url: /hacsfiles/HA-Firemote/HA-Firemote.js
+  type: module
+- url: /hacsfiles/spotify-card/spotify-card.js
+  type: module
+- url: /hacsfiles/maxi-media-player/maxi-media-player.js
+  type: module
+
+# DASHBOARD ENHANCEMENTS
+- url: /hacsfiles/Bubble-Card/bubble-card.js
+  type: module
+- url: /hacsfiles/clock-weather-card/clock-weather-card.js
+  type: module
+- url: /hacsfiles/light-entity-card/light-entity-card.js
+  type: module
+- url: /hacsfiles/tabbed-card/tabbed-card.js
+  type: module
+
+# SPECIALIZED CARDS (Add as needed)
+- url: /hacsfiles/frigate-hass-card/frigate-hass-card.js
+  type: module
+- url: /hacsfiles/atomic-calendar-revive/atomic-calendar-revive.js
+  type: module
+- url: /hacsfiles/formulaone-card/formulaone-card.js
+  type: module
+
+# UTILITY CARDS
+- url: /hacsfiles/unused-card/unused-card.js
+  type: module
+- url: /hacsfiles/uptime-card/uptime-card.js
+  type: module
+- url: /hacsfiles/Summary-Card/summary-card.js
+  type: module

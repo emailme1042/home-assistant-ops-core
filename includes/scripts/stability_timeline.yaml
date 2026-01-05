@@ -1,0 +1,115 @@
+# ================================================
+# STABILITY TIMELINE LOGGING SCRIPTS
+# ================================================
+# Purpose: Log stability events to markdown timeline with timestamps
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+log_stability_event:
+  alias: "Log Stability Event"
+  description: "Logs stability events to timeline with structured format"
+  fields:
+    event_type:
+      description: "Type of event (Crash, Warning, Info, VSCode Action, etc.)"
+      example: "Crash"
+    event_cause:
+      description: "Cause or category of the event"
+      example: "Frontend Error"
+    event_details:
+      description: "Detailed description of the event"
+      example: "Frontend became unavailable for 2+ minutes"
+  sequence:
+    - service: input_number.increment
+      target:
+        entity_id: input_number.timeline_event_count
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_timeline_event
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.last_timeline_event_type
+      data:
+        value: "{{ event_type }}"
+    - service: shell_command.append_stability_timeline
+      data:
+        timestamp: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+        event_type: "{{ event_type }}"
+        event_cause: "{{ event_cause }}"
+        event_details: "{{ event_details }}"
+        stability_score: "{{ states('sensor.system_stability_score') }}%"
+        crash_count: "{{ states('input_number.crash_counter_24h') }}"
+
+update_stability_timeline_log:
+  alias: "Update Stability Timeline Log"
+  description: "Updates the rolling log display for recent events"
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.stability_timeline_log
+      data:
+        value: >
+          Last 5 Events:
+          {% for i in range(5) %}
+          {% set event_time = states('input_datetime.last_timeline_event') %}
+          {% if event_time != 'unknown' %}
+          {{ loop.index }}. {{ event_time }} - {{ states('input_text.last_timeline_event_type') }}
+          {% endif %}
+          {% endfor %}
+          
+          Current Status:
+          Stability Score: {{ states('sensor.system_stability_score') }}%
+          24h Crashes: {{ states('input_number.crash_counter_24h') }}
+          Last Cause: {{ states('input_select.last_crash_cause') }}
+          VSCode Correlation: {{ states('sensor.vscode_action_tracker') }}
+
+vscode_triggered_restart_log:
+  alias: "VSCode Triggered Restart Log"
+  description: "Logs restart triggered by VSCode for correlation tracking"
+  sequence:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_vscode_action
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.last_vscode_action_description
+      data:
+        value: "HA Restart Triggered"
+    - service: script.log_stability_event
+      data:
+        event_type: "VSCode Action"
+        event_cause: "Restart Triggered"
+        event_details: "Home Assistant restart triggered from VSCode task"
+    - service: persistent_notification.create
+      data:
+        title: "🔄 VSCode Restart Logged"
+        message: "Restart triggered by VSCode logged for crash correlation analysis."
+        notification_id: "vscode_restart_{{ now().strftime('%Y%m%d_%H%M') }}"
+
+crash_frequency_analysis:
+  alias: "Crash Frequency Analysis"
+  description: "Analyzes crash patterns and provides recommendations"
+  sequence:
+    - service: script.update_stability_timeline_log
+    - service: persistent_notification.create
+      data:
+        title: "📊 Stability Analysis"
+        message: >
+          Stability Score: {{ states('sensor.system_stability_score') }}%
+          24h Crashes: {{ states('input_number.crash_counter_24h') }}
+          Primary Cause: {{ states('input_select.last_crash_cause') }}
+          VSCode Correlation: {{ states('sensor.vscode_action_tracker') }}
+          
+          {% set score = states('sensor.system_stability_score') | float(0) %}
+          {% if score >= 90 %}
+          System is stable. Continue current practices.
+          {% elif score >= 70 %}
+          Minor stability issues. Monitor recent changes.
+          {% elif score >= 50 %}
+          Stability concerns. Review configuration changes.
+          {% else %}
+          Critical instability. Immediate investigation required.
+          {% endif %}
+        notification_id: "stability_analysis"

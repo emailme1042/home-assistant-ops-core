@@ -1,0 +1,19 @@
+# Ignore HA runtime/state
+home-assistant_v2.*
+home-assistant.log*
+*.db
+*.db-shm
+*.db-wal
+
+# Zigbee2MQTT noise
+zigbee2mqtt/log/
+zigbee2mqtt/state.json
+
+# SSH keys
+.ssh/
+
+# Internal HA storage (optional to ignore)
+.storage/
+
+# Problematic files with trailing dots
+includes/sensors_atom_btproxy.yaml.

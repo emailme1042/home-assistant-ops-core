@@ -1,0 +1,128 @@
+# OneNote Integration Automation
+# Monitors OneNote file and triggers AI coordination tasks
+
+- id: onenote_file_watcher
+  alias: "OneNote: File Change Detection"
+  description: "Detects changes to OneNote file and triggers processing"
+  trigger:
+    - platform: time_pattern
+      minutes: "/30"  # Check every 30 minutes
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('input_text.onenote_file_path') not in ['unknown', 'None', ''] }}
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.last_onenote_sync
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.onenote_extraction_result
+      data:
+        value: "File monitored at {{ now().strftime('%H:%M') }} - Manual extraction available"
+    - service: persistent_notification.create
+      data:
+        title: "📝 OneNote Monitor Active"
+        message: >
+          Monitoring: {{ states('input_text.onenote_file_path') }}
+          
+          To extract content:
+          1. Open OneNote file
+          2. Copy relevant sections
+          3. Paste to AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/
+          4. Use Message Matrix to route tasks to agents
+        notification_id: "onenote_monitor"
+
+- id: onenote_extraction_request
+  alias: "OneNote: Extraction Request Handler"
+  description: "Handles requests to extract OneNote content"
+  trigger:
+    - platform: state
+      entity_id: input_text.current_message_action
+  condition:
+    - condition: template
+      value_template: >
+        {{ 'onenote' in states('input_text.current_message_action').lower() or
+           'extract' in states('input_text.current_message_action').lower() }}
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.m365_task_queue
+      data:
+        value: "Extract OneNote content - {{ states('input_text.current_message_action') }}"
+    - service: persistent_notification.create
+      data:
+        title: "📎 M365 Copilot Task Queued"
+        message: >
+          Task: {{ states('input_text.current_message_action') }}
+          
+          Manual Steps Required:
+          1. Open OneNote: {{ states('input_text.onenote_file_path') }}
+          2. Copy relevant automation/AI logic
+          3. Create structured YAML in AI_WORKSPACE
+          4. Update task queue when complete
+        notification_id: "m365_task_{{ now().timestamp() | int }}"
+
+- id: onenote_content_to_yaml
+  alias: "OneNote: Content to YAML Converter"
+  description: "Guides conversion of OneNote content to HA YAML"
+  trigger:
+    - platform: state
+      entity_id: input_text.onenote_extraction_result
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('input_text.onenote_extraction_result') not in ['unknown', 'None', ''] and
+           'extracted' in states('input_text.onenote_extraction_result').lower() }}
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.vscode_task_queue
+      data:
+        value: "Process OneNote extraction: {{ states('input_text.onenote_extraction_result') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.current_message_from
+      data:
+        value: "M365 Copilot"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.current_message_to
+      data:
+        value: "VSCode Copilot"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.current_message_action
+      data:
+        value: "Convert OneNote logic to YAML automation"
+
+- id: message_routing_validator
+  alias: "Message Router: Validation Check"
+  description: "Validates message routing parameters before processing"
+  trigger:
+    - platform: state
+      entity_id:
+        - input_text.current_message_from
+        - input_text.current_message_to
+        - input_text.current_message_action
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('input_text.current_message_from') in [
+          'Jamie', 'Edge Copilot', 'VSCode Copilot', 'Smart Home Ops', 
+          'OpenAI API', 'M365 Copilot', 'Siri'
+        ] and states('input_text.current_message_to') in [
+          'Jamie', 'Edge Copilot', 'VSCode Copilot', 'Smart Home Ops',
+          'OpenAI API', 'M365 Copilot', 'Siri'
+        ] }}
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "✅ Valid Message Route"
+        message: >
+          Route validated: {{ states('input_text.current_message_from') }} → {{ states('input_text.current_message_to') }}
+          Action: {{ states('input_text.current_message_action') }}
+        notification_id: "route_valid_{{ now().timestamp() | int }}"
+  mode: single

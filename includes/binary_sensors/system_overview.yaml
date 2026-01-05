@@ -1,0 +1,61 @@
+
+- platform: template
+  sensors:
+    dump1090_status:
+      friendly_name: "Dump1090 Status"
+      device_class: connectivity
+      value_template: "{{ states('sensor.aircraft_count') | int(0) > 0 }}"
+      icon_template: >-
+        {% if states('sensor.aircraft_count') | int(0) > 0 %}
+          mdi:airplane
+        {% else %}
+          mdi:airplane-alert
+        {% endif %}
+
+    jit_plugin_online:
+      friendly_name: "JIT Plugin (Flask) Online"
+      device_class: connectivity
+      value_template: "{{ is_state('sensor.jit_plugin_status', 'alive') }}"
+
+    copilot_log_stale:
+      friendly_name: "Copilot Log Stale"
+      value_template: >-
+        {% set last_mod = states('sensor.file_last_modified') %}
+        {% set now = as_timestamp(now()) %}
+        {% if last_mod not in ['unknown', 'unavailable'] %}
+          {% set ts = as_timestamp(last_mod) %}
+          {% if (now - ts) > 86400 %}
+            true
+          {% else %}
+            false
+          {% endif %}
+        {% else %}
+          false
+        {% endif %}
+
+    aircraft_count:
+      friendly_name: "Aircraft Count"
+      device_class: problem
+      value_template: "{{ states('sensor.aircraft_count') | int(0) == 0 }}"
+      icon_template: >-
+        {% if is_state('binary_sensor.aircraft_count', 'on') %}
+          mdi:airplane-alert
+        {% else %}
+          mdi:airplane
+        {% endif %}
+
+    kodi_ai_command_result:
+      friendly_name: "Kodi AI Command Result"
+      device_class: problem
+      value_template: "{{ states('input_text.kodi_command_result') != 'Success' }}"
+      icon_template: >-
+        {% if is_state('binary_sensor.kodi_ai_command_result', 'on') %}
+          mdi:alert-circle-outline
+        {% else %}
+          mdi:check-circle-outline
+        {% endif %}
+
+    adsb_feed_alive:
+      friendly_name: "ADSB Feed Alive"
+      device_class: connectivity
+      value_template: "{{ is_state('sensor.adsb_heartbeat', 'alive') }}"

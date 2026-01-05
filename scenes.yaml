@@ -1,0 +1,208 @@
+- id: '1757859326966'
+  name: Lounge Lamps
+  entities:
+    light.wiz_rgbw_tunable_2606be:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      rgbw_color:
+      icon: mdi:lamp
+      friendly_name: Left lamp
+      supported_features: 4
+      state: 'off'
+    light.wiz_rgbw_tunable_2609a6:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      rgbw_color:
+      icon: mdi:lamp
+      friendly_name: Right lamp
+      supported_features: 4
+      state: 'off'
+    light.wiz_rgbw_tunable_ae6b50:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      rgbw_color:
+      friendly_name: Dining Lamp
+      supported_features: 4
+      icon: mdi:lamp
+      state: 'off'
+    light.brown_lamp:
+      min_color_temp_kelvin: 2500
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 400
+      effect_list:
+      - 'Off'
+      - Party
+      - Relax
+      supported_color_modes:
+      - color_temp
+      - hs
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      friendly_name: Brown Lamp
+      supported_features: 36
+      icon: mdi:lamp
+      state: 'off'
+  icon: mdi:lamps
+  metadata:
+    light.wiz_rgbw_tunable_2606be:
+      entity_only: true
+    light.wiz_rgbw_tunable_2609a6:
+      entity_only: true
+    light.wiz_rgbw_tunable_ae6b50:
+      entity_only: true
+    light.brown_lamp:
+      entity_only: true

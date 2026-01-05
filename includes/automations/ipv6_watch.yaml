@@ -1,0 +1,84 @@
+# IPv6 Connectivity Monitoring & Fallback
+# Created: 2025-10-28 | Multi-AI Collaboration Project  
+# Purpose: Monitor IPv6 connectivity and implement fallback logic
+
+alias: IPv6 Connectivity Monitor
+description: Monitor IPv6 status and provide fallback automation
+trigger:
+  - platform: state
+    entity_id: binary_sensor.192_168_1_1  # Router ping sensor
+    to: 'off'
+    for:
+      minutes: 3
+  - platform: state
+    entity_id: binary_sensor.192_168_1_217  # HA system self-ping
+    to: 'off'
+    for:
+      minutes: 2
+  - platform: time_pattern
+    # Check IPv6 connectivity every hour
+    minutes: 0
+condition:
+  # Only trigger if we actually have network issues
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.192_168_1_1
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.192_168_1_217
+        state: 'off'
+action:
+  - choose:
+      # Critical: Both router and self-ping failing
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.192_168_1_1
+            state: 'off'
+          - condition: state
+            entity_id: binary_sensor.192_168_1_217
+            state: 'off'
+        sequence:
+          - service: notify.alexa_media_kitchen_alexa
+            data:
+              message: "Network connectivity issue detected. Running diagnostic checks."
+              data:
+                type: tts
+          - service: shell_command.network_interface_check
+          - service: persistent_notification.create
+            data:
+              title: "IPv6 Connectivity Issue"
+              message: "Both router and local connectivity failing. Check network configuration."
+              notification_id: ipv6_critical
+      # Warning: Router ping failing but HA system responsive
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.192_168_1_1
+            state: 'off'
+          - condition: state
+            entity_id: binary_sensor.192_168_1_217
+            state: 'on'
+        sequence:
+          - service: shell_command.test_network
+          - service: persistent_notification.create
+            data:
+              title: "Router Connectivity Warning"
+              message: "Router ping failing but HA system responsive. Checking external connectivity."
+              notification_id: ipv6_warning
+  # Always log connectivity status
+  - service: logbook.log
+    data:
+      name: "IPv6 Monitor"
+      message: "Router: {{ states('binary_sensor.192_168_1_1') }}, HA System: {{ states('binary_sensor.192_168_1_217') }}"
+      entity_id: binary_sensor.192_168_1_1
+
+mode: single
+max_exceeded: silent
+
+# Tags for multi-AI tracking
+tags:
+  - network_monitoring
+  - ipv6_connectivity
+  - multi_ai_project
+  - session_2025_10_28
+  - fallback_automation

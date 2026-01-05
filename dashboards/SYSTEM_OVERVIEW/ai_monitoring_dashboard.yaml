@@ -1,0 +1,109 @@
+title: "🧠 AI Monitoring & Repair"
+views:
+  - title: "System Health"
+    path: system_health
+    cards:
+      - type: entities
+        title: "Core Monitoring"
+        entities:
+          - sensor.hacs_status
+          - sensor.zigbee_mesh_lqi
+          - sensor.mqtt_status
+          - sensor.automation_health
+          - sensor.watchman_orphans
+          - sensor.restart_safety_score
+          - sensor.ai_agent_health
+      - type: custom:config-template-card
+        entities: []
+        card:
+          type: markdown
+          content: |
+            ### AI Repair Log
+            {% raw %}
+            {{ state_attr('sensor.ai_exec_log', 'log') }}
+            {% endraw %}
+
+      - type: custom:state-switch
+        entity: input_boolean.ai_workspace_active
+        states:
+          'on':
+            type: entities
+            title: "AI Workspace Active"
+            entities:
+              - sensor.ai_agent_health
+              - sensor.restart_safety_score
+          'off':
+            type: markdown
+            content: "AI Workspace is not active. Activate to view advanced health metrics."
+      - type: button
+        name: "Manual Zigbee Repair"
+        tap_action:
+          action: call-service
+          service: script.zigbee_repair_protocol
+          service_data:
+            device_id: "<device_id>"
+      - type: button
+        name: "Clear MQTT Topics"
+        tap_action:
+          action: call-service
+          service: shell_command.clear_mqtt_topics
+
+  - title: "Gentle AI Workflow"
+    path: gentle_workflow
+    cards:
+      - type: markdown
+        title: "🧠 Gentle Copilot Workflow Guide"
+        content: |
+          ## How to Work with GitHub Copilot (Simple Steps)
+
+          ### Before Starting
+          1. **Check Current Task**: Open `AI_WORKSPACE/SHARED_CONTEXT/current_session.md` to see what we're working on
+          2. **Use Dashboard Navigation**: You're here! This dashboard helps you navigate
+          3. **Ask if Unclear**: If anything is confusing, say "I need clarification" - it's okay!
+
+          ### When Copilot Suggests Changes
+          1. **Read the Explanation**: Copilot will explain what it's doing
+          2. **Check if it Matches Patterns**: Does it look like other files in the project?
+          3. **Ask Questions**: "Is this safe?" or "Will this break anything?"
+          4. **Confirm Before Apply**: Say "yes" only if you're sure
+
+          ### Safe Workflow
+          - **One File at a Time**: Don't change multiple files together
+          - **Small Changes**: Fix one thing, not everything
+          - **Test After**: Use the validation commands to check
+          - **Log Everything**: Changes go to `ai_exec_log.md` automatically
+
+          ### If You Feel Overwhelmed
+          - **Take a Break**: Close VS Code and come back later
+          - **Use Dashboard**: Navigate back to work via this dashboard
+          - **Ask for Help**: Say "Let's pause and check the dashboard" or "I need to review this"
+
+          ### Quick Commands to Remember
+          - Validate YAML: `python3 /config/scripts/validate_yaml.py /config`
+          - Check includes: `python3 /config/scripts/validate_yaml.py /config/includes`
+          - View current session: Open `AI_WORKSPACE/SHARED_CONTEXT/current_session.md`
+
+          ### Emergency Stop
+          If anything feels wrong:
+          1. Don't apply the change
+          2. Close the file
+          3. Go to dashboard navigation
+          4. Take a break
+
+          Remember: This is your system. Take it at your pace. Copilot is here to help, not stress you.
+
+      - type: button
+        name: "Open Current Session"
+        tap_action:
+          action: navigate
+          navigation_path: /ai-workspace/current-session
+      - type: button
+        name: "View AI Exec Log"
+        tap_action:
+          action: navigate
+          navigation_path: /ai-workspace/ai-exec-log
+      - type: button
+        name: "Check Validation Status"
+        tap_action:
+          action: call-service
+          service: shell_command.validate_yaml

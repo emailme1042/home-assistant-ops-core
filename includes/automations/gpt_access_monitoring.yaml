@@ -1,0 +1,101 @@
+# GPT Access Monitoring Automation
+# Purpose: Track external access attempts and log connection health for GPT troubleshooting
+# Supports: Nabu Casa connectivity monitoring, WebSocket health tracking
+
+- id: gpt_access_health_monitor
+  alias: "GPT Access Health Monitor" 
+  description: "Monitor cloud connectivity and log when GPT access might be impacted"
+  trigger:
+    - platform: state
+      entity_id: cloud.cloud
+      to: 
+        - 'disconnected'
+        - 'connecting'
+        - 'connected'
+    - platform: state
+      entity_id: binary_sensor.remote_ui
+      to:
+        - 'on'
+        - 'off'
+    - platform: state
+      entity_id: sensor.gpt_access_health
+  condition: []
+  action:
+    - service: logbook.log
+      data:
+        name: "GPT Access Monitor"
+        message: >
+          Cloud: {{ states('cloud.cloud') }}, 
+          Remote UI: {{ states('binary_sensor.remote_ui') }}, 
+          Health Score: {{ states('sensor.gpt_access_health') }}%
+        entity_id: cloud.cloud
+
+- id: nabu_casa_connection_alert
+  alias: "Nabu Casa Connection Alert"
+  description: "Alert when Nabu Casa connection fails (impacts GPT access)"
+  trigger:
+    - platform: state
+      entity_id: cloud.cloud
+      to: 'disconnected'
+      for:
+        minutes: 2
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🚨 GPT Access Impact"
+        message: |
+          Nabu Casa cloud connection is down. 
+          GPTs cannot access Home Assistant remotely.
+          
+          Quick fixes:
+          - Check internet connection
+          - Restart Home Assistant  
+          - Check Nabu Casa service status
+        notification_id: "nabu_casa_down"
+
+- id: remote_ui_disabled_alert  
+  alias: "Remote UI Disabled Alert"
+  description: "Alert when remote UI is disabled (blocks GPT access)"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.remote_ui
+      to: 'off'
+      for:
+        minutes: 1
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "⚠️ GPT Access Blocked"
+        message: |
+          Remote UI is disabled in Nabu Casa settings.
+          GPTs cannot access Home Assistant.
+          
+          Fix: Settings → Home Assistant Cloud → Enable Remote Control
+        notification_id: "remote_ui_disabled"
+
+- id: gpt_access_health_low_alert
+  alias: "GPT Access Health Low Alert" 
+  description: "Alert when overall GPT access health is poor"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.gpt_access_health
+      below: 50
+      for:
+        minutes: 5
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "📊 GPT Access Health Low"
+        message: |
+          GPT Access Health Score: {{ states('sensor.gpt_access_health') }}%
+          
+          Check:
+          - Nabu Casa connection: {{ states('cloud.cloud') }}
+          - Remote UI: {{ states('binary_sensor.remote_ui') }}
+          - Internet: {{ states('binary_sensor.192_168_1_1') }}
+          
+          Go to AI Hub → GPT Access Monitor for details
+        notification_id: "gpt_access_health_low"

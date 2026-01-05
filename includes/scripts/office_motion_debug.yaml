@@ -1,0 +1,73 @@
+# Office Motion Debugging Script
+# This script helps diagnose why office motion automation isn't working
+
+debug_office_motion:
+  alias: Debug Office Motion System
+  sequence:
+    # Step 1: Check current sensor state
+    - service: persistent_notification.create
+      data:
+        title: "Office Motion Debug - Step 1"
+        message: >
+          Office Motion Sensor State: {{ states('binary_sensor.office_motion') }}
+          Last Changed: {{ states.binary_sensor.office_motion.last_changed }}
+          Office Light State: {{ states('light.office') }}
+          
+    # Step 2: Test light control
+    - service: light.toggle
+      target:
+        entity_id: light.office
+        
+    # Step 3: Log automation states
+    - service: persistent_notification.create
+      data:
+        title: "Office Motion Debug - Step 2"
+        message: >
+          YAML Automations:
+          - office_light_on_when_occupied_yaml: {{ states('automation.office_light_on_when_occupied_yaml') }}
+          - office_light_off_after_no_motion_yaml: {{ states('automation.office_light_off_after_no_motion_yaml') }}
+          
+          UI Automations (if they exist):
+          - office_light_on_when_occupied_2: {{ states('automation.office_light_on_when_occupied_2') }}
+          - office_light_off_after_no_motion: {{ states('automation.office_light_off_after_no_motion') }}
+
+# Quick test - force trigger the light on action
+test_office_light_on:
+  alias: Test Office Light On Action
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: light.office
+      data:
+        brightness_pct: 82
+    - service: persistent_notification.create
+      data:
+        title: "Office Light Test"
+        message: "Office light should now be ON at 82% brightness"
+
+# Quick test - force trigger the light off action  
+test_office_light_off:
+  alias: Test Office Light Off Action
+  sequence:
+    - service: light.turn_off
+      target:
+        entity_id: light.office
+    - service: persistent_notification.create
+      data:
+        title: "Office Light Test"
+        message: "Office light should now be OFF"
+
+# Sensor state monitor
+monitor_office_motion:
+  alias: Monitor Office Motion Sensor
+  sequence:
+    - repeat:
+        count: 10
+        sequence:
+          - service: persistent_notification.create
+            data:
+              title: "Motion Monitor"
+              message: >
+                {{ now().strftime('%H:%M:%S') }}: binary_sensor.office_motion = {{ states('binary_sensor.office_motion') }}
+          - delay: 
+              seconds: 5

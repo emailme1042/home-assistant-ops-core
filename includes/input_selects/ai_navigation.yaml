@@ -1,0 +1,24 @@
+# AI Navigation Dashboard Input Entities
+# Purpose: Provide missing input entities for AI dashboard functionality
+
+session_tag_status:
+  name: Session Tag Status
+  options:
+    - ready
+    - in_progress
+    - pending
+    - complete
+    - error
+  initial: ready
+  icon: mdi:tag-outline
+
+ai_dashboard_target:
+  name: AI Dashboard Target
+  options:
+    - ai_navigation
+    - ai_workspace
+    - ai_system_insight
+    - system_overview
+    - home_controls
+  initial: ai_navigation
+  icon: mdi:target

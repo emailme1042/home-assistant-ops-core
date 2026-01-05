@@ -1,0 +1,23 @@
+# ================================================
+# STABILITY TIMELINE DATETIME ENTITIES
+# ================================================
+# Purpose: Timestamp tracking for crash events and VSCode actions
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+last_crash_timestamp:
+  name: "Last Crash Timestamp"
+  has_date: true
+  has_time: true
+  icon: mdi:clock-alert
+
+last_vscode_action:
+  name: "Last VSCode Action"
+  has_date: true
+  has_time: true
+  icon: mdi:code-tags
+
+last_timeline_event:
+  name: "Last Timeline Event"
+  has_date: true
+  has_time: true
+  icon: mdi:timeline-clock

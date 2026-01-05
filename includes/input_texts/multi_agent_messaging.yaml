@@ -1,0 +1,102 @@
+# Multi-Agent Input Entities
+# Stores messaging state and task queues for AI coordination
+
+# Last Action Tracking
+last_edge_action:
+  name: "Last Edge Copilot Action"
+  max: 255
+  initial: "None"
+  icon: mdi:microsoft-edge
+
+last_vscode_action:
+  name: "Last VSCode Copilot Action" 
+  max: 255
+  initial: "None"
+  icon: mdi:microsoft-visual-studio-code
+
+last_gpt_action:
+  name: "Last GPT Action"
+  max: 255
+  initial: "None"
+  icon: mdi:robot-outline
+
+last_openai_action:
+  name: "Last OpenAI API Action"
+  max: 255
+  initial: "None"
+  icon: mdi:brain
+
+last_m365_action:
+  name: "Last M365 Copilot Action"
+  max: 255
+  initial: "None"
+  icon: mdi:microsoft-office
+
+last_siri_action:
+  name: "Last Siri Action"
+  max: 255
+  initial: "None"
+  icon: mdi:apple
+
+# Task Queue Management
+edge_task_queue:
+  name: "Edge Copilot Task Queue"
+  max: 255
+  initial: ""
+  icon: mdi:format-list-bulleted
+
+vscode_task_queue:
+  name: "VSCode Copilot Task Queue"
+  max: 255
+  initial: ""
+  icon: mdi:format-list-bulleted
+
+gpt_task_queue:
+  name: "GPT Task Queue"
+  max: 255
+  initial: ""
+  icon: mdi:format-list-bulleted
+
+openai_task_queue:
+  name: "OpenAI API Task Queue"
+  max: 255
+  initial: ""
+  icon: mdi:format-list-bulleted
+
+m365_task_queue:
+  name: "M365 Copilot Task Queue"
+  max: 255
+  initial: ""
+  icon: mdi:format-list-bulleted
+
+# Current Message Routing
+current_message_from:
+  name: "Current Message From"
+  max: 50
+  initial: "None"
+  icon: mdi:send
+
+current_message_to:
+  name: "Current Message To"
+  max: 50
+  initial: "None"
+  icon: mdi:inbox-arrow-down
+
+current_message_action:
+  name: "Current Message Action"
+  max: 255
+  initial: "None"
+  icon: mdi:cog
+
+# OneNote Integration
+onenote_extraction_result:
+  name: "OneNote Extraction Result"
+  max: 255
+  initial: "None"
+  icon: mdi:microsoft-onenote
+
+onenote_file_path:
+  name: "OneNote File Path"
+  max: 255
+  initial: "/config/AI_WORKSPACE/SHARED_CONTEXT/HAOS - 5 x Ai's.one"
+  icon: mdi:file-document

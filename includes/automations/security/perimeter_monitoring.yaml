@@ -1,0 +1,58 @@
+- alias: Garden Light On When Door Opens After Sunset
+  id: garden_light_on_door_open_at_night
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door_door
+      to: "on"
+  condition:
+    - condition: sun
+      after: sunset
+      before: sunrise
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.garden_lights
+  # Removed logbook.log action
+      data:
+        name: "Garden Lights"
+        message: "Garden lights turned on - back door opened after sunset"
+
+- alias: Garden Light Off When Door Closes
+  id: garden_light_off_door_closed
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door_door
+      to: "off"
+      for: "00:01:00"  # Wait 1 minute before turning off
+  condition:
+    - condition: sun
+      after: sunset
+      before: sunrise
+  action:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.garden_lights
+  # Removed logbook.log action
+      data:
+        name: "Garden Lights"
+        message: "Garden lights turned off - back door closed for 1 minute"
+
+- alias: Door Open – Alexa Lounge Weather Advisory
+  id: door_open_alexa_lounge_weather_advisory
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.back_door_door
+      from: "off"
+      to: "on"
+  condition:
+    - condition: time
+      after: "06:00:00"
+      before: "22:00:00"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Back Door Triggered"
+        message: "The back door automation ran successfully."

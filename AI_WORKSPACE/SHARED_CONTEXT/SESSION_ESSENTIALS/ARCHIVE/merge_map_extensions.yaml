@@ -1,0 +1,50 @@
+# SESSION_ESSENTIALS Consolidation Map — 2025-11-01
+# Maps all existing files to 10 master context files for AI sharing
+
+merge_targets:
+  AI_OPERATIONS_REFERENCE.md:
+    - README.md
+    - system_status.md
+    - active_issues.md
+    - RESOURCE_VALIDATION_RESPONSE.md
+    - ha_green_support_reference.md
+    - JAMIE_AUTHORIZATION_REQUEST.md
+  AI_DASHBOARD_GUIDE.md:
+    - entity_reference.md
+    - entity_reference_validation.yaml
+    - ai_workspace_sync_status_blueprint.yaml
+    - dashboard_structure.md
+    - automation_patterns.md
+  VSCode_Edge_Integration_Guide.md:
+    - VSCode_Edge_Integration_Guide.md
+    - vscode_ha_extension_troubleshooting.md
+    - custom_sidebar_fix.md
+    - custom_sidebar_summary.md
+  AI_SYNC_STATUS.yaml:
+    - AI_SYNC_STATUS.yaml
+    - system_status.md
+  HAOS_Restart_Safe_Checklist.md:
+    - HAOS_Restart_Safe_Checklist.md
+    - AI_RESTART_VALIDATION_CHECKLIST.md
+  AI_RESTART_VALIDATION_CHECKLIST.md:
+    - AI_RESTART_VALIDATION_CHECKLIST.md
+    - validate_merge_sources.py
+  ai_workspace_sync_status_blueprint.yaml:
+    - ai_workspace_sync_status_blueprint.yaml
+  session_tags_index.md:
+    - session_tags_index.md
+    - merge_map.yaml
+    - merge_map_extensions.yaml
+  copilot_session_notes_merge.md:
+    - copilot_session_notes.md
+    - LIVE_AI_HANDOFF_MESSAGE.md
+    - recent_changes.md
+    - CONSOLIDATED_SESSION_STATUS.md
+    - NEXT_STEPS_FOR_JAMIE.md
+    - NEXT_STEPS_SUCCESS.md
+    - JD_TODO_LIST.md
+    - QUICK_START.md
+    - critical_system_issues.md
+    - copilot_autocomplete_fallback.md
+    - active_issues.md
+    - current_session.md

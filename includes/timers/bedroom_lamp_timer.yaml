@@ -1,0 +1,6 @@
+# Bedroom Lamp Auto-Off Timer for Zigbee Button
+bedroom_lamp_auto_off:
+  name: Bedroom Lamp Auto-Off Timer
+  duration: "00:15:00"
+  icon: mdi:lamp
+  restore: false

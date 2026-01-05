@@ -1,0 +1,5 @@
+test_string:
+  name: Test String Input
+  initial: "test value"
+  max: 200
+  icon: mdi:format-text

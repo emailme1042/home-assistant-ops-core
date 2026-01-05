@@ -1,0 +1,62 @@
+{
+  "rules": [
+    {
+      "description": "Simplified Copilot responsibilities for HA project",
+      "pattern": "**/*.{yaml,yml,md}",
+      "rules": [
+        "Keep changes small and safe - one file at a time",
+        "Always explain what you're doing before making changes",
+        "Use simple language, avoid technical jargon",
+        "Ask for confirmation before editing important files",
+        "Include clear comments in all YAML changes",
+        "Follow existing patterns - don't invent new structures",
+        "Log all changes in ai_exec_log.md",
+        "If unsure, suggest checking with Jamie instead of guessing"
+      ]
+    },
+    {
+      "description": "What to avoid - keep it simple",
+      "pattern": "**/*",
+      "rules": [
+        "Don't make big changes without asking",
+        "Don't touch secrets.yaml or .storage files",
+        "Don't delete files without confirmation",
+        "Don't assume you know what Jamie wants",
+        "Don't make runtime changes or execute commands",
+        "Don't work on multiple files at once"
+      ]
+    },
+    {
+      "description": "Gentle workflow reminders",
+      "pattern": "**/*.{yaml,yml}",
+      "rules": [
+        "Take it slow - one step at a time",
+        "Use the dashboard navigation for context",
+        "Check AI_WORKSPACE/SHARED_CONTEXT/current_session.md first",
+        "Surface all changes in SYSTEM_OVERVIEW for visibility",
+        "Include troubleshooting notes in comments",
+        "Make changes restart-safe",
+        "End with a summary of what was done"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "description": "Gentle default prompt",
+      "pattern": "**/*.{yaml,yml}",
+      "prompt": "Please help with this YAML change. Keep it simple and safe. Explain what you're doing. Ask if you need clarification. Use existing patterns."
+    },
+    {
+      "description": "Dashboard reminder",
+      "pattern": "**/dashboards/**",
+      "prompt": "Remember to update SYSTEM_OVERVIEW with any dashboard changes. Keep navigation simple and clear."
+    }
+  ],
+  "settings": {
+    "max_changes_per_session": 3,
+    "require_confirmation": false,
+    "use_simple_language": true,
+    "log_all_actions": true,
+    "auto_apply_routine_fixes": true
+  }
+}

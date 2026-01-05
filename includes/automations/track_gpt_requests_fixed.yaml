@@ -1,0 +1,11 @@
+alias: "Metrics – Track GPT Requests"
+id: metrics_track_gpt_requests
+mode: queued
+trigger:
+  - platform: time_pattern
+    minutes: "/5"  # every 5 minutes
+action:
+  - event: gpt_request_tick
+  - service: input_number.increment
+    target:
+      entity_id: input_number.frontend_errors  # Using existing entity instead of counter

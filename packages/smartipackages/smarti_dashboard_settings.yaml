@@ -1,0 +1,123 @@
+input_boolean:
+  smarti_dashboard_hide_sidebar:
+    name: Hide Sidebar
+    icon: mdi:menu
+    initial: false
+
+  smarti_dashboard_hide_header:
+    name: Hide Header
+    icon: mdi:page-layout-header
+    initial: false
+
+  smarti_show_energy_tab:
+    name: Show Energy Tab
+    icon: mdi:flash
+    initial: true
+
+  smarti_show_weather_tab:
+    name: Show Weather Tab
+    icon: mdi:weather-cloudy
+    initial: true
+
+  smarti_show_light_tab:
+    name: Show Light Tab
+    icon: mdi:lightbulb
+    initial: true
+
+  smarti_show_climate_tab:
+    name: Show Climate Tab
+    icon: mdi:thermometer
+    initial: true
+
+  smarti_show_misc_tab:
+    name: Show Misc Tab
+    icon: mdi:dots-horizontal
+    initial: true
+
+  smarti_show_security_tab:
+    name: Show Security Tab
+    icon: mdi:shield
+    initial: true
+
+  smarti_show_energy_measurement:
+    name: Show Energy Measurement
+    icon: mdi:lightning-bolt-circle
+    initial: true
+
+input_select:
+  calendar_days_to_show:
+    name: Calendar Days to Show
+    icon: mdi:calendar-range
+    options:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+      - "7"
+      - "8"
+      - "9"
+      - "10"      
+
+template:
+  - binary_sensor:
+      - name: "SMARTi Has Air Quality"
+        state: "{{ states('air_quality') | count > 0 }}"
+      - name: "SMARTi Has Motion Sensor"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'motion') | list | count > 0 }}"
+      - name: "SMARTi Has Camera"
+        state: "{{ states.camera | count > 0 }}"
+      - name: "SMARTi Has Climate"
+        state: "{{ states.climate | count > 0 }}"
+      - name: "SMARTi Has Cover"
+        state: "{{ states.cover | count > 0 }}"
+      - name: "SMARTi Has Fan"
+        state: "{{ states.fan | count > 0 }}"
+      - name: "SMARTi Has Humidifier"
+        state: "{{ states.humidifier | count > 0 }}"
+      - name: "SMARTi Has Lawn Mower"
+        state: "{{ states('vacuum') | selectattr('name', 'search', 'mower') | list | count > 0 }}"
+      - name: "SMARTi Has Light"
+        state: "{{ states.light | count > 0 }}"
+      - name: "Has Lock"
+        state: "SMARTi {{ states.lock | count > 0 }}"
+      - name: "Has Media Player"
+        state: "{{ states.media_player | count > 0 }}"
+      - name: "SMARTi Has Remote"
+        state: "{{ states.remote | count > 0 }}"
+      - name: "SMARTi Has Scene"
+        state: "{{ states.scene | count > 0 }}"
+      - name: "SMARTi Has Siren"
+        state: "{{ states.switch | selectattr('attributes.device_class', '==', 'siren') | list | count > 0 }}"
+      - name: "SMARTi Has Switch"
+        state: "{{ states.switch | count > 0 }}"
+      - name: "SMARTi Has Vacuum"
+        state: "{{ states.vacuum | count > 0 }}"
+      - name: "SMARTi Has Valve"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'valve') | list | count > 0 }}"
+      - name: "SMARTi Has Water Heater"
+        state: "{{ states.water_heater | count > 0 }}"
+      - name: "SMARTi Has Smoke Sensor"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'smoke') | list | count > 0 }}"
+      - name: "SMARTi Has Gas Sensor"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'gas') | list | count > 0 }}"
+      - name: "SMARTi Has Temperature Sensor"
+        state: "{{ states.sensor | selectattr('attributes.device_class', '==', 'temperature') | list | count > 0 }}"
+      - name: "SMARTi Has Humidity Sensor"
+        state: "{{ states.sensor | selectattr('attributes.device_class', '==', 'humidity') | list | count > 0 }}"
+      - name: "SMARTi Has Water Sensor"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'moisture') | list | count > 0 }}"
+      - name: "SMARTi Has Door Sensor"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'door') | list | count > 0 }}"
+      - name: "SMARTi Has Window Sensor"
+        state: "{{ states.binary_sensor | selectattr('attributes.device_class', '==', 'window') | list | count > 0 }}"
+      - name: "SMARTi Has Unassigned Devices"
+        state: >
+          {{ states | selectattr('attributes.area_id', '==', none) | list | count > 0 }}
+
+  - sensor:
+      - name: "calendar_days_to_show"
+        state: >
+          {% set val = states('input_select.calendar_days_to_show') | int(3) %}
+          {{ val }}                       

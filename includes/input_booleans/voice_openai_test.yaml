@@ -1,0 +1,4 @@
+test_voice_openai:
+  name: Test Voice OpenAI Integration
+  initial: false
+  icon: mdi:microphone-message

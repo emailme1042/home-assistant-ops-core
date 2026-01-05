@@ -1,0 +1,112 @@
+# System Health Tracking Automations
+# Purpose: Automatically log health snapshots and track trends
+
+- alias: "System Health: Capture Snapshot on Restart"
+  id: system_health_capture_snapshot
+  description: "Captures system health snapshot 5 minutes after HA restart"
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - delay: "00:05:00"  # Wait 5 minutes for system to stabilize
+    - service: script.turn_on
+      target:
+        entity_id: script.capture_health_snapshot
+
+- alias: "System Health: Shift Snapshots"
+  id: system_health_shift_snapshots
+  description: "Shifts older snapshots down when capturing new one"
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: script
+        service: capture_health_snapshot
+  action:
+    # Shift snapshot 4 to 5
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_5_entities
+      data:
+        value: "{{ states('input_number.health_snapshot_4_entities') | int(0) }}"
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_5_unavailable
+      data:
+        value: "{{ states('input_number.health_snapshot_4_unavailable') | int(0) }}"
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.health_snapshot_5_time
+      data:
+        datetime: "{{ states('input_datetime.health_snapshot_4_time') }}"
+    
+    # Shift snapshot 3 to 4
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_4_entities
+      data:
+        value: "{{ states('input_number.health_snapshot_3_entities') | int(0) }}"
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_4_unavailable
+      data:
+        value: "{{ states('input_number.health_snapshot_3_unavailable') | int(0) }}"
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.health_snapshot_4_time
+      data:
+        datetime: "{{ states('input_datetime.health_snapshot_3_time') }}"
+    
+    # Shift snapshot 2 to 3
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_3_entities
+      data:
+        value: "{{ states('input_number.health_snapshot_2_entities') | int(0) }}"
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_3_unavailable
+      data:
+        value: "{{ states('input_number.health_snapshot_2_unavailable') | int(0) }}"
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.health_snapshot_3_time
+      data:
+        datetime: "{{ states('input_datetime.health_snapshot_2_time') }}"
+    
+    # Shift snapshot 1 to 2
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_2_entities
+      data:
+        value: "{{ states('input_number.health_snapshot_1_entities') | int(0) }}"
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.health_snapshot_2_unavailable
+      data:
+        value: "{{ states('input_number.health_snapshot_1_unavailable') | int(0) }}"
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.health_snapshot_2_time
+      data:
+        datetime: "{{ states('input_datetime.health_snapshot_1_time') }}"
+
+- alias: "System Health: Daily Health Check"
+  id: system_health_daily_check
+  description: "Performs daily health check and trend analysis"
+  trigger:
+    - platform: time
+      at: "23:00:00"
+  action:
+    - service: script.turn_on
+      target:
+        entity_id: script.capture_health_snapshot
+    - service: notify.persistent_notification
+      data:
+        title: "📊 Daily System Health Report"
+        message: >
+          **Current Status**: {{ states('sensor.system_health_snapshot') }}
+          **Trend**: {{ states('sensor.system_health_trend') }}
+          **HACS Status**: {{ states('sensor.hacs_resource_status') }}
+          
+          Check the Health Trends dashboard for detailed analysis.

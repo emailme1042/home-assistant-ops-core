@@ -1,0 +1,177 @@
+orphaned_file_log:
+  name: Orphaned File Log
+  initial: |
+    - /config/includes/unused.yaml
+    - /config/templates/old_backup.yaml
+    - /config/www/context_snapshots/abandoned.md
+  max: 255
+chatgpt_enchanted:
+  name: GPT Output
+  initial: ""
+  max: 255
+chatgpt_prompt:
+  name: ChatGPT Prompt
+  initial: ""
+  max: 255
+gpt_result_core:
+  name: GPT Result Core
+  initial: ""
+  max: 255
+  mode: text
+tts_message_text:
+  name: TTS Message Text
+  max: 255
+  initial: ""
+teddy_adoptme_pet_log:
+  name: Adopt Me Pet Log
+  initial: ""
+  max: 255
+dashboard_urls:
+  name: Dashboard URLs
+  initial: ""
+  icon: mdi:web
+  max: 255
+gpt_status:
+  name: GPT Status
+  initial: "Waiting for input..."
+  max: 255
+  icon: mdi:robot
+gpt_text_prompt:
+  name: GPT Text Prompt
+  initial: ""
+  max: 255
+gpt_text_reply:
+  name: GPT Text Reply
+  initial: ""
+  max: 255
+gpt_log:
+  name: GPT Prompt Log
+  initial: ""
+  max: 255
+gpt_status_flag:
+  name: GPT Status
+  initial: ""
+  max: 50
+gpt_last_sent_prompt:
+  name: GPT Last Sent Prompt
+  initial: ""
+  max: 255
+  icon: mdi:history
+last_chatgpt_prompt:
+  name: Last ChatGPT Prompt
+  initial: ""
+  max: 255
+latest_card_features:
+  name: Latest Card Features
+  initial: ""
+  max: 255
+latest_card_name:
+  name: Latest Card Name
+  initial: ""
+  max: 100
+latest_card_rarity:
+  name: Latest Card Rarity
+  initial: ""
+  max: 50
+latest_card_value:
+  name: Latest Card Value
+  initial: ""
+  max: 50
+new_dashboard_keyword:
+  name: Dashboard Keyword (e.g., 'tv', 'bedroom')
+  initial: ""
+  max: 32
+new_dashboard_slug:
+  name: Dashboard Slug (use hyphens only)
+  initial: ""
+  max: 32
+new_dashboard_title:
+  name: Dashboard Title
+  initial: ""
+  max: 64
+set_value:
+  name: set value
+  initial: ""
+  max: 100
+todo_task_1:
+  name: Task 1
+  initial: ""
+  max: 100
+todo_task_2:
+  name: Task 2
+  initial: ""
+  max: 100
+todo_task_3:
+  name: Task 3
+  initial: ""
+  max: 100
+goal_watch_config:
+  name: Watch Config Health
+  initial: ""
+  max: 100
+goal_dashboard_stability:
+  name: Dashboard Stability
+  initial: ""
+  max: 100
+goal_backup_cycle:
+  name: Backup Cycle Reminder
+  initial: ""
+  max: 100
+folder_index:
+  name: Folder Index
+  initial: ""
+  max: 255
+exact_entity_match:
+  name: Exact Entity Match
+  initial: ""
+  max: 80
+gpt_result_portal:
+  name: ChatGPT Response
+  initial: ""
+  max: 255
+test_panel_input:
+  name: UtestUpanel Input
+  initial: ""
+  max: 255
+gpt_session_notes:
+  name: GPT Session Notes
+  max: 255
+  mode: text
+  initial: ""
+gpt_status_message:
+  name: GPT Status Message
+  max: 255
+  initial: "Waiting for input..."
+gpt_summary_flag:
+  name: GPT Summary Flag
+  initial: "Sent to Admin GPT"
+  max: 255
+kodi_command_prompt:
+  name: Kodi Command Prompt
+  initial: ""
+  max: 255
+kodi_command_status:
+  name: Kodi Command Status
+  initial: "Idle"
+  max: 100
+kodi_command_result:
+  name: Kodi Command Result
+  initial: ""
+  max: 255
+kodi_command_last_sent:
+  name: Kodi Command Last Sent
+  initial: ""
+  max: 255
+gpt_context_file:
+  name: GPT Context File
+  initial: context_20250808_master.md
+  max: 255
+  icon: mdi:file-document-outline
+gpt_direct_input:
+  name: GPT Direct Input
+  initial: ""
+  max: 255
+  icon: mdi:message-text
+teddy_badge_wall:
+  name: Teddy's Badge Wall
+  initial: "🏅 Starter Badge"

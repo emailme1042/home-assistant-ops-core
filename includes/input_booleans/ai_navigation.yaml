@@ -1,0 +1,7 @@
+# AI Navigation Dashboard Input Booleans
+# Purpose: Provide missing boolean controls for AI dashboard functionality
+
+ai_navigation_enabled:
+  name: AI Navigation Enabled
+  initial: true
+  icon: mdi:robot-outline

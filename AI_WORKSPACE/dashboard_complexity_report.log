@@ -1,0 +1,127 @@
+Error processing /config/dashboards/ai/ai-workspace.yaml: could not determine a constructor for the tag '!include'
+  in "/config/dashboards/ai/ai-workspace.yaml", line 12, column 19
+Error processing /config/dashboards/ops/recovery_dashboard.yaml: could not determine a constructor for the tag '!include'
+  in "/config/dashboards/ops/recovery_dashboard.yaml", line 244, column 9
+Error processing /config/dashboards/ops/approved.yaml: while parsing a block collection
+  in "/config/dashboards/ops/approved.yaml", line 1, column 1
+expected <block end>, but found '?'
+  in "/config/dashboards/ops/approved.yaml", line 11, column 1
+Error processing /config/dashboards/ops/main.yaml: could not determine a constructor for the tag '!include'
+  in "/config/dashboards/ops/main.yaml", line 4, column 5
+Error processing /config/dashboards/ops/ops_admin_overview.yaml: 'list' object has no attribute 'get'
+Error processing /config/dashboards/admin/main_admin.yaml: could not determine a constructor for the tag '!include'
+  in "/config/dashboards/admin/main_admin.yaml", line 3, column 5
+Error processing /config/dashboards/admin/main_batch.yaml: could not determine a constructor for the tag '!include'
+  in "/config/dashboards/admin/main_batch.yaml", line 3, column 5
+Error processing /config/dashboards/users/fire_tv.yaml: object of type 'NoneType' has no len()
+Error processing /config/dashboards/users/main.yaml: could not determine a constructor for the tag '!include'
+  in "/config/dashboards/users/main.yaml", line 3, column 5
+Error processing /config/dashboards/users/fire_tv_simple.yaml: object of type 'NoneType' has no len()
+Error processing /config/dashboards/SYSTEM_OVERVIEW/dashboard_sync.yaml: 'list' object has no attribute 'get'
+Error processing /config/dashboards/SYSTEM_OVERVIEW/test-sync.yaml: 'list' object has no attribute 'get'
+Dashboard Complexity Analysis:
+========================================
+ai_workspace: 120
+ai_workspace: 0
+openapi_gpt_actions: 0
+system_ops: 34
+admin_ops_fix: 38
+recovery: 0
+system_status: 0
+approved: 0
+ops_future_6: 0
+session_health: 0
+ops_future_5: 0
+gpt-session: 0
+todo-dashboard: 114
+daily-ops: 0
+mqtt-status: 0
+ops_main: 0
+network_diagnostics: 175
+network_performance_fix: 0
+automation_audit: 56
+ops_dashboard_issues: 0
+ai workspace: 0
+ops_api_test_4: 0
+ops_hacs_test_1: 0
+ops_hacs_test_2: 0
+quick_network_test: 0
+ops_admin_overview: 0
+entity_reference: 103
+ops_integration_test_3: 0
+admin_partials_batch11: 57
+ai_control: 0
+admin_partials_batch4: 40
+admin_partials_batch7: 57
+input_helpers: 0
+admin_partials_batch13: 60
+homekit: 0
+topology: 0
+admin_partials_batch14: 53
+helpers: 0
+admin_partials_batch3: 59
+people: 0
+admin_partials_batch2: 104
+conversation: 0
+main_admin: 0
+timers: 0
+index: 0
+system_issues: 0
+admin_partials_batch12: 57
+zones: 0
+admin_sidebar: 0
+admin_partials_batch10: 57
+scripts: 0
+scenes: 0
+location_custom: 0
+ops_main: 0
+maintenance: 0
+admin_partials_batch5: 37
+admin_partials_batch1: 28
+admin_partials_batch8: 54
+system: 0
+automations: 0
+gpt_tools: 49
+templates: 0
+main_batch: 0
+admin_partials_batch15: 37
+admin_partials_batch9: 57
+schedule: 0
+mqtt: 0
+admin_batch_index: 0
+admin_root: 0
+admin_partials_batch6: 37
+x- home: 307
+user_dashboard: 84
+gpt_user: 0
+x-teddys_pokemon_lab: 0
+fire_tv: 0
+garden_combined: 0
+kodi_remote: 0
+apple_tv_control: 92
+ops_main: 0
+fire_tv_simple: 0
+teddys_pokemon_lab: 11
+fire_tv_bedroom: 0
+x-teddy_central: 0
+kodi_ai_control: 0
+openapi_gpt_actions: 0
+starter_recovery_dashboard: 48
+ai_navigation: 50
+fix_sheet: 0
+dashboard_sync: 0
+update_log: 0
+test-sync: 0
+todo_master: 0
+systema_indexa: 0
+system_recovery_status: 0
+system_index: 29
+system_overview: 53
+copilot_log_monitor: 0
+gpt_context: 0
+structure_index: 0
+mindmap_links: 0
+generated_motion_group: 0
+
+Average Complexity: 21.4
+Total Dashboards: 101

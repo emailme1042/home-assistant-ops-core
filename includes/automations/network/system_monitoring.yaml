@@ -1,0 +1,77 @@
+- alias: "Watchdog - ADS-B Feed Stale"
+  trigger:
+    - platform: state
+      entity_id: sensor.adsb_heartbeat
+      to: "dead"
+      for: "00:05:00"
+  condition:
+    - condition: state
+      entity_id: sensor.adsb_feed_alive_status
+      state: "STALE"
+  action:
+    - service: notify.mobile_app_jamie_phone
+      data:
+        message: "ADS-B feed appears stale. Check MQTT broker or aircraft source."
+
+- alias: "MQTT Sensor Stale Alert - Motion Lounge"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.mqtt_last_message_age_motion_lounge
+      above: 3600
+  action:
+    - service: notify.mobile_app_jamie_phone
+      data:
+        message: "Motion Lounge MQTT sensor stale (>1h)"
+    - service: homeassistant.turn_on
+      target:
+        entity_id: input_boolean.mqtt_motion_lounge_stale
+
+- alias: "MQTT Sensor Stale Alert - Temperature Hall"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.mqtt_last_message_age_temperature_hall
+      above: 3600
+  action:
+    - service: notify.mobile_app_jamie_phone
+      data:
+        message: "Temperature Hall MQTT sensor stale (>1h)"
+    - service: homeassistant.turn_on
+      target:
+        entity_id: input_boolean.mqtt_temperature_hall_stale
+
+- alias: "MQTT Sensor Stale Alert - Door Front"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.mqtt_last_message_age_door_front
+      above: 3600
+  action:
+    - service: notify.mobile_app_jamie_phone
+      data:
+        message: "Door Front MQTT sensor stale (>1h)"
+    - service: homeassistant.turn_on
+      target:
+        entity_id: input_boolean.mqtt_door_front_stale
+
+- alias: "Recover ADS-B Feed if Stale"
+  trigger:
+    - platform: state
+      entity_id: sensor.adsb_feed_alive_status
+      to: "STALE"
+      for: "00:10:00"
+  action:
+    - service: script.system_overview_recover_adsb
+
+- alias: "Watchdog - Health Monitor Stale"
+  trigger:
+    - platform: state
+      entity_id: sensor.health_monitor_status
+      to: "dead"
+      for: "00:05:00"
+  condition:
+    - condition: state
+      entity_id: sensor.health_monitor_alive_status
+      state: "STALE"
+  action:
+    - service: notify.mobile_app_jamie_phone
+      data:
+        message: "Health Monitor appears stale. Check MQTT broker or device status."

@@ -1,0 +1,100 @@
+[32m2025-11-03 12:33:14.934 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API proxy running[0m
+[33m2025-11-03 12:33:37.122 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 12:33:38.078 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:33:38.079 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:33:38.080 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:38:45.911 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 12:38:45.990 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:38:45.990 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:38:45.991 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:43:52.825 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 12:43:52.886 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:43:52.886 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:43:52.887 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[32m2025-11-03 12:47:20.761 INFO (MainThread) [supervisor.host.info] Updating local host information[0m
+[32m2025-11-03 12:47:23.041 INFO (MainThread) [supervisor.host.services] Updating service information[0m
+[32m2025-11-03 12:47:23.073 INFO (MainThread) [supervisor.host.network] Updating local network information[0m
+[32m2025-11-03 12:47:23.696 INFO (MainThread) [supervisor.host.sound] Updating PulseAudio information[0m
+[32m2025-11-03 12:47:23.733 INFO (MainThread) [supervisor.host.manager] Host information reload completed[0m
+[33m2025-11-03 12:47:45.645 WARNING (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Error WebSocket message received while proxying: ServerTimeoutError('No PONG received after 15.0 seconds')[0m
+[32m2025-11-03 12:47:45.657 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API closed[0m
+[32m2025-11-03 12:48:03.543 INFO (MainThread) [supervisor.api.proxy] Home Assistant WebSocket API request initialize[0m
+[32m2025-11-03 12:48:03.566 INFO (MainThread) [supervisor.api.proxy] WebSocket access from a0d7b954_appdaemon[0m
+[32m2025-11-03 12:48:05.579 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API proxy running[0m
+[33m2025-11-03 12:49:00.609 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 12:49:00.727 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:49:00.727 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:49:00.728 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:54:07.819 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 12:54:07.878 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:54:07.883 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:54:07.883 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[32m2025-11-03 12:54:27.500 INFO (MainThread) [supervisor.resolution.check] Starting system checks with state running[0m
+[32m2025-11-03 12:54:27.501 INFO (MainThread) [supervisor.resolution.checks.base] Run check for free_space/system[0m
+[32m2025-11-03 12:54:27.505 INFO (MainThread) [supervisor.resolution.checks.base] Run check for disabled_data_disk/system[0m
+[32m2025-11-03 12:54:27.506 INFO (MainThread) [supervisor.resolution.checks.base] Run check for dns_server_failed/dns_server[0m
+[32m2025-11-03 12:54:27.595 INFO (MainThread) [supervisor.resolution.checks.base] Run check for docker_config/system[0m
+[32m2025-11-03 12:54:27.598 INFO (MainThread) [supervisor.resolution.checks.base] Run check for multiple_data_disks/system[0m
+[32m2025-11-03 12:54:27.599 INFO (MainThread) [supervisor.resolution.checks.base] Run check for disk_lifetime/system[0m
+[32m2025-11-03 12:54:27.607 INFO (MainThread) [supervisor.resolution.checks.base] Run check for security/core[0m
+[32m2025-11-03 12:54:27.608 INFO (MainThread) [supervisor.resolution.checks.base] Run check for trust/supervisor[0m
+[32m2025-11-03 12:54:27.670 INFO (MainThread) [supervisor.resolution.checks.base] Run check for pwned/addon[0m
+[32m2025-11-03 12:54:27.672 INFO (MainThread) [supervisor.resolution.checks.base] Run check for dns_server_ipv6_error/dns_server[0m
+[32m2025-11-03 12:54:27.674 INFO (MainThread) [supervisor.resolution.checks.base] Run check for ipv4_connection_problem/system[0m
+[32m2025-11-03 12:54:27.674 INFO (MainThread) [supervisor.resolution.check] System checks complete[0m
+[32m2025-11-03 12:54:27.675 INFO (MainThread) [supervisor.resolution.evaluate] Starting system evaluation with state running[0m
+[32m2025-11-03 12:54:28.259 INFO (MainThread) [supervisor.resolution.evaluate] System evaluation complete[0m
+[32m2025-11-03 12:54:28.260 INFO (MainThread) [supervisor.resolution.fixup] Starting system autofix at state running[0m
+[32m2025-11-03 12:54:28.260 INFO (MainThread) [supervisor.resolution.fixup] System autofix complete[0m
+[33m2025-11-03 12:59:15.156 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 12:59:15.184 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:59:15.185 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 12:59:15.185 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:02:46.647 WARNING (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Error WebSocket message received while proxying: ServerTimeoutError('No PONG received after 15.0 seconds')[0m
+[32m2025-11-03 13:02:46.653 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API closed[0m
+[32m2025-11-03 13:02:58.793 INFO (MainThread) [supervisor.api.proxy] Home Assistant WebSocket API request initialize[0m
+[32m2025-11-03 13:02:58.810 INFO (MainThread) [supervisor.api.proxy] WebSocket access from a0d7b954_appdaemon[0m
+[32m2025-11-03 13:03:00.722 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API proxy running[0m
+[33m2025-11-03 13:04:21.732 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:04:21.866 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:04:21.866 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:04:21.866 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:09:28.577 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:09:28.620 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:09:28.620 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:09:28.621 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:14:35.475 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:14:35.562 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:14:35.563 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:14:35.563 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:17:47.650 WARNING (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Error WebSocket message received while proxying: ServerTimeoutError('No PONG received after 15.0 seconds')[0m
+[32m2025-11-03 13:17:47.658 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API closed[0m
+[32m2025-11-03 13:18:29.358 INFO (MainThread) [supervisor.homeassistant.api] Updated Home Assistant API token[0m
+[32m2025-11-03 13:18:29.711 INFO (MainThread) [supervisor.api.proxy] Home Assistant WebSocket API request initialize[0m
+[32m2025-11-03 13:18:29.719 INFO (MainThread) [supervisor.api.proxy] WebSocket access from a0d7b954_appdaemon[0m
+[32m2025-11-03 13:18:30.079 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API proxy running[0m
+[33m2025-11-03 13:19:41.848 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:19:41.946 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:19:41.946 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:19:41.947 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:24:49.312 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:24:49.443 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:24:49.444 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:24:49.444 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:29:55.818 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:29:55.925 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:29:55.925 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:29:55.925 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:32:48.642 WARNING (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Error WebSocket message received while proxying: ServerTimeoutError('No PONG received after 15.0 seconds')[0m
+[32m2025-11-03 13:32:48.650 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API closed[0m
+[32m2025-11-03 13:33:14.419 INFO (MainThread) [supervisor.api.proxy] Home Assistant WebSocket API request initialize[0m
+[32m2025-11-03 13:33:14.432 INFO (MainThread) [supervisor.api.proxy] WebSocket access from a0d7b954_appdaemon[0m
+[32m2025-11-03 13:33:16.031 INFO (MainThread) [supervisor.api.proxy] [a0d7b954_appdaemon] Home Assistant WebSocket API proxy running[0m
+[33m2025-11-03 13:35:02.969 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:35:03.031 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:35:03.031 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:35:03.031 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:40:09.493 WARNING (MainThread) [supervisor.addons.options] Option 'ignore' does not exist in the schema for Govee to MQTT Bridge (b9845f46_govee2mqtt)[0m
+[33m2025-11-03 13:40:09.536 WARNING (MainThread) [supervisor.addons.options] Option 'mqtt' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:40:09.537 WARNING (MainThread) [supervisor.addons.options] Option 'media_dir' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m
+[33m2025-11-03 13:40:09.537 WARNING (MainThread) [supervisor.addons.options] Option 'cameras' does not exist in the schema for Frigate (Full Access) (ccab4aaf_frigate-fa)[0m

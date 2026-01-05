@@ -1,0 +1,25 @@
+system_overview_recover_adsb:
+  alias: "Recover ADS-B Feed"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "adsb/aircraft/heartbeat/request"
+        payload: "ping"
+    - delay:
+        seconds: 5
+    - service: homeassistant.update_entity
+      data:
+        entity_id: sensor.adsb_heartbeat
+
+system_overview_recover_health_monitor:
+  alias: "Recover Health Monitor"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "health/device/heartbeat/request"
+        payload: "ping"
+    - delay:
+        seconds: 5
+    - service: homeassistant.update_entity
+      data:
+        entity_id: sensor.health_monitor_status

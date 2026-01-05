@@ -1,0 +1,163 @@
+sensor:
+  - platform: template
+    sensors:
+      smarti_forecast_temperature:
+        friendly_name: "SMARTi Forecast Temperature"
+        unit_of_measurement: "°C"
+        value_template: "{{ state_attr('weather.forecast_home', 'temperature') }}"
+
+      smarti_forecast_dew_point:
+        friendly_name: "SMARTi Forecast Dew Point"
+        unit_of_measurement: "°C"
+        value_template: "{{ state_attr('weather.forecast_home', 'dew_point') }}"
+
+      smarti_forecast_humidity:
+        friendly_name: "SMARTi Forecast Humidity"
+        unit_of_measurement: "%"
+        value_template: "{{ state_attr('weather.forecast_home', 'humidity') }}"
+
+      smarti_forecast_cloud_coverage:
+        friendly_name: "SMARTi Forecast Cloud Coverage"
+        unit_of_measurement: "%"
+        value_template: "{{ state_attr('weather.forecast_home', 'cloud_coverage') }}"
+
+      smarti_forecast_pressure:
+        friendly_name: "SMARTi Forecast Pressure"
+        unit_of_measurement: "hPa"
+        value_template: "{{ state_attr('weather.forecast_home', 'pressure') }}"
+
+      smarti_forecast_wind_bearing:
+        friendly_name: "SMARTi Forecast Wind Bearing"
+        unit_of_measurement: "°"
+        value_template: "{{ state_attr('weather.forecast_home', 'wind_bearing') }}"
+
+      smarti_forecast_wind_gust_speed:
+        friendly_name: "SMARTi Forecast Wind Gust Speed"
+        unit_of_measurement: "km/h"
+        value_template: "{{ state_attr('weather.forecast_home', 'wind_gust_speed') }}"
+
+      smarti_forecast_wind_speed:
+        friendly_name: "SMARTi Forecast Wind Speed"
+        unit_of_measurement: "km/h"
+        value_template: "{{ state_attr('weather.forecast_home', 'wind_speed') }}"
+
+      smarti_forecast_precipitation:
+        friendly_name: "SMARTi Forecast Precipitation"
+        unit_of_measurement: "mm"
+        value_template: "{{ state_attr('weather.forecast_home', 'precipitation_unit') }}"
+
+      smarti_forecast_attribution:
+        friendly_name: "SMARTi Forecast Attribution"
+        value_template: "{{ state_attr('weather.forecast_home', 'attribution') }}"
+
+template:
+  - sensor:
+      - name: "Current Weather Description"
+        state: >
+          {% set lang = states('input_select.language') %}
+          {% set condition = states('weather.forecast_home') %}
+          {% set temperature = state_attr('weather.forecast_home', 'temperature') %}
+          {% set wind = state_attr('weather.forecast_home', 'wind_speed') %}
+          {% set unit_temp = state_attr('weather.forecast_home', 'temperature_unit') %}
+          {% set unit_wind = state_attr('weather.forecast_home', 'wind_speed_unit') %}
+
+          {% if condition != 'unavailable' and temperature is not none %}
+
+            {% set condition_translations = {
+              'clear': {
+                'English': 'clear', 'Norwegian': 'klart', 'German': 'klar', 'French': 'dégagé', 'Spanish': 'despejado',
+                'Dutch': 'helder', 'Italian': 'sereno', 'Danish': 'klart', 'Swedish': 'klart', 'Finnish': 'selkeä'
+              },
+              'clear-night': {
+                'English': 'clear night', 'Norwegian': 'klar natt', 'German': 'klare Nacht', 'French': 'nuit dégagée', 'Spanish': 'noche despejada',
+                'Dutch': 'heldere nacht', 'Italian': 'notte serena', 'Danish': 'klar nat', 'Swedish': 'klar natt', 'Finnish': 'selkeä yö'
+              },
+              'cloudy': {
+                'English': 'cloudy', 'Norwegian': 'skyet', 'German': 'bewölkt', 'French': 'nuageux', 'Spanish': 'nublado',
+                'Dutch': 'bewolkt', 'Italian': 'nuvoloso', 'Danish': 'skyet', 'Swedish': 'molnigt', 'Finnish': 'pilvinen'
+              },
+              'fog': {
+                'English': 'foggy', 'Norwegian': 'tåke', 'German': 'neblig', 'French': 'brumeux', 'Spanish': 'niebla',
+                'Dutch': 'mistig', 'Italian': 'nebbioso', 'Danish': 'tåget', 'Swedish': 'dimma', 'Finnish': 'sumuinen'
+              },
+              'hail': {
+                'English': 'hail', 'Norwegian': 'hagel', 'German': 'Hagel', 'French': 'grêle', 'Spanish': 'granizo',
+                'Dutch': 'hagel', 'Italian': 'grandine', 'Danish': 'hagl', 'Swedish': 'hagel', 'Finnish': 'raekuuro'
+              },
+              'lightning': {
+                'English': 'lightning', 'Norwegian': 'lyn', 'German': 'Blitz', 'French': 'éclair', 'Spanish': 'relámpago',
+                'Dutch': 'bliksem', 'Italian': 'fulmine', 'Danish': 'lyn', 'Swedish': 'blixt', 'Finnish': 'salama'
+              },
+              'lightning-rainy': {
+                'English': 'thunderstorm', 'Norwegian': 'tordenvær', 'German': 'Gewitter', 'French': 'orage', 'Spanish': 'tormenta eléctrica',
+                'Dutch': 'onweer', 'Italian': 'temporale', 'Danish': 'tordenvejr', 'Swedish': 'åskväder', 'Finnish': 'ukkonen'
+              },
+              'partlycloudy': {
+                'English': 'partly cloudy', 'Norwegian': 'delvis skyet', 'German': 'teilweise bewölkt', 'French': 'partiellement nuageux',
+                'Spanish': 'parcialmente nublado', 'Dutch': 'gedeeltelijk bewolkt', 'Italian': 'parzialmente nuvoloso',
+                'Danish': 'delvist skyet', 'Swedish': 'delvis molnigt', 'Finnish': 'osittain pilvinen'
+              },
+              'pouring': {
+                'English': 'pouring rain', 'Norwegian': 'kraftig regn', 'German': 'starker Regen', 'French': 'forte pluie', 'Spanish': 'lluvia intensa',
+                'Dutch': 'hevige regen', 'Italian': 'pioggia intensa', 'Danish': 'kraftig regn', 'Swedish': 'ösregn', 'Finnish': 'kaatosade'
+              },
+              'rainy': {
+                'English': 'rainy', 'Norwegian': 'regnfullt', 'German': 'regnerisch', 'French': 'pluvieux', 'Spanish': 'lluvioso',
+                'Dutch': 'regenachtig', 'Italian': 'piovoso', 'Danish': 'regnfuldt', 'Swedish': 'regnigt', 'Finnish': 'sateinen'
+              },
+              'snowy': {
+                'English': 'snowy', 'Norwegian': 'snø', 'German': 'verschneit', 'French': 'enneigé', 'Spanish': 'nevado',
+                'Dutch': 'sneeuwachtig', 'Italian': 'nevoso', 'Danish': 'snevejr', 'Swedish': 'snöigt', 'Finnish': 'luminen'
+              },
+              'snowy-rainy': {
+                'English': 'sleet', 'Norwegian': 'sludd', 'German': 'Schneeregen', 'French': 'neige fondue', 'Spanish': 'aguanieve',
+                'Dutch': 'natte sneeuw', 'Italian': 'nevischio', 'Danish': 'slud', 'Swedish': 'snöblandat regn', 'Finnish': 'räntä'
+              },
+              'sunny': {
+                'English': 'sunny', 'Norwegian': 'sol', 'German': 'sonnig', 'French': 'ensoleillé', 'Spanish': 'soleado',
+                'Dutch': 'zonnig', 'Italian': 'soleggiato', 'Danish': 'solrigt', 'Swedish': 'soligt', 'Finnish': 'aurinkoinen'
+              },
+              'windy': {
+                'English': 'windy', 'Norwegian': 'vindfullt', 'German': 'windig', 'French': 'venteux', 'Spanish': 'ventoso',
+                'Dutch': 'winderig', 'Italian': 'ventoso', 'Danish': 'blæsende', 'Swedish': 'blåsigt', 'Finnish': 'tuulinen'
+              },
+              'windy-variant': {
+                'English': 'breezy', 'Norwegian': 'litt vind', 'German': 'luftig', 'French': 'brise', 'Spanish': 'brisa',
+                'Dutch': 'briesje', 'Italian': 'brezza', 'Danish': 'let vind', 'Swedish': 'lätt vind', 'Finnish': 'heikko tuuli'
+              },
+              'exceptional': {
+                'English': 'exceptional', 'Norwegian': 'ekstremt', 'German': 'außergewöhnlich', 'French': 'exceptionnel', 'Spanish': 'excepcional',
+                'Dutch': 'uitzonderlijk', 'Italian': 'eccezionale', 'Danish': 'ekstremt', 'Swedish': 'extremt', 'Finnish': 'poikkeuksellinen'
+              }
+            } %}
+
+            {% set description = {
+              'English': "It’s currently {condition} and {temp}{unit} with {wind} {wind_unit}.",
+              'Norwegian': "Akkurat nå er det {condition} og {temp}{unit} med {wind} {wind_unit}.",
+              'German': "Aktuell ist es {condition} bei {temp}{unit} mit {wind} {wind_unit}.",
+              'French': "Il fait actuellement {condition} avec {temp}{unit} et du {wind} {wind_unit}.",
+              'Spanish': "Actualmente está {condition} con {temp}{unit} y {wind} {wind_unit}.",
+              'Dutch': "Het is momenteel {condition}, {temp}{unit} met {wind} {wind_unit}.",
+              'Italian': "Attualmente è {condition}, {temp}{unit} con {wind} {wind_unit}.",
+              'Danish': "Det er lige nu {condition}, {temp}{unit} og {wind} {wind_unit}.",
+              'Swedish': "Det är för närvarande {condition}, {temp}{unit} med {wind} {wind_unit}.",
+              'Finnish': "Tällä hetkellä on {condition}, {temp}{unit} ja {wind} {wind_unit}."
+            } %}
+
+            {% set translated_condition = condition_translations.get(condition, {}).get(lang, condition) %}
+            {% set template_str = description.get(lang, description['English']) %}
+
+            {{ template_str.format(
+              condition=translated_condition,
+              temp=temperature,
+              unit=unit_temp,
+              wind=wind,
+              wind_unit=unit_wind
+            ) }}
+          {% else %}
+            {% if lang == 'Norwegian' %}
+              Værdata er ikke tilgjengelig.
+            {% else %}
+              Weather data is not available.
+            {% endif %}
+          {% endif %}

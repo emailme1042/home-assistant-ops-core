@@ -1,0 +1,40 @@
+# ================================================
+# STABILITY TIMELINE SHELL COMMANDS
+# ================================================
+# Purpose: Shell commands for logging stability events to markdown files
+# Created: 2025-11-04 for comprehensive stability monitoring
+
+append_stability_timeline:
+  >
+  echo "## $(date '+%Y-%m-%d %H:%M:%S') - {{ event_type }}" >> /config/AI_WORKSPACE/stability_timeline.md &&
+  echo "**Cause**: {{ event_cause }}" >> /config/AI_WORKSPACE/stability_timeline.md &&
+  echo "**Details**: {{ event_details }}" >> /config/AI_WORKSPACE/stability_timeline.md &&
+  echo "**Stability Score**: {{ stability_score }}" >> /config/AI_WORKSPACE/stability_timeline.md &&
+  echo "**24h Crashes**: {{ crash_count }}" >> /config/AI_WORKSPACE/stability_timeline.md &&
+  echo "**VSCode Correlation**: {{ states('sensor.vscode_action_tracker') }}" >> /config/AI_WORKSPACE/stability_timeline.md &&
+  echo "" >> /config/AI_WORKSPACE/stability_timeline.md
+
+archive_stability_timeline:
+  >
+  if [ -f /config/AI_WORKSPACE/stability_timeline.md ]; then
+    cp /config/AI_WORKSPACE/stability_timeline.md "/config/AI_WORKSPACE/stability_timeline_$(date +%Y%m%d_%H%M).md" &&
+    echo "# HA Stability Timeline - $(date '+%Y-%m-%d')" > /config/AI_WORKSPACE/stability_timeline.md &&
+    echo "" >> /config/AI_WORKSPACE/stability_timeline.md &&
+    echo "Timeline archived and reset for new monitoring period." >> /config/AI_WORKSPACE/stability_timeline.md;
+  else
+    echo "# HA Stability Timeline - $(date '+%Y-%m-%d')" > /config/AI_WORKSPACE/stability_timeline.md &&
+    echo "" >> /config/AI_WORKSPACE/stability_timeline.md &&
+    echo "Stability timeline initialized." >> /config/AI_WORKSPACE/stability_timeline.md;
+  fi
+
+check_stability_timeline_size:
+  >
+  if [ -f /config/AI_WORKSPACE/stability_timeline.md ]; then
+    SIZE=$(wc -l < /config/AI_WORKSPACE/stability_timeline.md) &&
+    echo "Timeline size: $SIZE lines" &&
+    if [ $SIZE -gt 1000 ]; then
+      echo "Timeline size exceeded 1000 lines - archiving recommended";
+    fi;
+  else
+    echo "Timeline file not found";
+  fi

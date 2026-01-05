@@ -1,0 +1,8 @@
+- file_preview:
+    name: File Preview
+    options:
+      - AI_WORKSPACE/copilot_session_notes.md
+      - AI_WORKSPACE/ai_exec_log.md
+      - .github/copilot-instructions.md
+      - AI_WORKSPACE/copilot_session_template.md
+    initial: AI_WORKSPACE/ai_exec_log.md

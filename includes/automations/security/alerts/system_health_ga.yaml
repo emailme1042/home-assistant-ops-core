@@ -1,0 +1,165 @@
+# System Health GA Automation
+# Purpose: Smart system health monitoring with GA notifications, Alexa TTS, and trend logging
+# Triggers: HA startup, reload, or manual testing
+# Features: Compare vs previous snapshot, multi-channel notifications, trend analysis
+
+- id: system_health_ga_notification
+  alias: "System Health GA Notification"
+  description: "Monitor system health on startup/reload with GA notifications and Alexa announcements"
+  
+  trigger:
+    # Trigger on HA startup and reload events
+    - platform: homeassistant
+      event: start
+      id: "startup"
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: homeassistant
+        service: reload_core_config
+      id: "reload"
+    # Manual trigger for testing
+    - platform: state
+      entity_id: input_boolean.test_system_health_ga
+      from: "off"
+      to: "on"
+      id: "manual_test"
+
+  condition:
+    # Ensure health sensors are available
+    - condition: not
+      conditions:
+        - condition: state
+          entity_id: sensor.ha_total_entities
+          state: "unavailable"
+
+  action:
+    # Step 1: Get current health metrics
+    - variables:
+        current_total: "{{ states('sensor.ha_total_entities') | int(0) }}"
+        current_unavailable: "{{ states('sensor.ha_unavailable_entities') | int(0) }}"
+        current_health: "{{ states('sensor.ha_system_health_percentage') | float(0) | round(1) }}"
+        current_automations: "{{ states('sensor.ha_total_automations') | int(0) }}"
+        current_scripts: "{{ states('sensor.ha_total_scripts') | int(0) }}"
+        
+        # Parse previous stats from storage
+        previous_stats: "{{ states('input_text.previous_system_health_stats') }}"
+        previous_total: "{{ previous_stats.split('|')[0].split(':')[1] | int(0) }}"
+        previous_unavailable: "{{ previous_stats.split('|')[1].split(':')[1] | int(0) }}"
+        previous_health: "{{ previous_stats.split('|')[2].split(':')[1] | float(0) }}"
+        
+        # Calculate changes
+        health_change: "{{ (current_health - previous_health) | round(1) }}"
+        unavailable_change: "{{ current_unavailable - previous_unavailable }}"
+        
+        # Determine status
+        status_icon: >
+          {% if health_change > 5 or unavailable_change < -2 %}
+            ✅
+          {% elif health_change < -5 or unavailable_change > 2 %}
+            ❌
+          {% else %}
+            📊
+          {% endif %}
+        
+        status_color: >
+          {% if health_change > 5 or unavailable_change < -2 %}
+            success
+          {% elif health_change < -5 or unavailable_change > 2 %}
+            warning
+          {% else %}
+            info
+          {% endif %}
+        
+        # Build notification message
+        trigger_reason: >
+          {% if trigger.id == "startup" %}
+            Home Assistant Started
+          {% elif trigger.id == "reload" %}
+            Configuration Reloaded
+          {% else %}
+            Manual Health Check
+          {% endif %}
+        
+        notification_title: "{{ status_icon }} System Health: {{ trigger_reason }}"
+        
+        notification_message: >
+          **Current Status:**
+          • Total Entities: {{ current_total }}
+          • Unavailable: {{ current_unavailable }}
+          • Health: {{ current_health }}%
+          • Automations: {{ current_automations }}
+          • Scripts: {{ current_scripts }}
+          
+          **Changes:**
+          {% if health_change != 0 %}
+          • Health: {{ '+' if health_change > 0 else '' }}{{ health_change }}%
+          {% endif %}
+          {% if unavailable_change != 0 %}
+          • Unavailable: {{ '+' if unavailable_change > 0 else '' }}{{ unavailable_change }}
+          {% endif %}
+        
+        tts_message: >
+          {% if health_change > 5 %}
+            System health improved by {{ health_change }} percent. {{ current_unavailable }} entities unavailable.
+          {% elif health_change < -5 %}
+            System health declined by {{ health_change | abs }} percent. {{ current_unavailable }} entities need attention.
+          {% else %}
+            System health stable at {{ current_health }} percent. {{ current_unavailable }} unavailable entities.
+          {% endif %}
+
+    # Step 2: Send GA persistent notification
+    - service: persistent_notification.create
+      data:
+        title: "{{ notification_title }}"
+        message: "{{ notification_message }}"
+        notification_id: "system_health_status"
+
+    # Step 3: Announce via Alexa TTS (if Office Echo available)
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: media_player.office_echo
+              state: "unavailable"
+      then:
+        - service: notify.alexa_media_office_echo
+          data:
+            message: "{{ tts_message }}"
+            data:
+              type: tts
+
+    # Step 4: Log to Home Assistant logbook
+    - service: logbook.log
+      data:
+        name: "System Health Monitor"
+        message: >
+          {{ trigger_reason }}: Health {{ current_health }}% 
+          ({{ '+' if health_change > 0 else '' }}{{ health_change }}%), 
+          {{ current_unavailable }} unavailable 
+          ({{ '+' if unavailable_change > 0 else '' }}{{ unavailable_change }})
+        entity_id: sensor.ha_system_health_percentage
+
+    # Step 5: Update storage for next comparison
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.previous_system_health_stats
+      data:
+        value: "entities:{{ current_total }}|unavailable:{{ current_unavailable }}|health:{{ current_health }}|automations:{{ current_automations }}|scripts:{{ current_scripts }}"
+
+    # Step 6: Update log display
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.system_health_log
+      data:
+        value: "{{ now().strftime('%H:%M') }} {{ status_icon }} Health: {{ current_health }}% | Unavailable: {{ current_unavailable }} | {{ trigger_reason }}"
+
+    # Step 7: Reset test toggle if manual trigger
+    - if:
+        - condition: template
+          value_template: "{{ trigger.id == 'manual_test' }}"
+      then:
+        - delay: "00:00:02"
+        - service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.test_system_health_ga

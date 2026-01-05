@@ -1,0 +1,4 @@
+last_irrigation_time:
+  name: Last Irrigation
+  has_date: true
+  has_time: true

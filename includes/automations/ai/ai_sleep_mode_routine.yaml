@@ -1,0 +1,175 @@
+# 🌙 AI Sleep Mode Routine Blueprint
+# Version: 2025.11.01 | Verified HA Core ≥2025.10.4
+# Description: Automatically transitions your smart home into sleep mode based on time, presence, and AI system sync state.
+
+blueprint:
+  name: AI Sleep Mode Routine
+  description: >
+    Transitions the home into low-power, quiet mode based on presence, ambient conditions,
+    and AI Workspace sync. Handles lights, media, HVAC, and notifications safely.
+  domain: automation
+  source_url: https://community.home-assistant.io/t/awesome-ha-blueprints/256687
+  input:
+    sleep_trigger_time:
+      name: Scheduled Sleep Time
+      default: "23:00:00"
+      selector:
+        time: {}
+    person_entities:
+      name: Occupants to Monitor
+      selector:
+        target:
+          entity:
+            domain: person
+    light_targets:
+      name: Lights to Dim or Turn Off
+      selector:
+        target:
+          entity:
+            domain: light
+    media_players:
+      name: Media Players
+      selector:
+        target:
+          entity:
+            domain: media_player
+    hvac_entities:
+      name: Climate Devices (Optional)
+      selector:
+        target:
+          entity:
+            domain: climate
+    lock_entities:
+      name: Smart Locks (Optional)
+      selector:
+        target:
+          entity:
+            domain: lock
+    notify_target:
+      name: Notification Target
+      selector:
+        target:
+          entity:
+            domain: notify
+    ai_sync_sensor:
+      name: AI Workspace Sync Status Sensor
+      default: sensor.ha_sync_status
+      selector:
+        entity:
+          domain: sensor
+    noise_sensor:
+      name: Optional Ambient Noise Sensor
+      selector:
+        entity:
+          domain: sensor
+
+# ───────────────────────────────
+# 🌒 SLEEP MODE SEQUENCE
+# ───────────────────────────────
+automation:
+  - id: ai_sleep_mode_automation
+    alias: AI Sleep Mode Routine
+    description: Activates sleep mode if home occupied and sync healthy.
+    trigger:
+      - platform: time
+        at: "{{ sleep_trigger_time }}"
+      - platform: state
+        entity_id: "{{ person_entities }}"
+        to: "home"
+        for:
+          hours: 0
+          minutes: 10
+          seconds: 0
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: "{{ ai_sync_sensor }}"
+            state: "✅ Synced"
+          - condition: state
+            entity_id: "{{ ai_sync_sensor }}"
+            state: "⚠️ Pending"
+      - condition: state
+        entity_id: group.all_persons
+        state: "home"
+    action:
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🌙 Entering Sleep Mode"
+          message: >
+            Sleep mode activating.
+            AI Sync: {{ states(ai_sync_sensor) }}.
+            Noise level: {{ states(noise_sensor) if noise_sensor else 'n/a' }}.
+
+      # 🕯️ Lights
+      - service: light.turn_off
+        target: "{{ light_targets }}"
+        data:
+          transition: 15
+
+      # 🔈 Media Players
+      - service: media_player.media_pause
+        target: "{{ media_players }}"
+
+      # 🌡️ HVAC
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ hvac_entities | length > 0 }}"
+            sequence:
+              - service: climate.set_preset_mode
+                target: "{{ hvac_entities }}"
+                data:
+                  preset_mode: "sleep"
+
+      # 🔒 Locks
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ lock_entities | length > 0 }}"
+            sequence:
+              - service: lock.lock
+                target: "{{ lock_entities }}"
+
+      # 🧠 AI Sync Logging
+      - service: persistent_notification.create
+        data:
+          title: "🧠 AI Sleep Routine Logged"
+          message: "AI Sleep Mode executed successfully at {{ now().strftime('%H:%M') }}."
+
+# ───────────────────────────────
+# 🌅 SLEEP MODE EXIT
+# ───────────────────────────────
+  - id: ai_sleep_exit
+    alias: AI Wake-Up Reset
+    trigger:
+      - platform: state
+        entity_id: "{{ person_entities }}"
+        to: "home"
+      - platform: time
+        at: "06:30:00"
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+    action:
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "☀️ Good Morning"
+          message: "Exiting sleep mode — restoring systems."
+      - service: light.turn_on
+        target: "{{ light_targets }}"
+        data:
+          brightness_pct: 40
+          transition: 10
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ hvac_entities | length > 0 }}"
+            sequence:
+              - service: climate.set_preset_mode
+                target: "{{ hvac_entities }}"
+                data:
+                  preset_mode: "home"

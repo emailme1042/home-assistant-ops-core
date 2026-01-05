@@ -1,0 +1,14 @@
+type: markdown
+card_mod:
+  style: |
+    ha-card {
+      border-left: 6px solid #ffab00;
+      padding: 12px;
+    }
+content: |
+  ### Helper Watchdog
+  - `input_text`: 34 total, 6 missing `max:`
+  - `media_player.fire_tv_192_168_1_247`: **Unavailable**
+  - `binary_sensor.bedroom_motion`: **Missing**
+  - Last Check: {{ states('sensor.helper_watchdog_last_run') }}
+  [Run Validation](/lovelace/test?entity=script.helper_watchdog_refresh)

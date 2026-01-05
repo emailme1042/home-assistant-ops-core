@@ -1,0 +1,85 @@
+# Admin – Toggle GPT automations
+- id: admin_toggle_gpt_automations
+  alias: Admin – Toggle GPT automations
+  trigger:
+    - platform: state
+      entity_id: input_boolean.quiet_gpt_automations
+  mode: single
+  action:
+    - choose:
+        - conditions: "{{ is_state('input_boolean.quiet_gpt_automations','on') }}"
+          sequence:
+            - service: automation.turn_off
+              target:
+                entity_id:
+                  - automation.track_gpt_requests
+                  - automation.run_gpt_when_prompt_changes
+                  - automation.send_gpt_prompt_from_direct_input
+                  - automation.mark_gpt_as_sent
+                  - automation.admin_gpt_reply_complete
+                  - automation.react_to_gpt_context_change
+                  - automation.log_gpt_context_change
+            - service: notify.persistent_notification
+              data:
+                title: "🤖 GPT Automations Quieted"
+                message: "GPT-related automations have been turned off for system stability."
+        - conditions: "{{ is_state('input_boolean.quiet_gpt_automations','off') }}"
+          sequence:
+            - service: automation.turn_on
+              target:
+                entity_id:
+                  - automation.track_gpt_requests
+                  - automation.run_gpt_when_prompt_changes
+                  - automation.send_gpt_prompt_from_direct_input
+                  - automation.mark_gpt_as_sent
+                  - automation.admin_gpt_reply_complete
+                  - automation.react_to_gpt_context_change
+                  - automation.log_gpt_context_change
+            - service: notify.persistent_notification
+              data:
+                title: "🤖 GPT Automations Enabled"
+                message: "GPT-related automations have been re-enabled."
+
+# Admin – Toggle noisy/logging automations
+- id: admin_toggle_noise_automations
+  alias: Admin – Toggle noisy/logging automations
+  trigger:
+    - platform: state
+      entity_id: input_boolean.quiet_noise_automations
+  mode: single
+  action:
+    - choose:
+        - conditions: "{{ is_state('input_boolean.quiet_noise_automations','on') }}"
+          sequence:
+            - service: automation.turn_off
+              target:
+                entity_id:
+                  - automation.disable_noisy_entity_logging
+                  - automation.log_esp_restart_reason
+                  - automation.alert_if_wsl_restart_marker_missing
+                  - automation.notify_backup_created
+                  - automation.notify_of_stale_updates
+                  - automation.notify_system_update_available
+                  - automation.sync_orphaned_files_to_recovery
+                  - automation.git_sync_failure_alert
+            - service: notify.persistent_notification
+              data:
+                title: "🔇 Noisy Automations Quieted"
+                message: "Logging and notification automations have been turned off for system stability."
+        - conditions: "{{ is_state('input_boolean.quiet_noise_automations','off') }}"
+          sequence:
+            - service: automation.turn_on
+              target:
+                entity_id:
+                  - automation.disable_noisy_entity_logging
+                  - automation.log_esp_restart_reason
+                  - automation.alert_if_wsl_restart_marker_missing
+                  - automation.notify_backup_created
+                  - automation.notify_of_stale_updates
+                  - automation.notify_system_update_available
+                  - automation.sync_orphaned_files_to_recovery
+                  - automation.git_sync_failure_alert
+            - service: notify.persistent_notification
+              data:
+                title: "🔔 Noisy Automations Enabled"
+                message: "Logging and notification automations have been re-enabled."

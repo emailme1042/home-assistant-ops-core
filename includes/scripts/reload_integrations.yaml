@@ -1,0 +1,15 @@
+# Scripts to reload integrations
+
+reload_alexa_media:
+  alias: Reload Alexa Media
+  sequence:
+    - service: homeassistant.reload_config_entry
+      data:
+        entry_id: "{{ state_attr('media_player.kitchen_alexa', 'config_entry_id') }}"
+
+reload_adaptive_lighting:
+  alias: Reload Adaptive Lighting
+  sequence:
+    - service: homeassistant.reload_config_entry
+      data:
+        entry_id: "{{ state_attr('light.adaptive_lighting', 'config_entry_id') }}"

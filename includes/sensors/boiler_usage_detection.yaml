@@ -1,0 +1,36 @@
+# Boiler Usage Detection - MINIMAL VERSION FOR SAFE MODE RECOVERY
+# Temporarily simplified to fix YAML syntax error preventing HA startup
+
+sensor:
+  - platform: template
+    sensors:
+      boiler_usage_type:
+        friendly_name: "Boiler Usage Type"
+        value_template: "Unknown"
+        icon: mdi:water-boiler
+
+      boiler_hot_water_flow:
+        friendly_name: "Boiler Hot Water Flow"
+        unit_of_measurement: "L/min"
+        value_template: "0"
+        icon: mdi:water-pump
+
+      boiler_heating_runtime_today:
+        friendly_name: "Boiler Heating Runtime Today"
+        unit_of_measurement: "hours"
+        value_template: "0"
+        icon: mdi:clock-outline
+
+      boiler_hot_water_runtime_today:
+        friendly_name: "Boiler Hot Water Runtime Today"
+        unit_of_measurement: "hours"
+        value_template: "0"
+        icon: mdi:water-clock
+
+binary_sensor:
+  - platform: template
+    binary_sensors:
+      heating_demand_active:
+        friendly_name: "Heating Demand Active"
+        device_class: heat
+        value_template: "false"

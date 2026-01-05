@@ -1,0 +1,8 @@
+# Frontend Error Tracking
+frontend_errors:
+  name: "Frontend Error Count"
+  initial: 0
+  min: 0
+  max: 100
+  step: 1
+  icon: mdi:alert-circle-outline

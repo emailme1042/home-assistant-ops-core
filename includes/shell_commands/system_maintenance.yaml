@@ -1,0 +1,36 @@
+# System Maintenance Shell Commands
+
+# Database purge command for performance optimization
+purge_database: >
+  curl -X POST -H "Authorization: Bearer YOUR_LONG_LIVED_ACCESS_TOKEN" -H "Content-Type: application/json" -d '{"keep_days": 2, "repack": true, "apply_filter": true}' http://localhost:8123/api/services/recorder/purge
+
+# Email subject saver
+save_email_subject: >
+  echo '{{ trigger.event.data.subject | default("No subject") if trigger is defined else "No trigger" }}' > /config/email/subject.txt
+
+# File system utilities
+cleanup_zone_identifier: >
+  find /config -type f -name '*:Zone.Identifier' -delete
+
+create_marker_file: >
+  touch /startup_marker
+
+create_fix_sheet: >
+  touch /config/fix_sheet.yaml && chmod 666 /config/fix_sheet.yaml
+
+# Permission fixes
+fix_gpt_status_permissions: >
+  chmod 644 /config/gpt_status.json
+
+# Changelog and context management
+write_changelog_entry: >
+  echo "\n               $(date +%Y-%m-%d_%H:%M) - Session Ended: $(cat /config/includes/input_texts/gpt_session.yaml | grep initial | cut -d '\"' -f2)" >> /config/www/CHANGELOG.md &&
+  cp /config/Master\ Context\ 0717.txt "/config/www/context_snapshots/context_$(date +%Y%m%d_%H%M).md"
+
+# OpenAI log writer
+write_openai_log: >
+  echo '{{ response_text | replace("\\n", " ") | replace("'", "") }}' > /config/ai_workspace/openai_orphaned_analysis.txt
+
+# GPT response writer
+write_gpt_response: >
+  echo '{{ response_text | replace("'", "\\'") | replace("\\n", " ") }}' > /config/www/gpt_response.txt

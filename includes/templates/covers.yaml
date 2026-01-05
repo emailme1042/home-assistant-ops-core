@@ -1,0 +1,72 @@
+cover:
+  - platform: template
+    covers:
+      office_blinds:
+        friendly_name: "Office Blinds"
+        open_cover:
+          service: remote.send_command
+          target:
+            entity_id: remote.universal_remote_rf
+          data:
+            device: Office Blinds
+            command: up
+            num_repeats: 3
+            delay_secs: 0.4
+        close_cover:
+          service: remote.send_command
+          target:
+            entity_id: remote.universal_remote_rf
+          data:
+            device: office_blind
+            command: down
+            num_repeats: 3
+            delay_secs: 0.4
+        stop_cover:
+          service: remote.send_command
+          target:
+            entity_id: remote.universal_remote_rf
+          data:
+            device: office_blind
+            command: stop
+        icon_template: mdi:blinds
+
+      lounge_blinds:
+        friendly_name: "Lounge Blinds"
+        open_cover:
+          service: remote.send_command
+          target:
+            entity_id: remote.universal_remote_rf
+          data:
+            device: lounge_blind
+            command: up
+            num_repeats: 3
+            delay_secs: 0.4
+        close_cover:
+          service: remote.send_command
+          target:
+            entity_id: remote.universal_remote_rf
+          data:
+            device: lounge_blind
+            command: down
+            num_repeats: 3
+            delay_secs: 0.4
+        stop_cover:
+          service: remote.send_command
+          target:
+            entity_id: remote.universal_remote_rf
+          data:
+            device: lounge_blind
+            command: stop
+        icon_template: mdi:blinds
+
+template:
+  - sensor:
+      - name: "Top Bournemouth Headlines"
+        unique_id: bournemouth_echo_top_headlines
+        state: >
+          {% set headlines = state_attr('sensor.bournemouth_echo_headlines', 'item') %}
+          {% if headlines %}
+            {{ headlines[:10] | map(attribute='title') | join(', ') }}
+          {% else %}
+            No headlines available
+          {% endif %}

@@ -1,0 +1,9 @@
+# Flight Alert Distance Control
+flight_alert_distance_km:
+  name: "Flight Alert Distance"
+  icon: mdi:map-marker-distance
+  min: 1
+  max: 20
+  step: 1
+  unit_of_measurement: "km"
+  initial: 5

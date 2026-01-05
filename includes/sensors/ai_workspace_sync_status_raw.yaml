@@ -1,0 +1,5 @@
+- platform: template
+  sensors:
+    ai_workspace_sync_status_raw:
+      friendly_name: "AI Workspace Sync Status (Raw)"
+      value_template: "{{ 'idle' }}"

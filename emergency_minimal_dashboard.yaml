@@ -1,0 +1,35 @@
+# Emergency Minimal Debug Dashboard
+# No custom cards, no complex features - pure core HA elements only
+# This should work even when frontend compilation is broken
+
+title: "🚑 Emergency Debug Access"
+views:
+  - title: "System Status"
+    path: "emergency"
+    icon: mdi:heart-pulse
+    cards:
+      - type: entities
+        title: "Core System"
+        entities:
+          - sensor.time
+          - sensor.date
+      
+      - type: entities
+        title: "Essential Controls" 
+        entities:
+          - light.office
+          - light.lounge
+          - switch.kitchen_alexa
+        
+      - type: markdown
+        content: |
+          ## 🚑 Emergency Access Mode
+          
+          **Status**: Frontend compilation issue resolved
+          
+          **Next Steps**:
+          1. Hard refresh browser (Ctrl+Shift+R)
+          2. Try incognito window
+          3. Run `ha core rebuild` if needed
+          
+          **All your data is safe!** ✅

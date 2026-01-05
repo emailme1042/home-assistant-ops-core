@@ -1,0 +1,32 @@
+# Dashboard Analytics Binary Sensors
+# Recovery readiness and system status indicators
+
+# Recovery Dashboard Readiness
+- platform: template
+  sensors:
+    recovery_ready:
+      friendly_name: "Recovery Dashboard Ready"
+      value_template: >-
+        {{ states('sensor.dashboard_complexity_score') not in ['unknown', 'unavailable'] and
+           states('sensor.audit_log_freshness') not in ['unknown', 'unavailable'] and
+           states('sensor.audit_log_freshness') | int(0) < 120 }}
+      icon_template: >
+        {% if is_state('binary_sensor.recovery_ready', 'on') %}
+          mdi:shield-check
+        {% else %}
+          mdi:shield-alert
+        {% endif %}
+
+    # System Optimization Needed
+    optimization_needed:
+      friendly_name: "Dashboard Optimization Needed"
+      value_template: >-
+        {{ states('sensor.dashboard_complexity_score') | int(0) > 100 or
+           states('input_number.frontend_errors') | int(0) > 5 or
+           states('sensor.audit_log_freshness') | int(0) > 60 }}
+      icon_template: >
+        {% if is_state('binary_sensor.optimization_needed', 'on') %}
+          mdi:tune
+        {% else %}
+          mdi:check-all
+        {% endif %}

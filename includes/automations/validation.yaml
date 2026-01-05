@@ -1,0 +1,43 @@
+- id: validate_yaml_and_automations
+  alias: Run YAML + Automation Validation
+  description: Runs both validation scripts and logs output
+  mode: single
+  trigger:
+    - platform: time
+      at: "03:00:00"
+    - platform: state
+      entity_id: input_boolean.run_validation_now
+      to: "on"
+  action:
+    - service: shell_command.validate_all_yaml
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.run_validation_now
+    - service: persistent_notification.create
+      data:
+        title: "Validation Triggered"
+        message: "YAML and automation validation scripts have run. Check fix_sheet.yaml for results."
+
+- id: run_yaml_validation_log
+  alias: Run YAML Validation & Log Result
+  mode: single
+  trigger:
+    - platform: time_pattern
+      minutes: "/5"
+    - platform: homeassistant
+      event: start
+  action:
+    # Log validation completion
+    - service: shell_command.validate_yaml
+
+- id: update_fix_sheet_timestamp
+  alias: Update Fix Sheet Timestamp
+  mode: single
+  trigger:
+    - platform: time
+      at: "00:00:00"
+  action:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.fix_sheet_last_checked
+        value: "{{ now().strftime('%Y-%m-%d %H:%M') }}"

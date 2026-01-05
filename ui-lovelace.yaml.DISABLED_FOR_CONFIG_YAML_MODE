@@ -1,0 +1,93 @@
+title: Jamie's Smart Home
+views:
+  - !include dashboards/ai/main.yaml
+  - !include dashboards/system_overview/system_overview_main.yaml  
+  - !include dashboards/users/users_main.yaml
+
+# Updated Custom Sidebar Configuration for New Modular Architecture
+custom_sidebar:
+  sidebar_edits:
+    # Hide default dashboard entries
+    - action: hide
+      item: "config"
+    
+    # PRIMARY HUBS (Edge Copilot Consolidation)
+    - action: item
+      item: "ai_main_section"
+      name: "🤖 AI INTELLIGENCE"
+      icon: "mdi:robot-outline"
+      new_item: true
+      
+    - action: item  
+      item: "ai-main"
+      name: "AI Main Hub"
+      icon: "mdi:robot-outline"
+      
+    - action: item
+      item: "system_section"
+      name: "📊 SYSTEM MONITORING"
+      icon: "mdi:monitor-dashboard"
+      new_item: true
+      
+    - action: item
+      item: "system-overview"
+      name: "System Overview Hub" 
+      icon: "mdi:home-analytics"
+      
+    - action: item
+      item: "users_section"
+      name: "👥 USERS & MEDIA"
+      icon: "mdi:account-group"
+      new_item: true
+      
+    - action: item
+      item: "users-media"
+      name: "Users & Media Hub"
+      icon: "mdi:account-group"
+
+    # ADMIN SECTION (Preserved)
+    - action: item
+      item: "admin_section"
+      name: "🔧 ADMINISTRATION"
+      icon: "mdi:cog"
+      new_item: true
+      
+    - action: item  
+      item: "admin-dash"
+      name: "Admin Dashboard"
+      icon: "mdi:tools"
+
+    # Hide individual legacy dashboards (accessible via hubs)
+    - action: hide
+      item: "ai-navigation"
+    - action: hide
+      item: "ai-insight" 
+    - action: hide
+      item: "ai-workspace"
+    - action: hide
+      item: "user-dashboard"
+    - action: hide
+      item: "fire-tv"
+    - action: hide
+      item: "fire-tv-simple"
+    - action: hide
+      item: "apple-tv-control"
+    - action: hide
+      item: "entity-reference"
+    - action: hide
+      item: "network-diagnostics"
+    - action: hide
+      item: "automation-audit"
+    - action: hide
+      item: "recovery-dash"
+    - action: hide
+      item: "test-sync"
+    - action: hide  
+      item: "ops-todo"
+    - action: hide
+      item: "user-dash"
+    - action: hide
+      item: "ops-dash"
+
+  # Set default to AI Main hub
+  default_view: "ai-main"

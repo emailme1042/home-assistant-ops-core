@@ -1,0 +1,21 @@
+title: Safe UI
+views:
+  - title: System Check
+    path: system-check
+    icon: mdi:shield-check
+    cards:
+      - type: entities
+        title: System Health
+        entities:
+          - sensor.system_health
+          - sensor.uptime
+          - sensor.processor_use
+          - sensor.memory_use_percent
+          - sensor.disk_use_percent
+      - type: history-graph
+        title: Uptime & CPU
+        entities:
+          - sensor.processor_use
+          - sensor.uptime
+        hours_to_show: 6
+        refresh_interval: 60

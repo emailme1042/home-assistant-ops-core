@@ -1,0 +1,161 @@
+# 🧭 AI Routine Lifecycle Tracker
+# Version: 2025.11.01 | Verified for HA Core ≥2025.10.4
+# Description: Tracks, logs, and visualizes daily AI routine transitions (morning → focus → evening → sleep).
+
+blueprint:
+  name: AI Routine Lifecycle Tracker
+  description: >
+    Monitors daily system routine progression through adaptive phases:
+    Morning, Focus, Evening, and Sleep. Logs transitions, verifies automation
+    completions, and synchronizes with AI Workspace dashboard.
+  domain: automation
+  source_url: https://community.home-assistant.io/t/awesome-ha-blueprints/256687
+
+  input:
+    ai_sync_sensor:
+      name: AI Workspace Sync Sensor
+      default: sensor.ha_sync_status
+      selector:
+        entity:
+          domain: sensor
+    routine_state_sensor:
+      name: Routine State Helper (input_select)
+      selector:
+        entity:
+          domain: input_select
+    routine_log_file:
+      name: Routine Log File (Text File or Markdown)
+      description: Path for daily log (optional)
+      default: "/config/www/ai_routine_log.txt"
+    notify_target:
+      name: Notification Target
+      selector:
+        target:
+          entity:
+            domain: notify
+    presence_entities:
+      name: Presence Entities (Persons)
+      selector:
+        target:
+          entity:
+            domain: person
+    mood_scene_automation:
+      name: Mood Selector Automation
+      selector:
+        entity:
+          domain: automation
+    sleep_routine_automation:
+      name: Sleep Routine Automation
+      selector:
+        entity:
+          domain: automation
+
+# ───────────────────────────────
+# 🌄 ROUTINE PHASE TRIGGERS
+# ───────────────────────────────
+automation:
+  - id: ai_routine_lifecycle_handler
+    alias: AI Routine Lifecycle Handler
+    description: Handles transitions between daily routine phases.
+    trigger:
+      - platform: time_pattern
+        minutes: "/15"
+      - platform: state
+        entity_id: "{{ presence_entities }}"
+        to: "home"
+      - platform: state
+        entity_id: "{{ ai_sync_sensor }}"
+        to: "✅ Synced"
+    condition:
+      - condition: state
+        entity_id: group.all_persons
+        state: "home"
+    action:
+      - variables:
+          hour: "{{ now().hour }}"
+          sync: "{{ states(ai_sync_sensor) }}"
+          current_state: "{{ states(routine_state_sensor) }}"
+          new_state: >-
+            {% if hour >= 6 and hour < 10 %}
+              Morning
+            {% elif hour >= 10 and hour < 18 %}
+              Focus
+            {% elif hour >= 18 and hour < 23 %}
+              Evening
+            {% else %}
+              Sleep
+            {% endif %}
+
+      # 🧠 Update State if Changed
+      - condition: template
+        value_template: "{{ new_state != current_state }}"
+      - service: input_select.select_option
+        target:
+          entity_id: "{{ routine_state_sensor }}"
+        data:
+          option: "{{ new_state }}"
+
+      # 🪄 Notify + Log
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🧭 Routine Update"
+          message: >
+            Routine phase changed: {{ current_state }} → {{ new_state }}.
+            Sync: {{ sync }}
+
+      - service: system_log.write
+        data:
+          level: info
+          message: >
+            [AI Routine Tracker] Phase: {{ new_state }} | Time: {{ now().strftime('%H:%M') }} | Sync: {{ sync }}
+
+      - service: file.write
+        data:
+          path: "{{ routine_log_file }}"
+          content: >
+            {{ now().strftime('%Y-%m-%d %H:%M:%S') }} — Phase: {{ new_state }} | Sync: {{ sync }}
+
+      # ⚙️ Trigger Relevant Automations
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ new_state == 'Focus' }}"
+            sequence:
+              - service: automation.trigger
+                target:
+                  entity_id: "{{ mood_scene_automation }}"
+
+          - conditions:
+              - condition: template
+                value_template: "{{ new_state == 'Sleep' }}"
+            sequence:
+              - service: automation.trigger
+                target:
+                  entity_id: "{{ sleep_routine_automation }}"
+
+      - service: persistent_notification.create
+        data:
+          title: "🧠 Lifecycle Tracker Logged"
+          message: >
+            Routine state transitioned to {{ new_state }} at {{ now().strftime('%H:%M') }}.
+
+# ───────────────────────────────
+# 🌅 DAILY RESET AT MIDNIGHT
+# ───────────────────────────────
+  - id: ai_routine_reset
+    alias: AI Routine Lifecycle Reset
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: input_select.select_option
+        target:
+          entity_id: "{{ routine_state_sensor }}"
+        data:
+          option: "Morning"
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🔁 Routine Tracker Reset"
+          message: "Daily cycle reset to Morning phase."

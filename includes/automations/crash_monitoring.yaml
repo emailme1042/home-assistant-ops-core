@@ -1,0 +1,111 @@
+- id: log_crash_trigger
+  alias: "🧯 Log Crash Trigger (DISABLED - Performance Impact)"
+  description: "DISABLED: Logs system context every 5 minutes - causing performance issues"
+  trigger:
+    - platform: time_pattern
+      minutes: "/5"
+  condition:
+    - condition: state
+      entity_id: input_boolean.enable_performance_monitoring
+      state: "on"
+  action:
+    - service: logbook.log
+      data:
+        name: "Crash Monitor"
+        message: "Context logged: Dashboard {{ states('sensor.last_card_loaded') }}, Errors: {{ states('input_number.frontend_errors') }}"
+    - service: logbook.log
+      data:
+        name: "Crash Sentinel"
+        message: >
+          Crash context logged: {{ states('sensor.crash_context_summary') }} | 
+          Vertical Layout: {{ states('sensor.vertical_layout_tracker') }} | 
+          Frontend Errors: {{ states('input_number.frontend_errors') }} | 
+          Memory: {{ state_attr('sensor.ha_crash_sentinel', 'memory_usage') }}
+        entity_id: sensor.ha_crash_sentinel
+
+- id: crash_risk_alert
+  alias: "🚨 Crash Risk Alert"
+  description: "Alert when crash risk becomes high or critical"
+  trigger:
+    - platform: state
+      entity_id: sensor.crash_context_summary
+      to: 
+        - "Warning"
+        - "Critical"
+      for:
+        minutes: 2
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🚨 Crash Risk Alert"
+        message: >
+          System Status: {{ states('sensor.crash_context_summary') }}
+          Frontend Errors: {{ states('input_number.frontend_errors') }}
+          Vertical Layout: {{ states('sensor.vertical_layout_tracker') }}
+          Recommended: {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}
+        notification_id: crash_risk_alert
+    - service: logbook.log
+      data:
+        name: "Crash Risk Monitor"
+        message: >
+          ⚠️ CRASH RISK ELEVATED: {{ states('sensor.crash_context_summary') }} - 
+          {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}
+        entity_id: sensor.crash_context_summary
+
+- id: frontend_error_spike_detection
+  alias: "📈 Frontend Error Spike Detection"
+  description: "Detect rapid increases in frontend errors indicating imminent crash"
+  trigger:
+    - platform: numeric_state
+      entity_id: input_number.frontend_errors
+      above: 3
+  condition:
+    - condition: template
+      value_template: >
+        {{ (states('input_number.frontend_errors') | int(0)) > 
+           (state_attr('sensor.ha_crash_sentinel', 'frontend_errors') | int(0)) }}
+  action:
+    - service: shell_command.emergency_crash_log
+      data: {}
+    - service: persistent_notification.create
+      data:
+        title: "⚡ Frontend Error Spike"
+        message: >
+          Frontend errors increased to {{ states('input_number.frontend_errors') }}
+          This may indicate an imminent crash. Check browser console immediately.
+          Last card: {{ states('sensor.last_card_loaded') }}
+        notification_id: frontend_error_spike
+    - service: logbook.log
+      data:
+        name: "Frontend Error Monitor"
+        message: >
+          ⚡ ERROR SPIKE DETECTED: {{ states('input_number.frontend_errors') }} errors - 
+          potential crash imminent. Card: {{ states('sensor.last_card_loaded') }}
+        entity_id: input_number.frontend_errors
+
+- id: vertical_layout_failure_detection
+  alias: "🔧 Vertical Layout Failure Detection"
+  description: "Detect when vertical-layout card fails to load properly"
+  trigger:
+    - platform: state
+      entity_id: sensor.vertical_layout_tracker
+      to: "failed"
+      for:
+        minutes: 1
+  condition: []
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🔧 Vertical Layout Card Failed"
+        message: >
+          The vertical-layout card has failed to load properly.
+          This was the root cause of previous crashes.
+          Check that layout-card.js is properly loaded in resources.
+        notification_id: vertical_layout_failure
+    - service: logbook.log
+      data:
+        name: "Vertical Layout Monitor"
+        message: >
+          🔧 VERTICAL LAYOUT FAILURE: Card failed to load - this was the previous crash cause!
+        entity_id: sensor.vertical_layout_tracker

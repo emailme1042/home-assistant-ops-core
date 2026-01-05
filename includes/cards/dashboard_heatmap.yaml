@@ -1,0 +1,147 @@
+# Dashboard Complexity Heatmap Card
+# Visual intelligence layer showing dashboard performance health
+# Green = Optimized, Yellow = Needs Review, Red = Overloaded
+
+type: vertical-stack
+cards:
+  - type: grid
+    title: "🧠 Dashboard Complexity Heatmap"
+    columns: 3
+    square: false
+    cards:
+      # Core System Dashboards
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_ai_workspace
+        name: "AI Workspace"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_recovery
+        name: "Recovery"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_system_overview
+        name: "System Overview"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      # User Interface Dashboards
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_user_dashboard
+        name: "User Home"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_network_diagnostics
+        name: "Network"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_entity_reference
+        name: "Entity Reference"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      # Admin Dashboards
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_main_admin
+        name: "Admin Main"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_automation_audit
+        name: "Automation Audit"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+      - type: gauge
+        entity: sensor.dashboard_complexity_score_ops_main
+        name: "Ops"
+        min: 0
+        max: 200
+        severity:
+          green: 0
+          yellow: 100
+          red: 150
+        needle: true
+
+  # Performance Impact Summary Card
+  - type: entities
+    title: "📊 Performance Impact Summary"
+    show_header_toggle: false
+    entities:
+      - entity: sensor.high_complexity_dashboards
+        name: "High Complexity Count"
+        icon: mdi:alert-circle
+      - entity: sensor.dashboard_optimization_recommendation
+        name: "Optimization Recommendation"
+        icon: mdi:lightbulb-outline
+      - entity: sensor.frontend_load_impact
+        name: "Frontend Load Impact"
+        icon: mdi:speedometer
+      - entity: input_number.frontend_errors
+        name: "Frontend Errors"
+        icon: mdi:alert-circle-outline
+
+  # Quick Actions
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "🔄 Refresh Complexity Analysis"
+        icon: mdi:refresh
+        tap_action:
+          action: call-service
+          service: shell_command.dashboard_complexity_audit
+          
+      - type: button
+        name: "📊 Generate Performance Report"
+        icon: mdi:chart-line
+        tap_action:
+          action: call-service
+          service: shell_command.dashboard_performance_audit

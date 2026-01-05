@@ -1,0 +1,112 @@
+- alias: "Trigger Fallback If ADS-B Feed Dies"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.adsb_feed_alive
+      to: "off"
+      for:
+        minutes: 2
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "system/fallback_trigger"
+        payload: "true"
+  mode: single
+
+- alias: "ADS-B Feed Heartbeat"
+  id: adsb_heartbeat
+  trigger:
+    - platform: time_pattern
+      minutes: "/1"
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "adsb/aircraft/heartbeat"
+        payload: "alive"
+  mode: single
+  initial_state: true
+
+- alias: "Log ADS-B Emergency"
+  id: log_adsb_emergency
+  trigger:
+    - platform: mqtt
+      topic: dump1090/emergency
+      payload: "true"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "ADS-B Emergency Detected"
+        message: "An aircraft has triggered an emergency flag."
+
+- alias: "Flight Alert – Noisy Aircraft Approaching"
+  id: flight_alert_noisy_aircraft
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.lowest_aircraft_altitude
+      below: 1500
+  condition:
+    - condition: time
+      after: "07:00:00"
+      before: "22:00:00"
+    - condition: template
+      value_template: "{{ states('sensor.aircraft_count') | int(0) > 0 }}"
+  action:
+    - service: rest_command.voice_monkey_door_alert
+      data:
+        advisory: "Heads up! A noisy aircraft is approaching Bournemouth airspace."
+    - service: light.turn_on
+      target:
+        entity_id: light.brown_lamp
+      data:
+        brightness_pct: 100
+        flash: long
+  mode: single
+
+- alias: "Log aircraft entry"
+  id: log_aircraft_entry_main
+  trigger:
+    - platform: event
+      event_type: opensky_entry
+  action:
+    - service: logbook.log
+      data:
+        name: "Aircraft Entered"
+        message: "{{ trigger.event.data.callsign }} at {{ trigger.event.data.altitude }}m"
+
+- alias: "Flight Log - Any Flight Entered (Short)"
+  id: flight_log_event_main_short
+  mode: queued
+  trigger:
+    - platform: event
+      event_type: flightradar24_area_entered
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Flight Log"
+        message: "✈️ {{ trigger.event.data.aircraft_model }} from {{ trigger.event.data.airline_short }} Altitude: {{ trigger.event.data.altitude }} ft Speed: {{ trigger.event.data.speed }} knots Time: {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+- alias: "Flight Log - Any Flight Entered (Detailed)"
+  id: flight_log_event_entry_detailed
+  mode: queued
+  trigger:
+    - platform: event
+      event_type: flightradar24_area_entered
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Flight Log"
+        message: >
+          ✈️ {{ trigger.event.data.aircraft_model }} from {{ trigger.event.data.airline_short }}
+          Altitude: {{ trigger.event.data.altitude }} ft
+          Speed: {{ trigger.event.data.speed }} knots
+          Time: {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+
+- alias: "Log aircraft entry (Secondary)"
+  id: log_aircraft_entry_secondary
+  trigger:
+    - platform: event
+      event_type: opensky_entry
+  action:
+    - service: logbook.log
+      data:
+        name: "Aircraft Entered"
+        message: "{{ trigger.event.data.callsign }} at {{ trigger.event.data.altitude }}m"

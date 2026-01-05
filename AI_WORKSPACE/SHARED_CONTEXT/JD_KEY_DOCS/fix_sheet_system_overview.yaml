@@ -1,0 +1,10 @@
+fix_sheet:
+  last_checked: "2025-08-11 19:06"
+  broken_entities:
+    - input_text.todo_task_1
+    - input_number.irrigation_duration
+    - notify.gmail_sender
+  suggested_fixes:
+    - "Replace gmail_sender with smtp_notify"
+    - "Add min/max to irrigation_duration"
+    - "Fix indentation in command_sensors.yaml"

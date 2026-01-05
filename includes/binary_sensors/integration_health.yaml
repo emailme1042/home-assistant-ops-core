@@ -1,0 +1,45 @@
+template:
+  - binary_sensor:
+      - name: "MQTT Broker Online"
+        unique_id: mqtt_broker_online
+        state: "{{ states('sensor.mqtt_connected_devices') | int(0) > 0 }}"
+        device_class: connectivity
+        icon: >
+          {% if states('sensor.mqtt_connected_devices') | int(0) > 0 %}
+            mdi:check-network
+          {% else %}
+            mdi:network-off
+          {% endif %}
+
+      - name: "AdGuard Running"
+        unique_id: adguard_running
+        state: "{{ states('sensor.adguard_dns_queries') | int(0) > 0 }}"
+        device_class: connectivity
+        icon: >
+          {% if states('sensor.adguard_dns_queries') | int(0) > 0 %}
+            mdi:shield-check
+          {% else %}
+            mdi:shield-off
+          {% endif %}
+
+      - name: "UniFi Controller Online"
+        unique_id: unifi_controller_online
+        state: "{{ states('sensor.unifi_connected_devices') | int(0) > 0 }}"
+        device_class: connectivity
+        icon: >
+          {% if states('sensor.unifi_connected_devices') | int(0) > 0 %}
+            mdi:access-point
+          {% else %}
+            mdi:access-point-off
+          {% endif %}
+
+      - name: "HACS Update Available"
+        unique_id: hacs_update_available
+        state: "{{ states('sensor.hacs_pending_updates') | int(0) > 0 }}"
+        device_class: update
+        icon: >
+          {% if states('sensor.hacs_pending_updates') | int(0) > 0 %}
+            mdi:update
+          {% else %}
+            mdi:check-circle
+          {% endif %}

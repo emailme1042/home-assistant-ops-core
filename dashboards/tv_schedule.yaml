@@ -1,0 +1,68 @@
+# 📺 TV Schedule Dashboard View
+# Shows tonight's TV lineup and upcoming episodes
+
+title: "📺 TV Schedule"
+path: tv-schedule
+icon: mdi:television
+type: sections
+max_columns: 3
+
+sections:
+  - type: grid
+    cards:
+      # Tonight's Schedule
+      - type: custom:upcoming-media-card
+        entity: sensor.tonight_tv_schedule
+        title: "Tonight's TV"
+        image_style: fanart
+        line1: $title
+        line2: $episode
+        line3: $day - $time
+        line4: $rating
+        max: 5
+
+      # Upcoming Episodes
+      - type: custom:upcoming-media-card
+        entity: sensor.upcoming_episodes
+        title: "Upcoming Episodes"
+        image_style: poster
+        line1: $title
+        line2: $episode
+        line3: $day - $time
+        line4: $number - $rating
+        max: 10
+
+      # Show Status
+      - type: entities
+        title: "TV Status"
+        entities:
+          - entity: sensor.tonight_tv_schedule
+          - entity: sensor.upcoming_episodes
+          - entity: binary_sensor.new_episode_available
+
+      # Quick Actions
+      - type: entities
+        title: "Quick Actions"
+        entities:
+          - entity: automation.notify_new_episodes
+            name: "Episode Notifications"
+          - entity: automation.daily_tv_schedule_summary
+            name: "Daily Summary"
+
+  - type: grid
+    cards:
+      # Specific Shows
+      - type: custom:upcoming-media-card
+        entity: calendar.the_traitors
+        title: "The Traitors"
+        max: 3
+
+      - type: custom:upcoming-media-card
+        entity: calendar.the_night_manager
+        title: "The Night Manager"
+        max: 3
+
+      - type: custom:upcoming-media-card
+        entity: calendar.happy_valley
+        title: "Happy Valley"
+        max: 3

@@ -1,0 +1,37 @@
+# MINIMAL RESOURCES BLOCK - Testing Configuration
+# Replace the resources section in configuration.yaml with this
+
+resources:
+  # CORE ESSENTIALS (Your current working set)
+  - url: /hacsfiles/button-card/button-card.js
+    type: module
+  - url: /hacsfiles/lovelace-mushroom/mushroom.js
+    type: module
+  - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+    type: module
+  - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+    type: module
+  - url: /hacsfiles/lovelace-card-mod/card-mod.js
+    type: module
+  - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+    type: module
+  
+  # HIGH PRIORITY ADDITIONS (Common dashboard dependencies)
+  - url: /hacsfiles/bar-card/bar-card.js
+    type: module
+  - url: /hacsfiles/custom-attributes/custom-attributes.js
+    type: module
+  - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js
+    type: module
+  - url: /hacsfiles/simple-weather-card/simple-weather-card-bundle.js
+    type: module
+  - url: /hacsfiles/state-switch/state-switch.js
+    type: module
+  - url: /hacsfiles/template-entity-row/template-entity-row.js
+    type: module
+  - url: /hacsfiles/config-template-card/config-template-card.js
+    type: module
+  - url: /hacsfiles/lovelace-layout-card/layout-card.js
+    type: module
+
+# After testing, gradually add more from resources_comprehensive.yaml

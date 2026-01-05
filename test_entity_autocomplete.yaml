@@ -1,0 +1,6 @@
+sensor:
+  - platform: template
+    sensors:
+      test_config_loaded:
+        friendly_name: "Configuration Test"
+        value_template: "{{ states.automation | list | length > 0 }}"

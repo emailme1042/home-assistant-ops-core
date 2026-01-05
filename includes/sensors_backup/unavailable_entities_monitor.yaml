@@ -1,0 +1,126 @@
+# Unavailable Entities Monitor - System Health Intelligence
+# Purpose: Track and monitor unavailable/unknown entities for system health
+# Features: Count tracking, entity listing, health percentage calculation
+
+- platform: template
+  sensors:
+    ha_total_entities:
+      friendly_name: "Total Entities Count"
+      unit_of_measurement: "entities"
+      icon_template: mdi:database
+      value_template: "{{ states | length }}"
+      availability_template: "{{ true }}"
+
+    ha_unavailable_entities_count:
+      friendly_name: "Unavailable Entities Count"
+      unit_of_measurement: "entities"
+      icon_template: >
+        {% set count = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length %}
+        {% if count == 0 %}
+          mdi:check-circle
+        {% elif count < 50 %}
+          mdi:alert-circle
+        {% else %}
+          mdi:alert-circle-outline
+        {% endif %}
+      value_template: >
+        {{ states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length }}
+      attribute_templates:
+        unavailable_entities: >
+          {% set unavailable = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | map(attribute='entity_id') | list %}
+          {{ unavailable[:50] | join(', ') }}
+        entity_domains: >
+          {% set domains = {} %}
+          {% for state in states %}
+            {% if state.state in ['unavailable', 'unknown', 'none'] %}
+              {% set domain = state.entity_id.split('.')[0] %}
+              {% set domains = dict(domains, **{domain: domains.get(domain, 0) + 1}) %}
+            {% endif %}
+          {% endfor %}
+          {{ domains }}
+
+    ha_system_health_percentage:
+      friendly_name: "System Health Percentage"
+      unit_of_measurement: "%"
+      icon_template: mdi:heart-pulse
+      value_template: >
+        {% set total = states | length %}
+        {% set unavailable = states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length %}
+        {% if total > 0 %}
+          {{ ((total - unavailable) / total * 100) | round(1) }}
+        {% else %}
+          0
+        {% endif %}
+      availability_template: "{{ states | length > 0 }}"
+
+    ha_system_health_grade:
+      friendly_name: "System Health Grade"
+      icon_template: >
+        {% set health = ((states | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length)) / states | length * 100) | round(1) if states | length > 0 else 0 %}
+        {% if health >= 95 %}
+          mdi:alpha-a-circle
+        {% elif health >= 90 %}
+          mdi:alpha-b-circle
+        {% elif health >= 85 %}
+          mdi:alpha-c-circle
+        {% elif health >= 80 %}
+          mdi:alpha-d-circle
+        {% else %}
+          mdi:alpha-f-circle
+        {% endif %}
+      value_template: >
+        {% set health = ((states | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length)) / states | length * 100) | round(1) if states | length > 0 else 0 %}
+        {% if health >= 95 %}
+          A+
+        {% elif health >= 90 %}
+          A
+        {% elif health >= 85 %}
+          B
+        {% elif health >= 80 %}
+          C
+        {% elif health >= 70 %}
+          D
+        {% else %}
+          F
+        {% endif %}
+      attribute_templates:
+        total_entities: "{{ states | length }}"
+        unavailable_entities: "{{ states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length }}"
+        health_percentage: "{{ ((states | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length)) / states | length * 100) | round(1) if states | length > 0 else 0 }}"
+        status_summary: >
+          {% set health = ((states | length - (states | selectattr('state', 'in', ['unavailable', 'unknown', 'none']) | list | length)) / states | length * 100) | round(1) if states | length > 0 else 0 %}
+          {% if health >= 95 %}
+            Excellent - System running optimally
+          {% elif health >= 90 %}
+            Good - Minor issues detected
+          {% elif health >= 85 %}
+            Fair - Some unavailable entities
+          {% elif health >= 80 %}
+            Poor - Multiple entity issues
+          {% else %}
+            Critical - System needs attention
+          {% endif %}
+
+    ha_entity_registry_summary:
+      friendly_name: "Entity Registry Summary"
+      icon_template: mdi:database-outline
+      value_template: >-
+        {% set domain_list = [] %}
+        {% for state in states %}
+          {% set domain_list = domain_list + [state.entity_id.split('.')[0]] %}
+        {% endfor %}
+        {{ domain_list | unique | list | join(', ') }}
+      attribute_templates:
+        by_domain: >
+          {% set domains = {} %}
+          {% for state in states %}
+            {% set domain = state.entity_id.split('.')[0] %}
+            {% set domains = dict(domains, **{domain: domains.get(domain, 0) + 1}) %}
+          {% endfor %}
+          {{ domains }}
+        top_domains: >
+          {% set domain_list = [] %}
+          {% for state in states %}
+            {% set domain_list = domain_list + [state.entity_id.split('.')[0]] %}
+          {% endfor %}
+          {{ (domain_list | unique | list)[:10] | join(', ') }}

@@ -1,0 +1,6 @@
+# Flight Playback Timestamp Control
+flight_playback_timestamp:
+  name: "Flight Playback Timestamp"
+  icon: mdi:clock-outline
+  has_date: true
+  has_time: true

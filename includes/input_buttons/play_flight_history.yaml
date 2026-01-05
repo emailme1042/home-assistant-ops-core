@@ -1,0 +1,4 @@
+# Play Flight History Button
+play_flight_history:
+  name: "Play Flight History"
+  icon: mdi:play

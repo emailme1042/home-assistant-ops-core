@@ -1,0 +1,7 @@
+quiet_gpt_automations:
+  name: Quiet GPT automations
+  icon: mdi:robot-off
+
+quiet_noise_automations:
+  name: Quiet noisy/logging automations
+  icon: mdi:volume-off

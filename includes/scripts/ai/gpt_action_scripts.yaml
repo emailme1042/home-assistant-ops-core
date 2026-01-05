@@ -1,0 +1,33 @@
+gpt_send_prompt:
+  alias: GPT - Send Prompt
+  sequence:
+    - service: rest_command.gpt_chatgpt_query
+      data:
+        prompt: "Hello from Home Assistant!"
+gpt_create_backup:
+  alias: GPT - Create Backup
+  sequence:
+    - service: rest_command.gpt_create_backup
+      data:
+        label: "Backup via GPT UI"
+gpt_reload_automations:
+  alias: GPT - Reload Automations
+  sequence:
+    - service: rest_command.gpt_reload_automations
+gpt_reload_scripts:
+  alias: GPT - Reload Scripts
+  sequence:
+    - service: rest_command.gpt_reload_scripts
+gpt_input_text_example:
+  alias: GPT - Set Input Text Example
+  sequence:
+    - service: rest_command.gpt_set_input_text
+      data:
+        entity_id: input_text.test
+        value: "Set from GPT Tools"
+gpt_get_prompt_state:
+  alias: GPT - Get Prompt State
+  sequence:
+    - service: rest_command.gpt_get_entity_state
+      data:
+        entity_id: input_text.chatgpt_prompt

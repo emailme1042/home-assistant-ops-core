@@ -1,0 +1,17 @@
+- id: 'ai_nightly_validation'
+  alias: AI Workspace - Nightly Validation
+  description: Run YAML & automation validators nightly and store results
+  trigger:
+    - platform: time
+      at: '03:30:00'
+  condition: []
+  action:
+    - service: shell_command.validate_all_yaml
+    - delay: '00:00:10'
+    - service: python_script.write_validation_summary
+    - service: persistent_notification.create
+      data:
+        title: 'AI Validation'
+        message: 'Nightly validation completed. See /config/fix_sheet.yaml for details.'
+        notification_id: ai_nightly_validation
+  mode: single

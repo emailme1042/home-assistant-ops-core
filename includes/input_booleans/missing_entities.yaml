@@ -1,0 +1,19 @@
+ai_script_toggle_1:
+  name: AI Script Toggle 1
+  initial: false
+  icon: mdi:toggle-switch
+
+ai_script_toggle_2:
+  name: AI Script Toggle 2  
+  initial: false
+  icon: mdi:toggle-switch
+
+test_mode:
+  name: Test Mode
+  initial: false
+  icon: mdi:test-tube
+
+admin_settings_summary:
+  name: Admin Settings Summary
+  initial: false
+  icon: mdi:cog-outline

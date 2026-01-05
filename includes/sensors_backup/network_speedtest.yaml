@@ -1,0 +1,42 @@
+# Network SpeedTest Sensors
+# Note: SpeedTest integration must be configured via UI (Settings → Integrations → Add Integration → SpeedTest)
+# These template sensors provide fallback monitoring
+
+# Template sensor for existing speedtest integration
+- platform: template
+  sensors:
+    speedtest_download:
+      friendly_name: "Download Speed"
+      unit_of_measurement: "Mbps"
+      value_template: >
+        {% if states('sensor.speedtest_download') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.speedtest_download') }}
+        {% elif states('sensor.speedtestdotnet_download') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.speedtestdotnet_download') }}
+        {% else %}
+          0
+        {% endif %}
+        
+    speedtest_upload:
+      friendly_name: "Upload Speed"  
+      unit_of_measurement: "Mbps"
+      value_template: >
+        {% if states('sensor.speedtest_upload') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.speedtest_upload') }}
+        {% elif states('sensor.speedtestdotnet_upload') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.speedtestdotnet_upload') }}
+        {% else %}
+          0
+        {% endif %}
+        
+    speedtest_ping:
+      friendly_name: "Ping Latency"
+      unit_of_measurement: "ms"
+      value_template: >
+        {% if states('sensor.speedtest_ping') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.speedtest_ping') }}
+        {% elif states('sensor.speedtestdotnet_ping') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.speedtestdotnet_ping') }}
+        {% else %}
+          0
+        {% endif %}

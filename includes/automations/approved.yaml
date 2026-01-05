@@ -1,0 +1,24 @@
+- alias: Automated Backup Repair Trigger
+  trigger:
+    - platform: state
+      entity_id: sensor.backup_last_attempted_automatic_backup
+  condition:
+    - condition: template
+      value_template: "{{ states('sensor.backup_backup_manager_state') == 'failed' }}"
+  action:
+    - service: script.trigger_backup_repair
+
+- alias: Update Notification During Work Hours
+  trigger:
+    - platform: state
+      entity_id: "update.home_assistant_core_update"
+      from: "off"
+      to: "on"
+  condition:
+    - condition: time
+      after: '08:00:00'
+      before: '18:00:00'
+  action:
+    - service: notify.mobile_app_your_device
+      data:
+        message: "New update available during your active hours!"

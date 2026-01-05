@@ -1,0 +1,81 @@
+# Dashboard Complexity Scoring Sensors (Simplified & Efficient)
+# Uses dedicated Python scripts for reliable complexity analysis
+
+# Dashboard Complexity Scoring - Clean Implementation
+- platform: command_line
+  name: dashboard_complexity_score
+  command: "python3 /config/AI_WORKSPACE/Scripts/complexity_score.py"
+  scan_interval: 300
+  unit_of_measurement: "pts"
+  icon: mdi:chart-bell-curve
+
+# Audit Log Freshness Tracker
+- platform: command_line
+  name: audit_log_freshness
+  command: "python3 /config/AI_WORKSPACE/Scripts/audit_freshness.py"
+  scan_interval: 300
+  unit_of_measurement: "min"
+  icon: mdi:clock-alert
+
+# Dashboard Count Sensor (Simplified)
+- platform: command_line
+  name: total_dashboard_count
+  command: >
+    python3 -c "
+    import yaml
+    with open('/config/configuration.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+    dashboards = config.get('lovelace', {}).get('dashboards', {})
+    print(len(dashboards))
+    "
+  value_template: "{{ value | int }}"
+  unit_of_measurement: "dashboards"
+  icon: mdi:view-dashboard
+
+# High Complexity Dashboard Detector (Efficient)
+- platform: template
+  sensors:
+    high_complexity_dashboards:
+      friendly_name: "High Complexity Dashboards"
+      value_template: >
+        {% set complexity = states('sensor.dashboard_complexity_score') | int(0) %}
+        {% if complexity > 100 %}
+          {{ (complexity / 50) | round(0) | int }}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: "dashboards"
+      icon_template: >
+        {% set count = states('sensor.high_complexity_dashboards') | int(0) %}
+        {% if count > 3 %}
+          mdi:alert-circle
+        {% elif count > 1 %}
+          mdi:alert-outline
+        {% else %}
+          mdi:check-circle
+        {% endif %}
+
+    # Frontend Error Trend Analysis (Simplified)
+    frontend_error_trend:
+      friendly_name: "Frontend Error Trend"
+      value_template: >
+        {% set current_errors = states('input_number.frontend_errors') | int(0) %}
+        {% set previous_errors = state_attr('input_number.frontend_errors', 'last_changed') %}
+        {% if current_errors == 0 %}
+          Stable
+        {% elif current_errors > 5 %}
+          Increasing
+        {% elif current_errors > 0 %}
+          Monitored
+        {% else %}
+          Stable
+        {% endif %}
+      icon_template: >
+        {% set trend = states('sensor.frontend_error_trend') %}
+        {% if trend == 'Increasing' %}
+          mdi:trending-up
+        {% elif trend == 'Monitored' %}
+          mdi:trending-neutral
+        {% else %}
+          mdi:trending-down
+        {% endif %}

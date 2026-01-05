@@ -1,0 +1,53 @@
+{
+  "security.workspace.trust.enabled": false,
+  "security.workspace.trust.startupPrompt": "never",
+  "security.workspace.trust.untrustedFiles": "open",
+
+  "vscode-home-assistant.hostUrl": "http://192.168.0.217:8123",
+  "vscode-home-assistant.longLivedAccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2MDU5ZjkwYjJmN2I0MmMzOTYyNzA2ODhiZjFmYmY1MSIsImlhdCI6MTc2NzI5NzMyOSwiZXhwIjoyMDgyNjU3MzI5fQ.3k3RbVOGUuDqTzfH2ZBzrW8dM7RnX4TYkxFgxL_JxE4",
+  "vscode-home-assistant.ignoreCertificates": true,
+  "vscode-home-assistant.languageserver.enable": true,
+  "vscode-home-assistant.languageserver.completions.enable": true,
+  "vscode-home-assistant.languageserver.definitions.enable": true,
+  "vscode-home-assistant.languageserver.hover.enable": true,
+
+  "chat.terminal.autoApprove": [
+    { "match": "^powershell", "line": true, "subCommands": true },
+    { "match": "^.*\\.ps1$", "line": true, "subCommands": true },
+    { "match": "^.*run_validator\\.ps1$", "line": true, "subCommands": true },
+    { "match": "^.*post_restore_verification\\.ps1$", "line": true, "subCommands": true },
+    { "match": "^.*historical_stats_tracker\\.ps1$", "line": true, "subCommands": true }
+  ],
+
+  "files.associations": {
+    "*.yaml": "home-assistant",
+    "**/includes/**/*.yaml": "home-assistant",
+    "**/dashboards/**/*.yaml": "home-assistant"
+  },
+
+  "terminal.integrated.confirmOnExit": "never",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.shellArgs.windows": [],
+
+  "task.autoDetect": "on",
+  "task.allowAutomaticTasks": "on",
+
+  "github.copilot.advanced": {
+    "enableReadWorkspace": true,
+    "enableWriteWorkspace": true
+  },
+
+  "chat.experimental.useWholeFileContext": true,
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "never",
+    "source.organizeImports": "never"
+  },
+  "files.exclude": {
+    "**/*.md": true
+  },
+  "search.exclude": {
+    "**/*.md": true
+  },
+  "markdown.validate.enabled": false
+}

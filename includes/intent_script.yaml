@@ -1,0 +1,43 @@
+# Alexa Intent Script Configuration
+# This allows Alexa to trigger OpenAI queries via Home Assistant
+
+# Example: "Alexa, ask Home Assistant to query OpenAI about {question}"
+AskOpenAI:
+  speech:
+    text: "Sending your question to OpenAI."
+  action:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.openai_query
+      data:
+        value: "{{ question }}"
+    - service: script.query_openai
+    - delay: "00:00:03"
+    # Primary TTS target: lounge Alexa
+    - service: notify.alexa_media_lounge_alexa
+      data:
+        message: "{{ states('input_text.openai_response') | truncate(250) }}"
+        data:
+          type: tts
+      continue_on_error: true
+    # Fallback: use media_player.play_media if notify fails
+    - if:
+        - condition: template
+          value_template: "{{ states('input_text.openai_response') != 'Processing...' }}"
+      then:
+        - service: media_player.play_media
+          target:
+            entity_id: media_player.lounge_alexa
+          data:
+            media_content_id: "{{ states('input_text.openai_response') }}"
+            media_content_type: "tts"
+          continue_on_error: true
+
+# Simple query without voice response
+SimpleOpenAIQuery:
+  speech:
+    text: "Query sent to OpenAI."
+  action:
+    - service: script.query_openai
+      data:
+        query: "{{ question }}"

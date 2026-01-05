@@ -1,0 +1,6 @@
+# Frontend Health Monitoring Counter
+frontend_errors:
+  name: Frontend Errors
+  initial: 0
+  step: 1
+  icon: mdi:alert-circle-outline

@@ -1,0 +1,44 @@
+data_path: /config/zigbee2mqtt
+
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://core-mosquitto:1883
+  user: addons
+  password: oovoonaeGaoSahj1ahngi0zae8Eecaeyosh8Ajazooghub6cho8Kei7doong9iec
+
+serial:
+  port: /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_2080f95ee16bef1184cea1adc169b110-if00-port0
+  baudrate: 115200
+  rtscts: false
+  adapter: zstack
+
+advanced:
+  log_level: info
+  channel: 11
+  network_key:
+    - 87
+    - 190
+    - 199
+    - 179
+    - 215
+    - 25
+    - 97
+    - 28
+    - 196
+    - 21
+    - 88
+    - 11
+    - 218
+    - 114
+    - 177
+    - 178
+  pan_id: 60332
+  ext_pan_id:
+    - 181
+    - 96
+    - 25
+    - 99
+    - 7
+    - 197
+    - 23
+    - 156

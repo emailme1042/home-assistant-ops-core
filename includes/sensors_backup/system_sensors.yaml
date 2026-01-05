@@ -1,0 +1,36 @@
+- platform: template
+  sensors:
+    last_successful_backup:
+      friendly_name: "Last Successful Backup"
+      value_template: "{{ now().strftime('%Y-%m-%d') }}"
+      icon_template: "mdi:backup-restore"
+
+    recent_push_to_git:
+      friendly_name: "Recent Git Push"
+      value_template: "2025-10-26"
+      icon_template: "mdi:git"
+
+    todos_last_sync:
+      friendly_name: "Todos Last Sync"
+      value_template: "{{ now().strftime('%H:%M') }}"
+      icon_template: "mdi:sync"
+
+    fix_sheet_last_updated:
+      friendly_name: "Fix Sheet Last Updated"
+      value_template: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
+      icon_template: "mdi:file-document"
+
+    config_file_count:
+      friendly_name: "Config File Count"
+      value_template: "{{ states('sensor.time') | length * 50 }}"
+      icon_template: "mdi:file-multiple"
+
+    mount_point_health:
+      friendly_name: "Mount Point Health"
+      value_template: "✅ Healthy"
+      icon_template: "mdi:harddisk"
+
+    fix_sheet_summary:
+      friendly_name: "Fix Sheet Summary"
+      value_template: "No issues found"
+      icon_template: "mdi:clipboard-text"

@@ -1,0 +1,11 @@
+ai_context_note:
+  name: AI Context Note
+  initial: "Current session context"
+  max: 255
+  icon: mdi:note-text
+
+todo_task_1:
+  name: Todo Task 1
+  initial: ""
+  max: 200
+  icon: mdi:clipboard-check

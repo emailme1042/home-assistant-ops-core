@@ -1,0 +1,11 @@
+mqtt:
+  sensor:
+    - name: "Living Room Temp"
+      state_topic: "home/living_room/temperature"
+      unit_of_measurement: "°C"
+      device_class: temperature
+
+    - name: "Front Door Battery"
+      state_topic: "home/front_door/battery"
+      unit_of_measurement: "%"
+      device_class: battery

@@ -1,0 +1,35 @@
+- alias: Kitchen Blinds Open Morning (Gradual)
+  id: kitchen_blinds_open_morning_gradual
+  description: Opens kitchen blinds gradually after sunrise
+  trigger:
+    - platform: sun
+      event: sunrise
+  action:
+    - service: cover.set_cover_position
+      target:
+        entity_id: cover.kitchen_blinds
+      data:
+        position: 33
+    - delay: "01:00:00"
+    - service: cover.set_cover_position
+      target:
+        entity_id: cover.kitchen_blinds
+      data:
+        position: 66
+    - delay: "01:00:00"
+    - service: cover.open_cover
+      target:
+        entity_id: cover.kitchen_blinds
+  mode: single
+
+- alias: Kitchen Blinds Close Evening (Gradual)
+  id: kitchen_blinds_close_evening_gradual
+  description: Closes kitchen blinds gradually after sunset
+  trigger:
+    - platform: sun
+      event: sunset
+  action:
+    - service: cover.toggle_cover_tilt
+      target:
+        device_id: 2ed99c13f4d40d3fcecdd3983336c8a3
+  mode: single

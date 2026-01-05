@@ -1,0 +1,8 @@
+Argv: ['/config/python_scripts/chatgpt_user_reply.py', '']
+Prompt: 
+HA URL and token loaded from secrets.yaml
+OpenAI key loaded from secrets.yaml
+GPT reply (full): Hello! How can I assist you today?
+HA response code: 201
+HA response text: {"entity_id":"input_text.gpt_text_reply","state":"Hello! How can I assist you today?","attributes":{},"last_changed":"2025-11-03T23:10:47.887941+00:00","last_reported":"2025-11-03T23:10:47.887941+00:00","last_updated":"2025-11-03T23:10:47.887941+00:00","context":{"id":"01K95ZSH2F6K1KB0093GR5N6W4","parent_id":null,"user_id":"2e53d15d69eb4487a385b4aa45fb8712"}}
+Successfully wrote full reply to file.

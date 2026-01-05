@@ -1,0 +1,8 @@
+lovelace:
+  dashboards:
+    smarti-dashboard: # URL path with a hyphen
+      mode: yaml
+      title: "SMARTi Dashboard Basic"
+      filename: smartidashboards/smarti-dashboard-basic.yaml
+      show_in_sidebar: true
+      icon: mdi:tablet-dashboard

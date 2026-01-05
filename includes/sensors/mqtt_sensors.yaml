@@ -1,0 +1,172 @@
+ - platform: mqtt
+   name: "MQTT Test Sensor"
+   state_topic: "adsb/aircraft/heartbeat"
+
+ - platform: mqtt
+   name: "ADS-B Feed Alive"
+   state_topic: "adsb/aircraft/heartbeat"
+   payload_on: "alive"
+   payload_off: "dead"
+   unique_id: "adsb_feed_alive"
+
+ - platform: mqtt
+   name: "Health Monitor Status"
+   state_topic: "health/device/heartbeat"
+   unique_id: "health_monitor_status"
+
+
+#  #  hashed out until above works..
+# - platform: mqtt
+#   name: ADSB Heartbeat
+#   state_topic: adsb/aircraft/heartbeat
+# - platform: mqtt
+#   name: Last Aircraft Altitude
+#   state_topic: adsb/aircraft/N791AV
+#   value_template: '{{ value_json.alt_baro }}'
+#   unit_of_measurement: ft
+# - platform: mqtt
+#   name: Polar Plot 90 Distance
+#   state_topic: adsb/polarplot/90
+#   value_template: '{{ value_json.Distance }}'
+#   unit_of_measurement: nm
+# - platform: mqtt
+#   name: Aircraft AABB90 Altitude
+#   state_topic: adsb/aircraft/AABB90
+#   value_template: '{{ value_json.alt_baro }}'
+#   unit_of_measurement: ft
+# - platform: mqtt
+#   name: Aircraft Altitude
+#   state_topic: adsb/aircraft/40685C
+#   value_template: '{{ value_json.Alt }}'
+#   unit_of_measurement: ft
+# - platform: mqtt
+#   name: ADS-B Aircraft Count
+#   state_topic: adsb/aircraft/count
+#   value_template: '{{ value }}'
+#   unit_of_measurement: aircraft
+#   qos: 0
+# - platform: mqtt
+#   name: Aircraft PH-BXM Altitude
+#   state_topic: adsb/aircraft/PH-BXM/altitude
+#   value_template: '{{ value }}'
+#   unit_of_measurement: ft
+# - platform: mqtt
+#   name: Dump1090 Aircraft Count
+#   state_topic: dump1090/aircraft_count
+#   value_template: '{{ value_json.count }}'
+#   unit_of_measurement: planes
+#   icon: mdi:airplane
+#   unique_id: dump1090_aircraft_count
+# - platform: mqtt
+#   name: Aircraft Timestamp
+#   state_topic: dump1090/aircraft_count
+#   value_template: '{{ value_json.timestamp }}'
+#   icon: mdi:clock-outline
+#   unique_id: dump1090_aircraft_timestamp
+# - platform: mqtt
+#   name: Dump1090 Uptime
+#   state_topic: dump1090/uptime
+#   value_template: '{{ value }}'
+#   unit_of_measurement: hours
+#   icon: mdi:clock-outline
+#   unique_id: dump1090_uptime
+# - platform: mqtt
+#   name: Dump1090 CPU Load
+#   state_topic: dump1090/cpu_load
+#   value_template: '{{ value }}'
+#   unit_of_measurement: '%'
+#   icon: mdi:cpu-64-bit
+#   unique_id: dump1090_cpu_load
+# - platform: mqtt
+#   name: Dump1090 Memory Usage
+#   state_topic: dump1090/memory
+#   value_template: '{{ value }}'
+#   unit_of_measurement: MB
+#   icon: mdi:memory
+#   unique_id: dump1090_memory
+# - platform: mqtt
+#   name: Dump1090 Temperature
+#   state_topic: dump1090/temperature
+#   value_template: '{{ value }}'
+#   unit_of_measurement: "\xB0C"
+#   icon: mdi:thermometer
+#   unique_id: dump1090_temperature
+# - platform: mqtt
+#   name: Dump1090 Status
+#   state_topic: dump1090/status
+#   value_template: '{{ value }}'
+#   icon: mdi:airplane-alert
+#   unique_id: dump1090_status
+# - platform: mqtt
+#   name: Fallback Trigger
+#   state_topic: system/fallback_trigger
+#   value_template: '{{ value }}'
+#   icon: mdi:restart-alert
+#   unique_id: system_fallback_trigger
+# - platform: mqtt
+#   name: Dump1090 Flight
+#   state_topic: dump1090/flight
+#   value_template: '{{ value }}'
+#   icon: mdi:airplane-takeoff
+#   unique_id: dump1090_flight
+# - platform: mqtt
+#   name: Dump1090 ICAO
+#   state_topic: dump1090/icao
+#   value_template: '{{ value }}'
+#   icon: mdi:identifier
+#   unique_id: dump1090_icao
+# - platform: mqtt
+#   name: Dump1090 Emergency
+#   state_topic: dump1090/emergency
+#   value_template: '{{ value }}'
+#   icon: mdi:alert
+#   unique_id: dump1090_emergency
+# - platform: mqtt
+#   name: Dump1090 Signal Level
+#   state_topic: dump1090/signal_level
+#   value_template: '{{ value }}'
+#   unit_of_measurement: dB
+#   icon: mdi:signal
+#   unique_id: dump1090_signal_level
+# - platform: mqtt
+#   name: Dump1090 Noise Level
+#   state_topic: dump1090/noise_level
+#   value_template: '{{ value }}'
+#   unit_of_measurement: dB
+#   icon: mdi:signal-variant
+#   unique_id: dump1090_noise_level
+# - platform: mqtt
+#   name: Dump1090 Messages Seen
+#   state_topic: dump1090/messages_seen
+#   value_template: '{{ value }}'
+#   unit_of_measurement: msgs
+#   icon: mdi:message-text-outline
+#   unique_id: dump1090_messages_seen
+# - platform: mqtt
+#   name: Dump1090 Messages Lost
+#   state_topic: dump1090/messages_lost
+#   value_template: '{{ value }}'
+#   unit_of_measurement: msgs
+#   icon: mdi:message-bulleted-off
+#   unique_id: dump1090_messages_lost
+# - platform: mqtt
+#   name: Dump1090 Messages Rejected
+#   state_topic: dump1090/messages_rejected
+#   value_template: '{{ value }}'
+#   unit_of_measurement: msgs
+#   icon: mdi:message-bulleted-off-outline
+#   unique_id: dump1090_messages_rejected
+# - platform: mqtt
+#   name: Dump1090 CPU Temp
+#   state_topic: dump1090/cpu_temp
+#   value_template: '{{ value }}'
+#   unit_of_measurement: "\xB0C"
+#   icon: mdi:thermometer
+#   unique_id: dump1090_cpu_temp
+# - platform: mqtt
+#   name: Dump1090 TCP Connections
+#   state_topic: dump1090/tcp_connections
+#   value_template: '{{ value }}'
+#   unit_of_measurement: conns
+#   icon: mdi:ethernet
+#   unique_id: dump1090_tcp_connections

@@ -1,0 +1,6 @@
+kodi_prompt_ready:
+  name: Kodi Prompt Ready
+  icon: mdi:gesture-tap-hold
+kodi_tts_enabled:
+  name: Enable Kodi TTS
+  icon: mdi:speaker

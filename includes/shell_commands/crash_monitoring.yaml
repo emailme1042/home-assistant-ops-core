@@ -1,0 +1,14 @@
+log_crash_context: >
+  echo "$(date '+%Y-%m-%d %H:%M:%S') — Dashboard: Unknown | Card: {{ states('sensor.last_card_loaded') }} | Automations: {{ expand('automation.*') | selectattr('state', 'equalto', 'on') | list | length }} | Frontend Errors: {{ states('input_number.frontend_errors') }} | Memory: {{ state_attr('sensor.ha_crash_sentinel', 'memory_usage') }} | CPU: {{ state_attr('sensor.ha_crash_sentinel', 'cpu_usage') }} | Vertical Layout: {{ states('sensor.vertical_layout_tracker') }}" >> /config/www/crash_trap_log.txt
+
+emergency_crash_log: >
+  echo "$(date '+%Y-%m-%d %H:%M:%S') — 🚨 EMERGENCY LOG: Frontend errors spiked to {{ states('input_number.frontend_errors') }} — Card: {{ states('sensor.last_card_loaded') }} — Layout Status: {{ states('sensor.vertical_layout_tracker') }} — Risk: {{ state_attr('sensor.crash_context_summary', 'crash_risk_level') }} — Action: {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}" >> /config/www/crash_trap_log.txt
+
+view_crash_log: >
+  if [ -f '/config/www/crash_trap_log.txt' ]; then tail -10 '/config/www/crash_trap_log.txt'; else echo 'No crash log found'; fi
+
+clear_crash_log: >
+  if [ -f '/config/www/crash_trap_log.txt' ]; then rm '/config/www/crash_trap_log.txt'; echo 'Crash log cleared'; else echo 'No crash log to clear'; fi
+
+archive_crash_log: >
+  if [ -f '/config/www/crash_trap_log.txt' ]; then cp '/config/www/crash_trap_log.txt' "/config/www/crash_trap_log_$(date '+%Y%m%d_%H%M%S').txt"; echo 'Crash log archived'; else echo 'No crash log to archive'; fi

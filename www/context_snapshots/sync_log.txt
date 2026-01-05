@@ -1,0 +1,5 @@
+Error copying /home/emailadmin/HA_Samba-Repo/python_scripts/compare_git_ha.py: [Errno 13] Permission denied: '/mnt/s/python_scripts/compare_git_ha.py'
+Error copying /home/emailadmin/HA_Samba-Repo/python_scripts/sync_ha_bidirectional.py: [Errno 13] Permission denied: '/mnt/s/python_scripts/sync_ha_bidirectional.py'
+Error copying /home/emailadmin/HA_Samba-Repo/python_scripts/.git/index: [Errno 13] Permission denied: '/mnt/s/python_scripts/.git/index'✅ HA→LIVE sync complete. 0 actions logged to /home/emailadmin/sync_ha_to_live_20250816_180001.txt
+✅ HA→LIVE sync complete. 0 actions logged to /home/emailadmin/sync_ha_to_live_20250816_180001.txt
+✅ HA→LIVE sync complete. 0 actions logged to /home/emailadmin/sync_ha_to_live_20250816_180501.txt

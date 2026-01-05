@@ -1,0 +1,36 @@
+
+  - platform: rest
+    name: "NJET ADS-B Status"
+    resource: https://api.adsb.lol/v2/reg/NJET
+    scan_interval: 120
+    timeout: 10
+    value_template: "{{ 'Online' if value_json.total != 0 else 'Offline' }}"
+    unique_id: "njet_adsb_status"
+
+  - platform: rest
+    name: "NJET ADS-B Data"
+    resource: https://api.adsb.lol/v2/reg/NJET
+    scan_interval: 120
+    timeout: 10
+    value_template: "{{ value_json.ac[0].flight if value_json.ac|length > 0 else 'Unknown' }}"
+    unique_id: "njet_adsb_data"
+    json_attributes_path: "$.ac[0]"
+    json_attributes:
+      - flight
+      - squawk
+      - emergency
+      - lat
+      - lon
+      - alt_baro
+      - track
+      - gs
+
+  - platform: rest
+    name: "VirtualRadar Feed"
+    resource: http://127.0.0.1:8081/VirtualRadar/AircraftList.json
+    scan_interval: 15
+    value_template: "{{ value_json.totalAircraft }}"
+    json_attributes:
+      - aircraft
+
+

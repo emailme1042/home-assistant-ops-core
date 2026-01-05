@@ -1,0 +1,15 @@
+teddy_cube:
+  module: controllerx
+  class: AqaraCubeController
+  controller: sensor.teddy_cube  
+  integration: z2m
+  mapping:
+    shake: script.teddy_lights_on
+    flip_to_side_1: script.set_color_red
+    flip_to_side_2: script.set_color_blue
+    flip_to_side_3: script.set_color_green
+    flip_to_side_4: script.set_color_yellow
+    flip_to_side_5: switch.toggle
+    flip_to_side_6: script.teddy_scene_xbox
+    rotate_left: script.dim_lights
+    rotate_right: script.brighten_lights

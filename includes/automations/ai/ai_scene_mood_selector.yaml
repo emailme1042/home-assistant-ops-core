@@ -1,0 +1,145 @@
+# 🌈 AI Scene Mood Selector Blueprint
+# Version: 2025.11.01 | Verified for HA Core ≥2025.10.4
+# Description: Dynamically selects and activates lighting scenes or playlists based on weather, time, and occupancy.
+
+blueprint:
+  name: AI Scene Mood Selector
+  description: >
+    Dynamically sets mood lighting and media playlists based on context.
+    Integrates with AI Workspace sync and performance sensors for adaptive mood automation.
+  domain: automation
+  source_url: https://community.home-assistant.io/t/awesome-ha-blueprints/256687
+  input:
+    person_entities:
+      name: Persons to Track
+      selector:
+        target:
+          entity:
+            domain: person
+    weather_entity:
+      name: Weather Source
+      selector:
+        entity:
+          domain: weather
+    ai_sync_sensor:
+      name: AI Workspace Sync Sensor
+      default: sensor.ha_sync_status
+      selector:
+        entity:
+          domain: sensor
+    light_targets:
+      name: Lights to Control
+      selector:
+        target:
+          entity:
+            domain: light
+    media_player:
+      name: Media Player (Optional)
+      selector:
+        entity:
+          domain: media_player
+    mood_scenes:
+      name: Scene Map (Define Custom Moods)
+      description: >
+        Map moods to scenes — e.g. morning, focus, relax, stormy.
+      selector:
+        object: {}
+    playlists:
+      name: Playlist Map (Optional)
+      description: >
+        Optional mapping of moods to playlists.
+      selector:
+        object: {}
+    notify_target:
+      name: Notification Target (Optional)
+      selector:
+        target:
+          entity:
+            domain: notify
+
+# ───────────────────────────────
+# 🧭 CONTEXT TRIGGERS
+# ───────────────────────────────
+automation:
+  - id: ai_scene_mood_selector
+    alias: AI Scene Mood Selector
+    trigger:
+      - platform: time_pattern
+        minutes: "/30"        # Check every 30 minutes
+      - platform: state
+        entity_id: "{{ weather_entity }}"
+      - platform: state
+        entity_id: "{{ person_entities }}"
+        to: "home"
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: "{{ ai_sync_sensor }}"
+            state: "✅ Synced"
+          - condition: state
+            entity_id: "{{ ai_sync_sensor }}"
+            state: "⚠️ Pending"
+      - condition: state
+        entity_id: group.all_persons
+        state: "home"
+
+# ───────────────────────────────
+# 🎨 CONTEXT LOGIC + ACTIONS
+# ───────────────────────────────
+    action:
+      - variables:
+          weather: "{{ states(weather_entity) }}"
+          time: "{{ now().hour }}"
+          sync: "{{ states(ai_sync_sensor) }}"
+          mood: >-
+            {% if time >= 6 and time < 10 %}
+              morning
+            {% elif time >= 10 and time < 18 %}
+              focus
+            {% elif time >= 18 and time < 22 %}
+              relax
+            {% elif weather in ['rainy', 'cloudy', 'stormy'] %}
+              stormy
+            {% else %}
+              night
+            {% endif %}
+      - service: scene.turn_on
+        target:
+          entity_id: "{{ mood_scenes[mood] | default('scene.default_relax') }}"
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ media_player is defined and playlists[mood] is defined }}"
+            sequence:
+              - service: media_player.play_media
+                target:
+                  entity_id: "{{ media_player }}"
+                data:
+                  media_content_id: "{{ playlists[mood] }}"
+                  media_content_type: "music"
+      - service: notify.send_message
+        target: "{{ notify_target }}"
+        data:
+          title: "🎨 Mood Update"
+          message: >
+            Mood: {{ mood | capitalize }} |
+            Weather: {{ weather }} |
+            Sync: {{ sync }}
+
+# ───────────────────────────────
+# 🧠 LOGGING
+# ───────────────────────────────
+  - id: ai_mood_logging
+    alias: AI Mood Log Entry
+    trigger:
+      - platform: event
+        event_type: automation_triggered
+        event_data:
+          name: AI Scene Mood Selector
+    action:
+      - service: persistent_notification.create
+        data:
+          title: "🧠 Mood Selection Logged"
+          message: >
+            {{ now().strftime('%H:%M') }} — mood set via AI Scene Mood Selector.

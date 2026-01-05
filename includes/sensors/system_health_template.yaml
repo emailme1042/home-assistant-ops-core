@@ -1,0 +1,13 @@
+
+# DISABLED FOR PERFORMANCE - System health template sensors causing high CPU load
+# template:
+#   - sensor:
+#       - name: "HA Total Automations"
+#         state: >
+#           {{ expand('automation.*') | list | length }}
+#         icon: mdi:robot
+
+#       - name: "HA Total Scripts"
+#         state: >
+#           {{ states.script | list | length }}
+#         icon: mdi:script-text

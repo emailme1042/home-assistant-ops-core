@@ -1,0 +1,56 @@
+# Restart Safety Score Template Sensor
+- platform: template
+  sensors:
+    restart_safety_score:
+      friendly_name: "Restart Safety Score"
+      value_template: >
+        {% set base_score = 100 %}
+        {% set config_errors = states('sensor.yaml_validation_errors') | int(0) %}
+        {% set missing_integrations = states('sensor.missing_integrations_count') | int(0) %}
+        {% set disabled_automations = states('sensor.disabled_automations_count') | int(0) %}
+        {% set unavailable_entities = states('sensor.unavailable_entities_count') | int(0) %}
+        {% set critical_automations_down = ['automation.multi_agent_message_router', 'automation.onenote_file_watcher', 'automation.system_stability_monitor'] | select('is_state', 'off') | list | length %}
+        {% set penalty = (config_errors * 15) + (missing_integrations * 10) + (disabled_automations * 5) + (unavailable_entities * 0.1) + (critical_automations_down * 20) %}
+        {% set final_score = base_score - penalty %}
+        {{ [final_score, 0] | max | round(1) }}
+      unit_of_measurement: "%"
+      attribute_templates:
+        score_breakdown: >
+          {{
+            {
+              "base_score": 100,
+              "config_errors": states('sensor.yaml_validation_errors') | int(0),
+              "missing_integrations": states('sensor.missing_integrations_count') | int(0),
+              "disabled_automations": states('sensor.disabled_automations_count') | int(0),
+              "unavailable_entities": states('sensor.unavailable_entities_count') | int(0),
+              "critical_automations_down": ['automation.multi_agent_message_router', 'automation.onenote_file_watcher', 'automation.system_stability_monitor'] | select('is_state', 'off') | list | length
+            }
+          }}
+        safety_level: >
+          {% set score = states('sensor.restart_safety_score') | int(0) %}
+          {% if score >= 90 %}Excellent
+          {% elif score >= 80 %}Good
+          {% elif score >= 70 %}Fair
+          {% elif score >= 60 %}Poor
+          {% elif score >= 40 %}Critical
+          {% else %}Emergency
+          {% endif %}
+        last_updated: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+        recommendations: >
+          {% set score = states('sensor.restart_safety_score') | int(0) %}
+          {% if score >= 90 %}✅ System ready for restart
+          {% elif score >= 80 %}⚠️ Minor issues - restart safe with monitoring
+          {% elif score >= 70 %}🔶 Some issues detected - review before restart
+          {% elif score >= 60 %}🔴 Multiple issues - fix before restart
+          {% elif score >= 40 %}🚨 Critical issues - do not restart
+          {% else %}☢️ Emergency state - immediate attention required
+          {% endif %}
+      icon_template: >
+        {% set score = states('sensor.restart_safety_score') | int(0) %}
+        {% if score >= 90 %}mdi:shield-check
+        {% elif score >= 80 %}mdi:shield
+        {% elif score >= 70 %}mdi:shield-alert
+        {% elif score >= 60 %}mdi:shield-remove
+        {% elif score >= 40 %}mdi:shield-off
+        {% else %}mdi:shield-off-outline
+        {% endif %}

@@ -1,0 +1,204 @@
+# AI-Powered Dashboard Audit Automations
+# Intelligent monitoring, alerts, and weekly digest system
+# Only sends notifications when action is needed
+
+# Real-time dashboard health monitoring
+- id: ai_dashboard_health_monitor
+  alias: "🧠 AI Dashboard Health Monitor"
+  description: "Monitors dashboard complexity and errors, sends alerts only when needed"
+  trigger:
+    # Check every 30 minutes during active hours
+    - platform: time_pattern
+      minutes: "/30"
+  condition:
+    # Only run during reasonable hours (8 AM to 10 PM)
+    - condition: time
+      after: "08:00:00"
+      before: "22:00:00"
+    # Only alert if there are actual issues
+    - condition: or
+      conditions:
+        - condition: numeric_state
+          entity_id: input_number.frontend_errors
+          above: 5
+        - condition: numeric_state
+          entity_id: sensor.dashboard_complexity_score_ai_workspace
+          above: 150
+        - condition: numeric_state
+          entity_id: sensor.dashboard_complexity_score_system_overview
+          above: 150
+  action:
+    # Run the audit script
+    - service: shell_command.dashboard_complexity_audit
+    # Wait for analysis to complete
+    - delay: "00:00:10"
+    # Send intelligent notification
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Dashboard health alert: {{ states('sensor.dashboard_optimization_tip') }}
+    # Log the alert
+    - service: logbook.log
+      data:
+        name: "Dashboard Health Monitor"
+        message: "Alert sent: {{ states('sensor.dashboard_optimization_tip') }}"
+
+# Weekly AI audit digest
+- id: weekly_ai_audit_digest
+  alias: "📊 Weekly AI Audit Digest"
+  description: "Comprehensive weekly dashboard analysis and optimization report"
+  trigger:
+    # Every Sunday at 8 AM
+    - platform: time
+      at: "08:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - sun
+  action:
+    # Run comprehensive weekly audit
+    - service: shell_command.dashboard_weekly_audit
+    # Wait for analysis to complete
+    - delay: "00:00:15"
+    # Send weekly summary
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Weekly dashboard audit complete. {{ states('sensor.weekly_audit_summary') }}
+          Performance grade: {{ states('sensor.dashboard_performance_grade') }}.
+          {{ state_attr('sensor.weekly_audit_summary', 'recommendation_count') }} recommendations available.
+    # Log weekly audit
+    - service: logbook.log
+      data:
+        name: "Weekly AI Audit"
+        message: >
+          Weekly audit completed. Grade: {{ states('sensor.dashboard_performance_grade') }}
+          Status: {{ states('sensor.weekly_audit_summary') }}
+
+# Critical error threshold alert
+- id: dashboard_critical_error_alert
+  alias: "🚨 Dashboard Critical Error Alert"
+  description: "Immediate alert for critical dashboard errors requiring urgent attention"
+  trigger:
+    - platform: numeric_state
+      entity_id: input_number.frontend_errors
+      above: 15
+  condition:
+    # Only during active hours for critical alerts
+    - condition: time
+      after: "07:00:00"
+      before: "23:00:00"
+  action:
+    # Immediate critical alert
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Critical dashboard alert! {{ states('input_number.frontend_errors') }} frontend errors detected.
+          Immediate system review required. Check Recovery Dashboard Analytics.
+    # Run emergency audit
+    - service: shell_command.dashboard_complexity_audit
+    # Log critical event
+    - service: logbook.log
+      data:
+        name: "Critical Dashboard Alert"
+        message: "CRITICAL: {{ states('input_number.frontend_errors') }} frontend errors require immediate attention"
+        level: error
+
+# Performance grade improvement celebration
+- id: dashboard_performance_improvement
+  alias: "🎉 Dashboard Performance Improvement"
+  description: "Celebrates when dashboard performance improves to excellent grade"
+  trigger:
+    - platform: state
+      entity_id: sensor.dashboard_performance_grade
+      to: "A+"
+  condition:
+    # Only celebrate if it wasn't A+ before
+    - condition: template
+      value_template: "{{ trigger.from_state.state != 'A+' }}"
+  action:
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Excellent news! Dashboard performance has improved to A+ grade.
+          System is now optimally configured with minimal complexity.
+    - service: notify.mobile_app_plop
+      data:
+        message: "Excellent news! Dashboard performance has improved to A+ grade. System is now optimally configured with minimal complexity."
+    - service: logbook.log
+      data:
+        name: "Dashboard Performance"
+        message: "Performance grade improved to A+ - celebrating achievement! Dashboard performance improved to A+ grade - excellent optimization!"
+
+# Audit freshness monitor
+- id: audit_freshness_monitor
+  alias: "⏰ Audit Freshness Monitor"
+  description: "Ensures audit system is running and logs are current"
+  trigger:
+    # Check twice daily
+    - platform: time
+      at: 
+        - "09:00:00"
+        - "18:00:00"
+  condition:
+    # Only alert if audit is stale
+    - condition: state
+      entity_id: sensor.dashboard_audit_freshness
+      state: "Stale"
+  action:
+    # Try to run audit to refresh
+    - service: shell_command.dashboard_complexity_audit
+    # Wait and check again
+    - delay: "00:00:30"
+    # Alert if still stale
+    - condition: state
+      entity_id: sensor.dashboard_audit_freshness
+      state: "Stale"
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Dashboard audit system appears stale. Manual intervention may be required.
+          Check AI Workspace Scripts directory.
+    - service: logbook.log
+      data:
+        name: "Audit System Health"
+        message: "Dashboard audit system requires attention - logs are stale"
+
+# Smart optimization reminder (Fixed)
+- id: dashboard_optimization_reminder
+  alias: "💡 Smart Dashboard Optimization Reminder"
+  description: "Gentle reminder to optimize dashboards when consistently showing issues"
+  trigger:
+    # Check weekly on Wednesday (mid-week optimization opportunity)
+    - platform: time
+      at: "10:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - wed
+    # Only remind if there are persistent issues (moved for: to trigger or removed)
+    - condition: or
+      conditions:
+        - condition: numeric_state
+          entity_id: input_number.frontend_errors
+          above: 3
+          # Note: for: removed - duration tracking should be in trigger or template sensor
+        - condition: state
+          entity_id: sensor.dashboard_performance_grade
+          state: "C"
+          # Note: for: removed - duration tracking should be in trigger or template sensor
+        - condition: state
+          entity_id: sensor.dashboard_performance_grade
+          state: "D"
+          # Note: for: removed - duration tracking should be in trigger or template sensor
+  action:
+    - service: script.mobile_alexa_announce
+      data:
+        message: >
+          Friendly optimization reminder: {{ states('sensor.dashboard_optimization_tip') }}
+          Current grade: {{ states('sensor.dashboard_performance_grade') }}.
+          Consider reviewing the Recovery Dashboard Analytics.
+    - service: logbook.log
+      data:
+        name: "Optimization Reminder"
+        message: "Weekly optimization reminder sent based on persistent performance issues"

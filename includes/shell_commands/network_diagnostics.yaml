@@ -1,0 +1,26 @@
+# Network Diagnostic Shell Commands
+# Fixed based on CP feedback for Home Assistant OS/BusyBox compatibility
+
+# Test command to verify shell command loading
+test_direct_ping: >
+  ping -c 2 8.8.8.8
+
+# Basic network connectivity test (improved per CP)
+test_network: >
+  ping -c 4 8.8.8.8 && ping -c 4 192.168.1.1
+
+# DNS cache management (BusyBox compatible)
+clear_dns_cache: >
+  echo "DNS cache flush not available in HA OS - network info:" && ip addr show | head -10
+
+# Network interface check (fixed syntax per CP)
+network_interface_check: >
+  ip addr show && echo "--- Routes ---" && ip route
+
+# Network performance check
+check_network_performance: >
+  ping -c 4 8.8.8.8 && echo "Network connectivity: OK" || echo "Network connectivity: FAILED"
+
+# Flask service health check
+check_flask_status: >
+  curl -s -o /dev/null -w "%{http_code}" http://localhost:5006/run_gpt

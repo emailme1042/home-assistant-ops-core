@@ -1,0 +1,51 @@
+# System Triage Template Sensors
+# Purpose: Provide missing sensors for system triage dashboard
+
+- sensor:
+  - name: "Automations Off Count"
+    unique_id: sensor_automations_off_count
+    state: >
+      {{ expand('automation.*') | selectattr('state','equalto','off') | list | count }}
+    unit_of_measurement: "automations"
+    icon: mdi:robot-off
+
+  - name: "Automations Total Count"
+    unique_id: sensor_automations_total_count
+    state: >
+      {{ expand('automation.*') | list | count }}
+    unit_of_measurement: "automations"
+    icon: mdi:robot
+
+  - name: "Processor Use"
+    unique_id: sensor_processor_use_compat
+    state: >
+      {{ states('sensor.home_assistant_core_cpu_percent') | float(0) }}
+    unit_of_measurement: "%"
+    device_class: power_factor
+    icon: mdi:cpu-64-bit
+
+  - name: "Memory Use Percent"
+    unique_id: sensor_memory_use_percent_compat
+    state: >
+      {{ states('sensor.home_assistant_core_memory_percent') | float(0) }}
+    unit_of_measurement: "%"
+    device_class: power_factor
+    icon: mdi:memory
+
+  - name: "Time"
+    unique_id: sensor_time_compat
+    state: >
+      {{ now().strftime('%H:%M') }}
+    icon: mdi:clock
+
+  - name: "Date"
+    unique_id: sensor_date_compat
+    state: >
+      {{ now().strftime('%Y-%m-%d') }}
+    icon: mdi:calendar
+
+  - name: "Home Assistant Core Version"
+    unique_id: sensor_home_assistant_core_version_compat
+    state: >
+      {{ states('sensor.current_version') | default('2025.10.4', true) }}
+    icon: mdi:home-assistant

@@ -1,0 +1,45 @@
+2025-11-01 11:09:12.225 [info] [GitExtensionServiceImpl] Initializing Git extension service.
+2025-11-01 11:09:12.441 [error] Copilot extension not found
+2025-11-01 11:09:12.441 [warning] Copilot API is undefined, unable to register context provider.
+2025-11-01 11:09:12.640 [info] Logged in as emailme1042
+2025-11-01 11:09:12.643 [info] Using the Electron fetcher.
+2025-11-01 11:09:12.684 [info] [GitExtensionServiceImpl] Successfully activated the vscode.git extension.
+2025-11-01 11:09:12.685 [info] [GitExtensionServiceImpl] Enablement state of the vscode.git extension: false.
+2025-11-01 11:09:13.002 [info] Got Copilot token for emailme1042
+2025-11-01 11:09:13.002 [info] Copilot Chat: 0.32.4, VS Code: 1.105.1
+2025-11-01 11:09:13.009 [info] activationBlocker from 'languageModelAccess' took for 648ms
+2025-11-01 11:09:13.085 [info] copilot token chat_enabled: true, sku: trial_30_monthly_subscriber_quota
+2025-11-01 11:09:13.085 [info] GitHub.vscode-pull-request-github extension is not yet activated.
+2025-11-01 11:09:13.101 [info] Registering default platform agent...
+2025-11-01 11:09:13.102 [info] activationBlocker from 'conversationFeature' took for 748ms
+2025-11-01 11:09:13.124 [info] BYOK: Copilot Chat known models list fetched successfully.
+2025-11-01 11:09:13.378 [info] Fetched model metadata in 251ms 19c0aa04-130a-463d-90fc-017d44627ea0
+2025-11-01 11:09:13.465 [info] Latest entry: ccreq:latest.copilotmd
+2025-11-01 11:09:13.466 [info] ccreq:b124b16b.copilotmd | markdown
+2025-11-01 11:09:13.568 [info] Fetched auto model in 101ms.
+2025-11-01 11:09:43.671 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:09:43.671 [info] request done: requestId: [6d504f34-21fa-44e8-a0d0-f68868baa84a] model deployment ID: []
+2025-11-01 11:09:43.672 [info] ccreq:6a7c91b5.copilotmd | success | gpt-4.1 | 4544ms | [panel/editAgent]
+2025-11-01 11:13:36.766 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:13:36.766 [info] request done: requestId: [f4f413a1-03ac-498a-bab4-03dc232a1592] model deployment ID: []
+2025-11-01 11:13:36.768 [info] ccreq:5b5bf9c3.copilotmd | success | gpt-4.1 | 3998ms | [panel/editAgent]
+2025-11-01 11:14:39.760 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:14:39.760 [info] request done: requestId: [7911454f-c04c-4ffe-9184-cfd48274d64c] model deployment ID: []
+2025-11-01 11:14:39.761 [info] ccreq:b3e7986c.copilotmd | success | gpt-4.1 | 4052ms | [panel/editAgent]
+2025-11-01 11:15:44.274 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:15:44.274 [info] request done: requestId: [fccd1705-0179-4922-b5fb-d0fd836893d8] model deployment ID: []
+2025-11-01 11:15:44.275 [info] ccreq:25604830.copilotmd | success | gpt-4.1 | 3461ms | [panel/editAgent]
+2025-11-01 11:16:45.402 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:16:45.403 [info] request done: requestId: [23cbcfdb-3f66-4bb5-8fe6-266f3adfcadd] model deployment ID: []
+2025-11-01 11:16:45.404 [info] ccreq:47815b1d.copilotmd | success | gpt-4.1 | 4464ms | [panel/editAgent]
+2025-11-01 11:17:14.319 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:17:14.319 [info] request done: requestId: [af451463-87a2-4094-917f-41169d5636fc] model deployment ID: []
+2025-11-01 11:17:14.320 [info] ccreq:df1325e7.copilotmd | success | gpt-4.1 | 3090ms | [panel/editAgent]
+2025-11-01 11:20:43.106 [info] Fetched model metadata in 426ms bb1e4a1b-29c1-462d-a352-92fdb730bbf3
+2025-11-01 11:20:43.190 [info] ccreq:ef73bb96.copilotmd | markdown
+2025-11-01 11:20:46.135 [info] message 0 returned. finish reason: [tool_calls]
+2025-11-01 11:20:46.136 [info] request done: requestId: [11612037-bdf7-47b1-82f0-ae80348e7fdd] model deployment ID: []
+2025-11-01 11:20:46.137 [info] ccreq:a262a0d3.copilotmd | success | gpt-4.1 | 2647ms | [panel/editAgent]
+2025-11-01 11:20:51.563 [info] message 0 returned. finish reason: [stop]
+2025-11-01 11:20:51.563 [info] request done: requestId: [11612037-bdf7-47b1-82f0-ae80348e7fdd] model deployment ID: []
+2025-11-01 11:20:51.564 [info] ccreq:e29da1bb.copilotmd | success | gpt-4.1 | 5124ms | [panel/editAgent]

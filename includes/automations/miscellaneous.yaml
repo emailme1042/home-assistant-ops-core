@@ -1,0 +1,28 @@
+- alias: Update Notion Icon When Hall Light Turns Off
+  id: update_notion_icon_when_hall_light_turns_off
+  trigger:
+    - platform: state
+      entity_id: light.hall
+      to: 'off'
+  condition:
+    - condition: state
+      entity_id: light.wiz_rgbw_tunable_2609a6
+      state: 'off'
+    - condition: state
+      entity_id: light.wiz_rgbw_tunable_2606be
+      state: 'off'
+  action:
+    - service: rest_command.update_notion_icon
+
+- alias: Disable noisy entity logging
+  id: disable_noisy_entity_logging
+  trigger:
+    - platform: time
+      at: "03:00:00"
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id:
+          - sensor.brown_lamp_signal_level
+          - sensor.reading_lamp_cloud_status
+

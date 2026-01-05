@@ -1,0 +1,411 @@
+###### INPUT BUTTON #################################################
+input_button:
+  ###### SETTINGS RELATED #################################
+  smarti_update_power_measurement_devices:
+    name: Update Power Measurement Devices
+    icon: mdi:update
+
+###### INPUT TEXT #################################################
+input_text:
+  ###### SETTING RELATED ################################
+  smarti_dynamic_power_sensor_storage:
+    name: "Dynamic Power Sensor Storage"
+
+  smarti_frequency_storage:
+    name: "Frequency Selection Storage"
+
+  smarti_phases_storage:
+    name: "Phases Selection Storage"
+
+  smarti_ain_fuse_storage:
+    name: "Main Fuse Selection Storage"
+
+  smarti_voltage_level_storage:
+    name: "Voltage_Level_Storage"
+
+input_number:
+  smarti_max_power_limit:
+    name: Max Power Limit
+    min: 0
+    max: 100000
+    step: 1
+    unit_of_measurement: W
+    icon: mdi:flash
+    mode: box
+
+input_select:    
+  ###### SETTINGS RELATED #################################
+  smarti_main_fuse_size:
+    name: Main Fuse Size
+    options:
+      - 10A
+      - 15A
+      - 20A
+      - 25A
+      - 32A
+      - 40A
+      - 50A
+      - 60A
+
+  smarti_phases_selection:
+    name: Phases Selection
+    options:
+      - One Phase
+      - Three Phase
+
+  smarti_voltage_level:
+    name: Voltage Level
+    options:
+      - 100V
+      - 110V
+      - 115V
+      - 120V
+      - 127V
+      - 220V
+      - 230V
+      - 240V
+      - 400V
+    icon: mdi:flash
+
+  smarti_frequency_hz:
+    name: Frequency (Hz)
+    options:
+      - 50Hz
+      - 60Hz
+    icon: mdi:current-ac
+
+  smarti_home_power_measurement_device:
+    name: Home Power Measurement Device
+    options:
+      - None
+    icon: mdi:flash
+
+
+################################### UTILITY METERS ###################################
+
+utility_meter:
+  hourly_energy_usage:
+    source: sensor.smarti_hourly_energy_consumed_fixed
+    cycle: hourly
+
+################################### TEMPLATES ###################################
+
+template:
+  - binary_sensor:
+      - name: "Smarti Shell Protection"
+        unique_id: "smarti_shell_protection"
+        state: >-
+          {% set doors = states('sensor.smarti_active_doors')|int %}
+          {% set windows = states('sensor.smarti_active_windows')|int %}
+          {% if doors == 0 and windows == 0 %}
+            on
+          {% else %}
+            off
+          {% endif %}
+        icon: >-
+          {% set doors = states('sensor.smarti_active_doors')|int %}
+          {% set windows = states('sensor.smarti_active_windows')|int %}
+          {% if doors == 0 and windows == 0 %}
+            mdi:shield-check
+          {% else %}
+            mdi:shield-alert
+          {% endif %}
+
+  - sensor:
+
+      ###### DAHSBOARD SETUP RELATED #################################
+      - name: "Browser Mod Installed"
+        state: "{{ states.sensor | selectattr('entity_id', 'search', '^sensor.browser_mod_') | list | count > 0 }}"  
+        
+      ###### GRID FEE RELATED #################################
+      - name: "smarti_hourly_energy_consumed_fixed"
+        unique_id: hourly_energy_consumed_fixed
+        state: "{{ states('sensor.smarti_hourly_energy_consumed') | float(0) }}"
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing  
+
+      - name: "SMARTi Dynamic Power (kW)"
+        unique_id: dynamic_power_kw
+        unit_of_measurement: "kW"
+        icon: mdi:flash
+        state: >
+          {% set power_watts = states('sensor.smarti_dynamic_power_sensor') | float(0) %}
+          {{ (power_watts / 1000) | round(3) }}
+
+      ###### DYNAMIC POWER SENSOR RELATED #################################
+      - name: "smarti_available_power_sensors_part1"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[0:5] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part2"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[5:10] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part3"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[10:15] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part4"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[15:20] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part5"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[20:25] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part6"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[25:30] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part7"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[30:35] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part8"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[35:40] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part9"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[40:45] | join(', ') }}
+
+      - name: "smarti_available_power_sensors_part10"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[45:50] | join(', ') }} 
+
+      - name: "smarti_available_power_sensors_part11"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[50:55] | join(', ') }}  
+
+      - name: "smarti_available_power_sensors_part12"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[55:60] | join(', ') }}   
+
+      - name: "smarti_available_power_sensors_part13"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[60:65] | join(', ') }}  
+
+      - name: "smarti_available_power_sensors_part14"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[65:70] | join(', ') }}   
+
+      - name: "smarti_available_power_sensors_part15"
+        state: >
+          {%- set excluded_sensors = ['sensor.available_power_this_hour', 'sensor.smarti_dynamic_power_sensor', 'sensor.monthly_peak_energy', 'sensor.smarti_hourly_energy_consumed', 'sensor.dynamic_power_max', 'sensor.dynamic_power_min', 'sensor.energy_consumed', 'sensor.energy_used_this_hour', 'sensor.energy_estimate_this_hour', 'sensor.average_peak_hour_energy', 'sensor.energy_level_upper_threshold'] %}
+          {%- set sensors = states.sensor
+              | selectattr('attributes.unit_of_measurement', 'in', ['W', 'kWh'])
+              | rejectattr('entity_id', 'in', excluded_sensors)
+              | map(attribute='entity_id')
+              | list %}
+          {{ sensors[70:75] | join(', ') }}                                                                    
+
+      - name: "smarti_dynamic_power_sensor"
+        state: >
+          {{ states(states('input_select.smarti_home_power_measurement_device')) }}
+        attributes:
+          unit_of_measurement: >
+            {{ state_attr(states('input_select.smarti_home_power_measurement_device'), 'unit_of_measurement') }}
+          device_class: >
+            {{ state_attr(states('input_select.smarti_home_power_measurement_device'), 'device_class') }}
+          friendly_name: >
+            {{ state_attr(states('input_select.smarti_home_power_measurement_device'), 'friendly_name') }}
+
+################################### SENSORS ###################################
+
+sensor:
+  - platform: integration
+    source: sensor.smarti_dynamic_power_sensor
+    name: smarti_hourly_energy_consumed
+    unit_prefix: k
+    round: 2
+
+
+
+################################### AUTOMATIONS ###################################
+
+###### NORDPOOL RELATED #################################
+
+automation:
+
+
+  - id: "smarti_update_power_measurement_device_list"
+    alias: SMARTi Update Power Measurement Device List
+    description: Update the list of power measurement devices manually or on restart
+    trigger:
+      # Trigger on Home Assistant start
+      - platform: homeassistant
+        event: start
+      # Trigger on button press
+      - platform: state
+        entity_id: input_button.smarti_update_power_measurement_devices
+    action:
+      - variables:
+          all_sensors: >
+            {% set ns = namespace(sensors=[]) %}
+            {% for i in range(1, 15) %}
+              {% set part = states('sensor.smarti_available_power_sensors_part' ~ i) %}
+              {% if part not in ['unavailable', 'none', '', 'unknown'] %}
+                {% set ns.sensors = ns.sensors + part.split(', ') %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.sensors | unique | list }}
+      - condition: template
+        value_template: "{{ all_sensors | length > 0 }}"
+      - service: input_select.set_options
+        data:
+          entity_id: input_select.smarti_home_power_measurement_device
+          options: "{{ all_sensors }}"
+      - delay: 00:00:05
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.smarti_home_power_measurement_device
+          option: "{{ states('input_text.smarti_dynamic_power_sensor_storage') }}"
+
+
+  - id: "smarti_restore_power_settings"
+    alias: SMARTi Restore Power Settings
+    description:
+      Restores the selected power settings in the SMARTi dashboard after
+      Home Assistant starts
+    triggers:
+      - trigger: homeassistant
+        event: start
+    conditions: []
+    actions:
+      - variables:
+          all_sensors:
+            "{% set ns = namespace(sensors=[]) %}  {% for i in range(1, 15)
+            %}\n  {% set part = states('sensor.smarti_available_power_sensors_part' ~ i) %}\n
+            \ {% if part not in ['unavailable', 'none', '', 'unknown'] %}\n    {% set
+            ns.sensors = ns.sensors + part.split(', ') %}\n  {% endif %}\n{% endfor %}
+            \ {{ ns.sensors | unique | list }}\n"
+          stored_sensor: "{{ states('input_text.smarti_dynamic_power_sensor_storage') }}"
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ all_sensors | length > 0 }}"
+            sequence:
+              - action: input_select.set_options
+                target:
+                  entity_id: input_select.smarti_home_power_measurement_device
+                data:
+                  options: "{{ all_sensors }}"
+              - delay: 00:00:05
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ stored_sensor in all_sensors }}"
+                    sequence:
+                      - action: input_select.select_option
+                        target:
+                          entity_id: input_select.smarti_home_power_measurement_device
+                        data:
+                          option: "{{ stored_sensor }}"
+
+  - id: "smarti_save_powers_ettings_before_shutdown"
+    alias: SMARTi Save Power Settings Before Shutdown
+    description:
+      Saves the selected power settings chosen for the SMARTi Dashboard before
+      system shutdown
+    triggers:
+      - trigger: homeassistant
+        event: shutdown
+    conditions: []
+    actions:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.smarti_dynamic_power_sensor_storage
+        data:
+          value:
+            "{% set val = states('input_select.smarti_home_power_measurement_device')
+            %} {{ val if val not in ['None', 'unknown', ''] else 'no sensor selected'
+            }}"
+
+
+
+

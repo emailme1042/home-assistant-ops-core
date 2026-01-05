@@ -1,0 +1,73 @@
+# 🔍 Entity Validation Report
+# Run this automation to generate a comprehensive entity health report
+
+- id: generate_entity_validation_report
+  alias: "📋 Generate Entity Validation Report"
+  description: "Create detailed report of entity availability for troubleshooting"
+  mode: single
+  
+  trigger:
+    - platform: event
+      event_type: call_service
+      event_data:
+        domain: automation
+        service: trigger
+        service_data:
+          entity_id: automation.generate_entity_validation_report
+  
+  action:
+    # Create comprehensive validation report
+    - service: persistent_notification.create
+      data:
+        title: "🔍 Entity Validation Report"
+        notification_id: entity_validation_report
+        message: >
+          ## Critical Entities Status:
+          
+          **Office Entities:**
+          • light.office: {{ 'Available' if states('light.office') != 'unavailable' else 'MISSING' }}
+          • binary_sensor.office_motion: {{ 'Available' if states('binary_sensor.office_motion') != 'unavailable' else 'MISSING' }}
+          
+          **Kitchen Entities:**
+          • media_player.kitchen_alexa: {{ 'Available' if states('media_player.kitchen_alexa') != 'unavailable' else 'MISSING' }}
+          • cover.kitchen_blinds: {{ 'Available' if states('cover.kitchen_blinds') != 'unavailable' else 'MISSING' }}
+          
+          **Common Light Entities:**
+          • light.hallway_5: {{ 'Available' if states('light.hallway_5') != 'unavailable' else 'MISSING' }}
+          • light.lounge: {{ 'Available' if states('light.lounge') != 'unavailable' else 'MISSING' }}
+          
+          **Switch Entities:**
+          • switch.garden_lights: {{ 'Available' if states('switch.garden_lights') != 'unavailable' else 'MISSING' }}
+          
+          **Button Entities:**
+          • sensor.button_zigbee_battery: {{ 'Available' if states('sensor.button_zigbee_battery') != 'unavailable' else 'MISSING' }}
+          
+          ## Summary:
+          {% set critical_entities = [
+            'light.office',
+            'binary_sensor.office_motion', 
+            'media_player.kitchen_alexa',
+            'cover.kitchen_blinds',
+            'light.hallway_5',
+            'light.lounge',
+            'switch.garden_lights',
+            'sensor.button_zigbee_battery'
+          ] %}
+          {% set available = critical_entities | reject('is_state', 'unavailable') | list | count %}
+          {% set total = critical_entities | count %}
+          
+          ✅ Available: {{ available }}/{{ total }} critical entities
+          {% if available < total %}
+          ⚠️ Action needed: {{ total - available }} entities missing
+          {% endif %}
+
+    # Log detailed entity information  
+    - service: system_log.write
+      data:
+        level: info
+        message: >
+          Entity Validation Report Generated:
+          {% set all_entities = states | list %}
+          Total entities: {{ all_entities | count }}
+          Unavailable: {{ all_entities | selectattr("state", "eq", "unavailable") | list | count }}
+          Unknown: {{ all_entities | selectattr("state", "eq", "unknown") | list | count }}

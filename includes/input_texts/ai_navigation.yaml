@@ -1,0 +1,20 @@
+# AI Navigation Dashboard Input Text Entities
+# Purpose: Provide missing text inputs for AI dashboard functionality
+
+ai_file_preview:
+  name: AI File Preview
+  initial: "No file selected"
+  max: 255
+  icon: mdi:file-document-outline
+
+shared_context_freshness:
+  name: Shared Context Freshness
+  initial: "fresh"
+  max: 50
+  icon: mdi:clock-outline
+
+update_tracking:
+  name: Update Tracking
+  initial: "No updates tracked"
+  max: 255
+  icon: mdi:update

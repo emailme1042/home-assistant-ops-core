@@ -1,0 +1,76 @@
+# ADS-B Enhanced Scripts
+# Scripts for flight tracking dashboard controls
+
+flight_history_playback:
+  alias: "Flight History Playback Control"
+  description: "Controls historical flight data playback"
+  sequence:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.flight_history_timeframe
+        option: "{{ timeframe | default('1_hour') }}"
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.flight_history_playback
+    - service: logbook.log
+      data:
+        name: "Flight Playback"
+        message: >
+          History playback started for {{ timeframe | default('1_hour') }}
+        entity_id: input_boolean.flight_history_playback
+
+flight_alert_distance_update:
+  alias: "Update Flight Alert Distance"
+  description: "Updates the proximity alert distance"
+  sequence:
+    - service: input_number.set_value
+      data:
+        entity_id: input_number.flight_alert_distance_km
+        value: "{{ distance | default(10) }}"
+    - service: logbook.log
+      data:
+        name: "Alert Distance"
+        message: >
+          Proximity alert distance updated to {{ distance | default(10) }}km
+        entity_id: input_number.flight_alert_distance_km
+
+flight_radar_refresh:
+  alias: "Refresh Flight Radar Data"
+  description: "Manually refreshes flight radar data"
+  sequence:
+    - service: homeassistant.update_entity
+      data:
+        entity_id:
+          - sensor.flightradar24_current_in_area
+          - sensor.flightradar24_entered_area
+          - sensor.flightradar24_exited_area
+    - service: logbook.log
+      data:
+        name: "Radar Refresh"
+        message: >
+          Flight radar data manually refreshed
+        entity_id: sensor.flightradar24_current_in_area
+
+flight_technical_diagnostics:
+  alias: "Flight System Diagnostics"
+  description: "Runs comprehensive flight system diagnostics"
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "🔍 Flight System Diagnostics"
+        message: >
+          **ADS-B Receiver Status:** {{ states('sensor.adsb_receiver_status') }}
+          **Signal Strength:** {{ states('sensor.adsb_signal_strength') }} dBm
+          **Aircraft Count:** {{ states('sensor.aircraft_count') }}
+          **Closest Aircraft:** {{ states('sensor.closest_aircraft_distance') }}km
+          **Proximity Alerts:** {{ states('input_boolean.flight_proximity_alerts') }}
+          **Alert Distance:** {{ states('input_number.flight_alert_distance_km') }}km
+          **History Playback:** {{ states('input_boolean.flight_history_playback') }}
+          **Timeframe:** {{ states('input_select.flight_history_timeframe') }}
+        notification_id: flight_diagnostics
+    - service: logbook.log
+      data:
+        name: "Flight Diagnostics"
+        message: >
+          Comprehensive flight system diagnostics completed
+        entity_id: sensor.adsb_receiver_status

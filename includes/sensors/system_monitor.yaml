@@ -1,0 +1,6 @@
+# System Monitor for host system resource monitoring
+- platform: systemmonitor
+  resources:
+    - type: disk_use_percent
+    - type: memory_use_percent
+    - type: processor_use

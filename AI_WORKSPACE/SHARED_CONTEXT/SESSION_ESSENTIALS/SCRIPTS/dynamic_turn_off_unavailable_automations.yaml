@@ -1,0 +1,9 @@
+# Dynamic Bulk Automation Control
+# Purpose: Turn off all unavailable automations using dynamic template
+# Usage: Copy to Developer Tools → Services → YAML mode
+
+service: automation.turn_off
+target:
+  entity_id: >-
+    {% set unavailable_automations = states.automation | selectattr('state','equalto','unavailable') | map(attribute='entity_id') | list %}
+    {{ unavailable_automations | join(', ') if unavailable_automations else 'none' }}

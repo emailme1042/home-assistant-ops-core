@@ -1,0 +1,6 @@
+tts_test_script:
+  alias: "TTS: Speak Test Message"
+  sequence:
+    - event: speak_ai_response
+      event_data:
+        message: "This is a test of the AI voice system."

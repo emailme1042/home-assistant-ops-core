@@ -1,0 +1,12 @@
+type: vertical-stack
+cards:
+  - type: markdown
+    content: |
+      ## 📂 AI Workspace Markdown Files
+      - [🧠 Session Notes](AI_WORKSPACE/copilot_session_notes.md)
+      - [📋 Exec Log](AI_WORKSPACE/ai_exec_log.md)
+      - [📄 Session Template](AI_WORKSPACE/copilot_session_template.md)
+      - [📘 Copilot Instructions](.github/copilot-instructions.md)
+      - [📑 SYSTEM_OVERVIEW Watchdog](AI_WORKSPACE/SYSTEM_OVERVIEW_MQTT_watchdog.md)
+      - [📊 Watchdog Summary](dashboards/SYSTEM_OVERVIEW/ai-watchdog-summary.md)
+      - [📚 README](AI_WORKSPACE/README.md)

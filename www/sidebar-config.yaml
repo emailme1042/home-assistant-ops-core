@@ -1,0 +1,74 @@
+custom_sidebar:
+  sidebar_title: "🧭 SYSTEM_OVERVIEW"
+  hidden: []
+  reorder:
+    - overview
+    - energy
+    - hacs
+    - terminal
+  rename:
+    hacs: Custom Components
+    terminal: System Terminal
+
+
+# sidebar:
+#   - name: SYSTEM_OVERVIEW
+#     icon: mdi:map-outline
+#     path: /system-index/0
+#   - name: Recovery
+#     icon: mdi:heart-pulse
+#     path: /starter-recovery/0
+
+
+# custom_sidebar:
+#   config_path: sidebar-config.yaml
+#   sidebar_title: "🧭 SYSTEM_OVERVIEW"
+
+#   # No hidden items — everything stays visible
+#   hidden: []
+
+#   reorder:
+#     - overview
+#     - energy
+#     - hacs
+#     - terminal
+#     - log_viewer
+#     - zigbee2mqtt
+#     - matter_server
+#     - browser_mod
+#     - grocy
+#     - media
+#     - todo_and_next_actions
+#     - recovery
+#     - settings
+#     - map
+#     - calendar
+#     - developer_tools
+#     - dwains_dashboard
+#     - ai_sync_test
+#     - activity_history
+#     - fire_tv_remote
+#     - teddy_central
+
+#   rename:
+#     terminal: System Terminal
+#     log_viewer: Logs & Recovery
+#     hacs: Custom Components
+#     zigbee2mqtt: Zigbee Devices
+#     matter_server: Matter Sync
+#     todo_and_next_actions: Tasks
+#     recovery: Fallback Tools
+
+#   # sidebar_items:
+#   #   - title: Recovery
+#   #     icon: mdi:heart-pulse
+#   #     path: /starter-recovery/0
+#   #   # - title: AI Workspace
+#   #   #   icon: mdi:robot
+#   #   #   path: /ai-workspace/0
+#   #   - title: TODO & Actions
+#   #     icon: mdi-check-circle
+#   #     path: /ops-todo/0
+#   #   # - title: System Index
+#   #   #   icon: mdi:map-outline
+#   #   #   path: /system-index/0
