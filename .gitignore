@@ -15,6 +15,11 @@ zigbee2mqtt/state.json
 # Internal HA storage (optional to ignore)
 .storage/
 
+# Secrets and sensitive files
+secrets.yaml
+snapshots/
+backups/
+
 # Problematic files with trailing dots
 includes/sensors_atom_btproxy.yaml.
 
