@@ -17,3 +17,8 @@ zigbee2mqtt/state.json
 
 # Problematic files with trailing dots
 includes/sensors_atom_btproxy.yaml.
+
+# Secrets and tokens
+python_scripts/gmail_token.json
+python_scripts/client_secret.json
+AI_WORKSPACE/SYSTEM_DATA/key_info-md/archieve or delete/ha_integrations.md
