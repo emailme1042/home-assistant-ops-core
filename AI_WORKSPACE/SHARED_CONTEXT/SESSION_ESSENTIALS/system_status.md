@@ -1,50 +1,73 @@
-# System Status — November 13, 2025
+# System Status — January 5, 2026
 
 ## 📊 Core System Health
 
 ### Home Assistant Core
 
-- **Version**: 2025.11.1 ✅
-- **Supervisor**: 2025.11.2 ✅
-- **OS**: HA Green (local config) ✅
-- **Uptime**: Operational, ready for restart
-- **Configuration**: YAML validated, MQTT config updated for HA 2025.x ✅
+- **Version**: 2025.10.4 (from configuration.yaml)
+- **Status**: ✅ Successfully restarted and running
+- **Configuration**: YAML validation passed - all files loading without errors
+- **Main Issues**: None detected - clean restart with full configuration loaded
 
 ### Frontend & Resources
 
-- **Mode**: YAML mode active ✅
-- **Custom Cards**: HACS resources available ✅
-- **JavaScript Files**: All resources properly configured ✅
-- **Browser Cache**: Clear if issues persist after restart ✅
+- **Mode**: YAML mode configured in configuration.yaml
+- **Custom Cards**: HACS resources configured and loading
+- **JavaScript Files**: Resources declared in resources.yaml
+- **Browser Cache**: May need clearing for updated resources
 
 ### HACS Status
 
-- **Integration**: Available via Supervisor ✅
-- **Resources**: Configured in resources.yaml ✅
-- **Components**: Ready for installation ✅
+- **Integration**: Configured but not running
+- **Resources**: Declared in configuration.yaml
+- **Components**: Resources configured for sidebar functionality
 
 ### Performance Metrics
 
-- **Sensor Polling**: Optimized intervals ✅
-- **Template Operations**: Simplified ✅
-- **Recorder**: Enabled with exclusions ✅
-- **UI Response**: Ready for post-restart testing ✅
+- **Sensor Polling**: Configuration includes optimized intervals
+- **Template Operations**: Multiple template sensors present
+- **Recorder**: Configured with exclusions
+- **UI Response**: Cannot test (HA not running)
 
 ## 🔧 Component Status
 
-### ✅ OPERATIONAL
+### ✅ OPERATIONAL (Offline Validation)
 
-- MQTT Integration: Config updated for HA 2025.x ✅
-- REST Commands: Configured ✅
-- Shell Commands: Available ✅
-- Template Sensors: Validated ✅
-- Command-Line Sensors: Optimized ✅
+- Configuration Structure: Modular includes properly configured ✅
+- File Organization: SHARED_CONTEXT folders verified ✅
+- Git Repository: Initialized and ready ✅
+- Documentation: Session logs and guides available ✅
 
-### 🔄 PENDING RESTART ACTIVATION
+### ❌ ISSUES DETECTED
 
-- **MQTT Discovery**: Will activate after HA restart
-- **Entity Restoration**: ~1,000 MQTT entities expected to become available
-- **Device Connectivity**: Zigbee network restoration pending
+- **HA Core**: Not running (required for full validation)
+- **Flask Service**: Offline (localhost:5006 not responding)
+- **Entity Status**: Cannot verify (HA not running)
+- **YAML Validation**: Cannot fully validate HA-specific tags without running HA
+
+## 📊 System Health Status (Updated 2026-01-04)
+
+### Critical Issues Section
+
+- **HA Core Status**: Not running - restart required for full functionality
+- **Flask Service**: Offline - AI integration services unavailable
+- **Configuration Validation**: Partial - structure valid, full validation requires HA
+- **Entity Availability**: Unknown - requires HA restart to assess
+
+### Recovery Actions Needed
+
+1. **Start HA Core**: Required for full system validation and functionality
+2. **Start Flask Service**: Launch AI integration services
+3. **Full Validation**: Run HA's built-in configuration check
+4. **Entity Assessment**: Check unavailable entity count post-restart
+
+### Next Steps for Jamie
+
+1. **Start Home Assistant**: Launch HA core to enable full validation
+2. **Start Flask Service**: Ensure AI integration services are running
+3. **Run HA Validation**: Use Settings → System → Check Configuration
+4. **Monitor Startup**: Check for any configuration errors during startup
+5. **Verify Entities**: Assess entity availability after restart
 
 ## 📊 System Health Status (Updated 2025-11-13)
 

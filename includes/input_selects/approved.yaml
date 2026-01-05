@@ -1,8 +1,8 @@
-  backup_strategy:
-    name: Backup Strategy
-    options:
-      - "Daily"
-      - "Weekly"
-      - "Bi-Weekly"
-    initial: "Daily"
-    icon: mdi:calendar-check
+backup_strategy:
+  name: Backup Strategy
+  options:
+    - Daily
+    - Weekly
+    - Bi-Weekly
+  initial: Daily
+  icon: mdi:calendar-check

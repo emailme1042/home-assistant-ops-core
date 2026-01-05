@@ -8,7 +8,7 @@
         - light.wiz_rgbw_tunable_2609a6
         - light.wiz_rgbw_tunable_2606be
         - light.reading_light
-        - light.was_dining_light
+        # - light.was_dining_light  # Commented out - entity does not exist
         - light.brown_lamp
         - light.dining_light
         - light.wiz_rgbw_tunable_ae6b50

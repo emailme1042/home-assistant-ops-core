@@ -39,12 +39,14 @@ lovelace:
 # 📦 Lovelace Resources
 # -------------------------------
 # File: resources.yaml
-- url: /hacsfiles/button-card/button-card.js
-  type: module
-- url: /hacsfiles/mushroom/mushroom.js
-  type: module
-- url: /local/custom-card.js
-  type: module
+frontend:
+  extra_module_url:
+    - url: /hacsfiles/button-card/button-card.js
+      type: module
+    - url: /hacsfiles/mushroom/mushroom.js
+      type: module
+    - url: /local/custom-card.js
+      type: module
 
 # -------------------------------
 # 🧱 Dashboard Fragment

@@ -51,18 +51,18 @@ sections:
 
   - type: grid
     cards:
-      # Specific Shows
-      - type: custom:upcoming-media-card
-        entity: calendar.the_traitors
-        title: "The Traitors"
-        max: 3
+      # Specific Shows - Temporarily commented out until TV integrations are configured
+      # - type: custom:upcoming-media-card
+      #   entity: calendar.the_traitors
+      #   title: "The Traitors"
+      #   max: 3
 
-      - type: custom:upcoming-media-card
-        entity: calendar.the_night_manager
-        title: "The Night Manager"
-        max: 3
+      # - type: custom:upcoming-media-card
+      #   entity: calendar.the_night_manager
+      #   title: "The Night Manager"
+      #   max: 3
 
-      - type: custom:upcoming-media-card
-        entity: calendar.happy_valley
-        title: "Happy Valley"
-        max: 3
+      # - type: custom:upcoming-media-card
+      #   entity: calendar.happy_valley
+      #   title: "Happy Valley"
+      #   max: 3

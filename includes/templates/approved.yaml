@@ -1,3 +1,4 @@
+template:
   - sensor:
       - name: Update Alert Threshold
         state: >-
