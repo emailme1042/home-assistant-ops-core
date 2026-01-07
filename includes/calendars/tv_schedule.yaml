@@ -1,0 +1,30 @@
+# TV Schedule Calendar Configuration
+# Integrates iCal feed from https://tvcal.app/ical/326blc
+# 
+# SETUP INSTRUCTIONS:
+# This calendar integration requires the ICS Calendar HACS integration.
+# 
+# Step 1: Install ICS Calendar via HACS
+#   - Go to HACS → Integrations
+#   - Search for "ICS Calendar" 
+#   - Install the integration
+#
+# Step 2: Add the calendar via UI
+#   - Go to Settings → Devices & Services
+#   - Click "+ Add Integration"
+#   - Search for "ICS Calendar"
+#   - Enter the following URL: https://tvcal.app/ical/326blc
+#   - Name: "TV Schedule"
+#
+# Alternative: Manual Configuration (if ICS platform supports YAML)
+# Uncomment the section below if your ICS Calendar integration supports YAML config:
+#
+# - platform: ics
+#   name: "TV Schedule"
+#   url: "https://tvcal.app/ical/326blc"
+#   include_all_day: true
+#   days: 30  # Look ahead 30 days
+#   parser: icalendar
+#
+# The calendar will create an entity: calendar.tv_schedule
+# This can be used in dashboards and automations
