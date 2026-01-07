@@ -1,0 +1,42 @@
+# Climate Control Input Booleans
+# Toggle switches for climate system features
+
+climate_auto_away_mode:
+  name: "Automatic Away Mode"
+  icon: mdi:home-export-outline
+  initial: true
+
+climate_schedule_enabled:
+  name: "Enable Heating Schedule"
+  icon: mdi:calendar-clock
+  initial: true
+
+fan_auto_control:
+  name: "Automatic Fan Control"
+  icon: mdi:fan-auto
+  initial: true
+
+humidifier_auto_control:
+  name: "Automatic Humidifier Control"
+  icon: mdi:air-humidifier
+  initial: true
+
+dehumidifier_auto_control:
+  name: "Automatic Dehumidifier Control"
+  icon: mdi:air-humidifier
+  initial: true
+
+climate_notifications:
+  name: "Climate Control Notifications"
+  icon: mdi:bell
+  initial: true
+
+heating_window_detection:
+  name: "Turn Off Heating When Windows Open"
+  icon: mdi:window-open-variant
+  initial: false
+
+climate_night_mode:
+  name: "Night Mode Active"
+  icon: mdi:weather-night
+  initial: false
