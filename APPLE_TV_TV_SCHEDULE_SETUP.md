@@ -112,8 +112,19 @@ To reload packages (including TV schedule integrations):
 - `switch.teddy_fan_2` - Teddy's room fan (switch-based)
 - `fan.bedroom_fan` - Bedroom fan (commented out - verify if exists)
 
+**Note on Govee Devices:** 
+The system has Govee temperature/humidity sensors (H5075, H5105) and possible light devices (H618A), but no Govee fans were found in the current configuration. If you have Govee fans or air purifiers that need to be added:
+1. Verify they are integrated in Home Assistant (check Settings → Devices & Services)
+2. Find their entity IDs in Developer Tools → States
+3. Add them to the `hacontrol_05` (Fans & Ventilation) group in groups.yaml
+
 ### Dehumidifier Entities
-**Note:** No dehumidifier entities were found in the current configuration. If you have dehumidifiers, add them to the appropriate group:
+**Note:** No dehumidifier entities were found in the current configuration. If you have dehumidifiers, they may be:
+- Integrated as `humidifier.` entities (Home Assistant uses the humidifier domain for both humidifiers and dehumidifiers)
+- Switch-based devices (e.g., `switch.dehumidifier_name`)
+- Smart plugs controlling dehumidifiers
+
+To add dehumidifiers, find them in **Developer Tools** → **States** and add to groups.yaml:
 
 ```yaml
 # Add to hacontrol_05 (Fans & Ventilation) or create a new group
