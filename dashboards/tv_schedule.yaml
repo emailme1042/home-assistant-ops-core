@@ -1,5 +1,12 @@
 # 📺 TV Schedule Dashboard View
 # Shows tonight's TV lineup and upcoming episodes
+# 
+# SETUP REQUIRED:
+# 1. Install "ICS Calendar" via HACS
+# 2. Add Integration: Settings → Devices & Services → ICS Calendar
+# 3. Enter URL: https://tvcal.app/ical/326blc
+# 4. Once setup, a calendar.tv_schedule entity will be available
+# 5. Uncomment the calendar card below after setup
 
 title: "📺 TV Schedule"
 path: tv-schedule
@@ -51,6 +58,19 @@ sections:
 
   - type: grid
     cards:
+      # TV Schedule Calendar - from https://tvcal.app/ical/326blc
+      # Uncomment after setting up ICS Calendar integration
+      # - type: calendar
+      #   entities:
+      #     - calendar.tv_schedule
+      #   title: "TV Schedule Calendar"
+      
+      # Alternative: Simple Calendar Card
+      # - type: entities
+      #   title: "TV Schedule"
+      #   entities:
+      #     - entity: calendar.tv_schedule
+      
       # Specific Shows - Temporarily commented out until TV integrations are configured
       # - type: custom:upcoming-media-card
       #   entity: calendar.the_traitors

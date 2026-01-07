@@ -1,6 +1,6 @@
 # 📺 TV Schedule & Streaming Integrations Package
 # Replaces JustWatch functionality with HA-native solutions
-# Includes: TVMaze, BBC iPlayer, Watchlist (HACS), Upcoming Media Card
+# Includes: TVMaze, BBC iPlayer, Watchlist (HACS), Upcoming Media Card, iCal TV Schedule
 
 # TVMaze Integration - For broadcast TV schedules
 # NOTE: Requires HACS installation of TVMaze integration
@@ -18,6 +18,11 @@
 #   - platform: trakt
 #     client_id: !secret trakt_client_id
 #     client_secret: !secret trakt_client_secret
+
+# TV Schedule Calendar Integration
+# See includes/calendars/tv_schedule.yaml for setup instructions
+# URL: https://tvcal.app/ical/326blc
+# Setup via UI: Settings → Devices & Services → Add Integration → ICS Calendar
 
 # Sensors for TV schedule monitoring
 sensor:

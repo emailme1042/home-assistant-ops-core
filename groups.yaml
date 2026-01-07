@@ -19,6 +19,10 @@ hacontrol_01:
     - cover.kitchen_blind
     - cover.blind_tilt_94a1
 
+    # Climate Zones
+    - climate.lounge
+    - climate.bedroom
+
 hacontrol_02:
   name: Media Zone
   icon: mdi:television
@@ -52,9 +56,25 @@ hacontrol_03:
     # Security-linked Switches
     - switch.garden_lights
     - switch.teddy_lamp
-    - switch.teddy_fan_2
 
     # Covers
     - cover.blind_tilt_94a1
+
+hacontrol_04:
+  name: Heating Zones
+  icon: mdi:radiator
+  entities:
+    # Climate Controls - Tado TRVs
+    - climate.lounge
+    - climate.bedroom
+
+hacontrol_05:
+  name: Fans & Ventilation
+  icon: mdi:fan
+  entities:
+    # Fans
+    - switch.teddy_fan_2
+    # Add fan.bedroom_fan if entity exists in your system
+    # - fan.bedroom_fan
 
 
