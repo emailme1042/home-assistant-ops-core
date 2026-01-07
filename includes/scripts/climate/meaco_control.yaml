@@ -1,0 +1,104 @@
+# Meaco Dehumidifier Control Scripts
+# Reusable scripts for controlling Meaco dehumidifier
+
+meaco_quick_dry:
+  alias: "Meaco Quick Dry Mode"
+  description: "Run dehumidifier continuously for rapid moisture removal"
+  mode: single
+  sequence:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Quick Dry Active"
+        message: "Meaco dehumidifier running in quick dry mode for 4 hours"
+    - delay:
+        hours: 4
+    - service: switch.turn_off
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Quick Dry Complete"
+        message: "Dehumidifier cycle finished. Final humidity: {{ states('sensor.meaco_dehumidifier_humidity') }}%"
+
+meaco_toggle:
+  alias: "Toggle Meaco Dehumidifier"
+  description: "Toggle dehumidifier on or off"
+  mode: single
+  sequence:
+    - service: switch.toggle
+      target:
+        entity_id: switch.meaco_dehumidifier
+
+meaco_laundry_mode:
+  alias: "Meaco Laundry Drying Mode"
+  description: "Run dehumidifier to help dry laundry indoors"
+  mode: single
+  sequence:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Laundry Drying Mode"
+        message: "Dehumidifier running for laundry drying (6 hours)"
+    - delay:
+        hours: 6
+    - service: switch.turn_off
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Laundry Mode Complete"
+        message: "Dehumidifier stopped. Check humidity levels"
+
+meaco_bathroom_boost:
+  alias: "Meaco Bathroom Boost"
+  description: "Run dehumidifier after shower to prevent mold"
+  mode: single
+  sequence:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - delay:
+        hours: 2
+    - service: switch.turn_off
+      target:
+        entity_id: switch.meaco_dehumidifier
+
+meaco_schedule_daily:
+  alias: "Meaco Daily Maintenance Run"
+  description: "Daily dehumidifier cycle to maintain optimal humidity"
+  mode: single
+  sequence:
+    - condition: numeric_state
+      entity_id: sensor.meaco_dehumidifier_humidity
+      above: 55
+    - service: switch.turn_on
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - delay:
+        hours: 3
+    - condition: numeric_state
+      entity_id: sensor.meaco_dehumidifier_humidity
+      below: 60
+    - service: switch.turn_off
+      target:
+        entity_id: switch.meaco_dehumidifier
+
+meaco_check_status:
+  alias: "Check Meaco Status"
+  description: "Report current dehumidifier status and humidity"
+  mode: single
+  sequence:
+    - service: notify.persistent_notification
+      data:
+        title: "Dehumidifier Status"
+        message: >
+          Status: {{ states('switch.meaco_dehumidifier') }}
+          Humidity: {{ states('sensor.meaco_dehumidifier_humidity') }}%
+          {% if is_state('sensor.meaco_dehumidifier_power', 'on') %}
+          Power: {{ states('sensor.meaco_dehumidifier_power') }}W
+          {% endif %}

@@ -1,0 +1,296 @@
+# Climate Control Dashboard
+# Optimized for Apple TV and large screen control
+# All climate devices in one convenient location
+
+title: Climate Control
+views:
+  - title: Home
+    path: climate-home
+    icon: mdi:home-thermometer
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          # Summary Card
+          - type: entities
+            title: Climate Overview
+            show_header_toggle: false
+            entities:
+              - entity: sensor.home_average_temperature
+                name: Average Temperature
+                icon: mdi:thermometer
+              - entity: sensor.climate_control_summary
+                name: Active Devices
+                icon: mdi:devices
+              - entity: binary_sensor.heating_required
+                name: Heating Needed
+              - entity: binary_sensor.humidity_too_high
+                name: High Humidity Alert
+              - entity: binary_sensor.humidity_too_low
+                name: Low Humidity Alert
+
+      # Tado Heating Zones
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🔥 Heating Zones
+
+          - type: thermostat
+            entity: climate.tado_hallway
+            name: Hallway (Floor 1)
+
+          - type: thermostat
+            entity: climate.tado_bedroom
+            name: Bedroom (Floor 2)
+
+          - type: entities
+            title: Quick Heating Controls
+            show_header_toggle: false
+            entities:
+              - entity: script.tado_boost_heating
+                name: Boost All Zones
+                icon: mdi:fire
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.tado_boost_heating
+              - entity: script.tado_comfort_mode
+                name: Comfort Mode (21°C)
+                icon: mdi:sofa
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.tado_comfort_mode
+              - entity: script.tado_eco_mode
+                name: Eco Mode (17°C)
+                icon: mdi:leaf
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.tado_eco_mode
+              - entity: script.tado_turn_off_all
+                name: Turn Off All Heating
+                icon: mdi:radiator-off
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.tado_turn_off_all
+
+  - title: Fans & Humidity
+    path: climate-fans
+    icon: mdi:fan
+    badges: []
+    cards:
+      # Govee Fans
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🌀 Govee Fans
+
+          - type: entities
+            title: Fan Control
+            show_header_toggle: true
+            entities:
+              - entity: fan.govee_fan_1
+                name: Govee Fan
+              - entity: sensor.govee_fan_status_summary
+                name: Fan Status
+
+          - type: entities
+            title: Fan Speed Presets
+            show_header_toggle: false
+            entities:
+              - type: button
+                name: Low Speed
+                icon: mdi:fan-speed-1
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_fan_set_speed
+                    variables:
+                      fan_entity: fan.govee_fan_1
+                      speed_level: low
+              - type: button
+                name: Medium Speed
+                icon: mdi:fan-speed-2
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_fan_set_speed
+                    variables:
+                      fan_entity: fan.govee_fan_1
+                      speed_level: medium
+              - type: button
+                name: High Speed
+                icon: mdi:fan-speed-3
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_fan_set_speed
+                    variables:
+                      fan_entity: fan.govee_fan_1
+                      speed_level: high
+
+      # Govee Humidifier
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 💧 Govee Humidifier
+
+          - type: humidifier
+            entity: humidifier.govee_humidifier
+            name: Govee Humidifier
+
+          - type: entities
+            title: Humidifier Status
+            show_header_toggle: false
+            entities:
+              - entity: sensor.govee_humidifier_status_summary
+                name: Status
+              - entity: sensor.govee_humidifier_humidity
+                name: Current Humidity
+
+          - type: entities
+            title: Quick Actions
+            show_header_toggle: false
+            entities:
+              - entity: script.govee_humidifier_quick_boost
+                name: Quick Boost
+                icon: mdi:water-plus
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_humidifier_quick_boost
+
+      # Meaco Dehumidifier
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🌬️ Meaco Dehumidifier
+
+          - type: entities
+            title: Dehumidifier Control
+            show_header_toggle: true
+            entities:
+              - entity: switch.meaco_dehumidifier
+                name: Meaco Dehumidifier
+              - entity: sensor.meaco_dehumidifier_status_summary
+                name: Status
+              - entity: sensor.meaco_dehumidifier_humidity
+                name: Current Humidity
+
+          - type: entities
+            title: Quick Actions
+            show_header_toggle: false
+            entities:
+              - entity: script.meaco_quick_dry
+                name: Quick Dry (4 hours)
+                icon: mdi:water-remove
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.meaco_quick_dry
+              - entity: script.meaco_laundry_mode
+                name: Laundry Mode (6 hours)
+                icon: mdi:tshirt-crew
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.meaco_laundry_mode
+              - entity: script.meaco_bathroom_boost
+                name: Bathroom Boost (2 hours)
+                icon: mdi:shower
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.meaco_bathroom_boost
+
+  - title: Scenes
+    path: climate-scenes
+    icon: mdi:palette
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🎭 Climate Scenes
+              Quick presets for different situations
+
+          - type: entities
+            title: Seasonal Modes
+            show_header_toggle: false
+            entities:
+              - entity: script.govee_summer_mode
+                name: Summer Mode
+                icon: mdi:weather-sunny
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_summer_mode
+              - entity: script.govee_winter_mode
+                name: Winter Mode
+                icon: mdi:snowflake
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_winter_mode
+
+          - type: entities
+            title: Time of Day
+            show_header_toggle: false
+            entities:
+              - entity: script.govee_sleep_mode
+                name: Sleep Mode
+                icon: mdi:bed
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_sleep_mode
+              - entity: script.tado_weekend_schedule
+                name: Weekend Schedule
+                icon: mdi:calendar-weekend
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.tado_weekend_schedule
+
+          - type: entities
+            title: All Off
+            show_header_toggle: false
+            entities:
+              - entity: script.govee_all_off
+                name: Turn Off All Govee Devices
+                icon: mdi:power-off
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.govee_all_off
+              - entity: script.tado_turn_off_all
+                name: Turn Off All Heating
+                icon: mdi:radiator-off
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.tado_turn_off_all

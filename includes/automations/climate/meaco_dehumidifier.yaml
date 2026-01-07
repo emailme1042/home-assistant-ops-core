@@ -1,0 +1,116 @@
+# Meaco Dehumidifier Automations
+# Controls dehumidifier for optimal humidity management
+
+- alias: Meaco Dehumidifier High Humidity Auto On
+  id: meaco_dehumidifier_auto_on
+  description: "Turn on dehumidifier when humidity is too high"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.meaco_dehumidifier_humidity
+      above: 65
+      for: "00:15:00"
+  condition:
+    - condition: state
+      entity_id: switch.meaco_dehumidifier
+      state: "off"
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Dehumidifier Control"
+        message: "Meaco dehumidifier activated - humidity at {{ states('sensor.meaco_dehumidifier_humidity') }}%"
+
+- alias: Meaco Dehumidifier Normal Humidity Auto Off
+  id: meaco_dehumidifier_auto_off
+  description: "Turn off dehumidifier when humidity is normal"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.meaco_dehumidifier_humidity
+      below: 55
+      for: "00:20:00"
+  condition:
+    - condition: state
+      entity_id: switch.meaco_dehumidifier
+      state: "on"
+  action:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.meaco_dehumidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Dehumidifier Control"
+        message: "Meaco dehumidifier deactivated - target humidity reached"
+
+- alias: Meaco Dehumidifier Schedule Morning
+  id: meaco_dehumidifier_schedule_morning
+  description: "Turn on dehumidifier during typical high humidity time"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "07:00:00"
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.meaco_dehumidifier_humidity
+      above: 60
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.meaco_dehumidifier
+
+- alias: Meaco Dehumidifier Schedule Evening Stop
+  id: meaco_dehumidifier_schedule_evening
+  description: "Stop dehumidifier in the evening for quiet operation"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "22:00:00"
+  condition:
+    - condition: state
+      entity_id: switch.meaco_dehumidifier
+      state: "on"
+  action:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.meaco_dehumidifier
+
+- alias: Meaco Dehumidifier High Power Alert
+  id: meaco_dehumidifier_power_alert
+  description: "Alert if dehumidifier power consumption is abnormal"
+  initial_state: true
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.meaco_dehumidifier_power
+      above: 500
+      for: "00:30:00"
+  action:
+    - service: notify.persistent_notification
+      data:
+        title: "⚠️ Dehumidifier Alert"
+        message: "Meaco dehumidifier power consumption is high ({{ states('sensor.meaco_dehumidifier_power') }}W). Check if water tank needs emptying."
+
+- alias: Meaco Dehumidifier Moisture Extraction Monitor
+  id: meaco_moisture_monitor
+  description: "Track dehumidifier effectiveness"
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: switch.meaco_dehumidifier
+      to: "on"
+      for: "02:00:00"
+  condition:
+    - condition: template
+      value_template: >
+        {% set start_humidity = state_attr('sensor.meaco_dehumidifier_humidity', 'last_changed') %}
+        {% set current_humidity = states('sensor.meaco_dehumidifier_humidity') | float(0) %}
+        {{ current_humidity > 60 }}
+  action:
+    - service: notify.persistent_notification
+      data:
+        title: "Dehumidifier Performance"
+        message: "Dehumidifier has been running for 2 hours but humidity remains high. Consider checking the unit or emptying the water tank."

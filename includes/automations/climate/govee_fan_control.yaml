@@ -1,0 +1,134 @@
+# Govee Fan Control Automations
+# Controls Govee smart fans for air circulation and comfort
+
+- alias: Govee Fan Auto on High Temperature
+  id: govee_fan_auto_high_temp
+  description: "Turn on fans when temperature is high"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.govee_fan_1_temperature
+      above: 25
+      for: "00:10:00"
+  action:
+    - service: fan.turn_on
+      target:
+        entity_id: fan.govee_fan_1
+      data:
+        percentage: 75
+    - service: notify.persistent_notification
+      data:
+        title: "Fan Control"
+        message: "Govee fan activated due to high temperature"
+
+- alias: Govee Fan Auto off Normal Temperature
+  id: govee_fan_auto_normal_temp
+  description: "Turn off fans when temperature normalizes"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.govee_fan_1_temperature
+      below: 23
+      for: "00:15:00"
+  condition:
+    - condition: state
+      entity_id: fan.govee_fan_1
+      state: "on"
+  action:
+    - service: fan.turn_off
+      target:
+        entity_id: fan.govee_fan_1
+
+- alias: Govee Humidifier Auto Control
+  id: govee_humidifier_auto
+  description: "Control humidifier based on humidity levels"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.govee_humidifier_humidity
+      below: 40
+      for: "00:10:00"
+      id: low_humidity
+    - platform: numeric_state
+      entity_id: sensor.govee_humidifier_humidity
+      above: 60
+      for: "00:10:00"
+      id: high_humidity
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: low_humidity
+          sequence:
+            - service: humidifier.turn_on
+              target:
+                entity_id: humidifier.govee_humidifier
+            - service: humidifier.set_humidity
+              target:
+                entity_id: humidifier.govee_humidifier
+              data:
+                humidity: 50
+        - conditions:
+            - condition: trigger
+              id: high_humidity
+          sequence:
+            - service: humidifier.turn_off
+              target:
+                entity_id: humidifier.govee_humidifier
+
+- alias: Govee Fan Night Mode
+  id: govee_fan_night_mode
+  description: "Reduce fan speed at night"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "22:00:00"
+  condition:
+    - condition: state
+      entity_id: fan.govee_fan_1
+      state: "on"
+  action:
+    - service: fan.set_percentage
+      target:
+        entity_id: fan.govee_fan_1
+      data:
+        percentage: 25
+
+- alias: Govee Humidifier Night Schedule
+  id: govee_humidifier_night_schedule
+  description: "Ensure humidifier runs overnight"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "22:30:00"
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.govee_humidifier_humidity
+      below: 50
+  action:
+    - service: humidifier.turn_on
+      target:
+        entity_id: humidifier.govee_humidifier
+    - service: humidifier.set_humidity
+      target:
+        entity_id: humidifier.govee_humidifier
+      data:
+        humidity: 50
+
+- alias: Govee Devices Morning Stop
+  id: govee_devices_morning_stop
+  description: "Turn off Govee devices in the morning"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "08:00:00"
+  action:
+    - service: fan.turn_off
+      target:
+        entity_id: fan.govee_fan_1
+    - service: humidifier.turn_off
+      target:
+        entity_id: humidifier.govee_humidifier

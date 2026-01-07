@@ -1,0 +1,171 @@
+# Tado Climate Control Scripts
+# Reusable scripts for controlling Tado heating zones
+
+tado_set_zone_temperature:
+  alias: "Set Tado Zone Temperature"
+  description: "Set temperature for a specific Tado zone"
+  mode: parallel
+  max: 10
+  fields:
+    zone_entity:
+      description: "Climate entity to control"
+      example: "climate.tado_hallway"
+      required: true
+      selector:
+        entity:
+          domain: climate
+    target_temp:
+      description: "Target temperature"
+      example: 21
+      required: true
+      selector:
+        number:
+          min: 5
+          max: 30
+          unit_of_measurement: "°C"
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id: "{{ zone_entity }}"
+      data:
+        temperature: "{{ target_temp }}"
+        hvac_mode: heat
+
+tado_boost_heating:
+  alias: "Boost Tado Heating"
+  description: "Temporarily boost heating in all zones"
+  mode: single
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 22
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Heating Boost"
+        message: "All zones boosted to 22°C for quick warmup"
+    - delay:
+        hours: 2
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 20
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Heating Boost Complete"
+        message: "Zones returned to normal temperature"
+
+tado_eco_mode:
+  alias: "Enable Tado Eco Mode"
+  description: "Set all zones to eco temperature"
+  mode: single
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 17
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Eco Mode Enabled"
+        message: "All heating zones set to eco temperature (17°C)"
+
+tado_comfort_mode:
+  alias: "Enable Tado Comfort Mode"
+  description: "Set all zones to comfort temperature"
+  mode: single
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 21
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Comfort Mode Enabled"
+        message: "All heating zones set to comfort temperature (21°C)"
+
+tado_turn_off_all:
+  alias: "Turn Off All Tado Heating"
+  description: "Turn off heating in all zones"
+  mode: single
+  sequence:
+    - service: climate.set_hvac_mode
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        hvac_mode: "off"
+    - service: notify.persistent_notification
+      data:
+        title: "Heating Disabled"
+        message: "All heating zones turned off"
+
+tado_sync_zones:
+  alias: "Sync Tado Zone Temperatures"
+  description: "Set all zones to the same temperature"
+  mode: single
+  fields:
+    target_temp:
+      description: "Temperature to set for all zones"
+      example: 20
+      required: true
+      selector:
+        number:
+          min: 5
+          max: 30
+          unit_of_measurement: "°C"
+  sequence:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: "{{ target_temp }}"
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Zones Synchronized"
+        message: "All zones set to {{ target_temp }}°C"
+
+tado_weekend_schedule:
+  alias: "Tado Weekend Heating Schedule"
+  description: "Apply weekend heating schedule"
+  mode: single
+  sequence:
+    # Morning warmup - later than weekdays
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 20
+        hvac_mode: heat
+    - delay:
+        hours: 4
+    # Daytime comfort
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 21
+        hvac_mode: heat

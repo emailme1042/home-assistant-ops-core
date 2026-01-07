@@ -1,0 +1,186 @@
+# Tado Heating Zone Automations
+# Controls two-zone heating system (Hallway - Floor 1, Bedroom - Floor 2)
+# Each zone has 2 TRVs for balanced heating
+
+- alias: Tado Morning Warmup - Hallway
+  id: tado_morning_warmup_hallway
+  description: "Warm up hallway zone before typical wake time"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "06:30:00"
+  condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.tado_hallway
+      data:
+        temperature: 21
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Heating Schedule"
+        message: "Hallway heating activated for morning warmup"
+
+- alias: Tado Morning Warmup - Bedroom
+  id: tado_morning_warmup_bedroom
+  description: "Warm up bedroom zone before wake time"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "06:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.tado_bedroom
+      data:
+        temperature: 20
+        hvac_mode: heat
+    - service: notify.persistent_notification
+      data:
+        title: "Heating Schedule"
+        message: "Bedroom heating activated for morning warmup"
+
+- alias: Tado Evening Comfort Mode
+  id: tado_evening_comfort
+  description: "Set comfortable temperature for evening"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "18:00:00"
+  condition:
+    - condition: sun
+      after: sunset
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 21
+        hvac_mode: heat
+
+- alias: Tado Night Mode Economy
+  id: tado_night_economy
+  description: "Reduce heating at night for energy saving"
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "23:00:00"
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        temperature: 18
+        hvac_mode: heat
+
+- alias: Tado Away Mode Detection
+  id: tado_away_mode
+  description: "Enable eco mode when everyone is away"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: zone.home
+      to: "0"
+      for: "00:30:00"
+  action:
+    - service: climate.set_preset_mode
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        preset_mode: away
+
+- alias: Tado Home Mode Detection
+  id: tado_home_mode
+  description: "Return to home preset when someone arrives"
+  initial_state: true
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: zone.home
+      from: "0"
+  action:
+    - service: climate.set_preset_mode
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        preset_mode: home
+
+- alias: Tado Low Temperature Alert
+  id: tado_low_temp_alert
+  description: "Alert if zone temperature drops too low"
+  initial_state: true
+  mode: parallel
+  trigger:
+    - platform: numeric_state
+      entity_id: climate.tado_hallway
+      attribute: current_temperature
+      below: 15
+      for: "00:15:00"
+    - platform: numeric_state
+      entity_id: climate.tado_bedroom
+      attribute: current_temperature
+      below: 15
+      for: "00:15:00"
+  action:
+    - service: notify.persistent_notification
+      data:
+        title: "⚠️ Low Temperature Alert"
+        message: "{{ trigger.to_state.attributes.friendly_name }} temperature is {{ trigger.to_state.attributes.current_temperature }}°C"
+
+- alias: Tado Window Open Detection
+  id: tado_window_open_heating
+  description: "Turn off heating when windows are open to save energy"
+  initial_state: true
+  mode: restart
+  trigger:
+    # Add your window sensor entities here if available
+    # - platform: state
+    #   entity_id: binary_sensor.hallway_window
+    #   to: "on"
+    - platform: template
+      value_template: "{{ false }}"  # Placeholder - enable when window sensors added
+  action:
+    - service: climate.set_hvac_mode
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        hvac_mode: "off"
+    - wait_for_trigger:
+        # Wait for window to close
+        - platform: template
+          value_template: "{{ false }}"  # Placeholder
+      timeout: "01:00:00"
+    - service: climate.set_hvac_mode
+      target:
+        entity_id:
+          - climate.tado_hallway
+          - climate.tado_bedroom
+      data:
+        hvac_mode: heat

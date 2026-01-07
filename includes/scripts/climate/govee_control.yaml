@@ -1,0 +1,172 @@
+# Govee Device Control Scripts
+# Reusable scripts for controlling Govee fans and humidifier
+
+govee_fan_set_speed:
+  alias: "Set Govee Fan Speed"
+  description: "Control Govee fan speed with predefined levels"
+  mode: parallel
+  max: 5
+  fields:
+    fan_entity:
+      description: "Fan entity to control"
+      example: "fan.govee_fan_1"
+      required: true
+      selector:
+        entity:
+          domain: fan
+    speed_level:
+      description: "Speed level (low, medium, high)"
+      example: "medium"
+      required: true
+      selector:
+        select:
+          options:
+            - "low"
+            - "medium"
+            - "high"
+  sequence:
+    - service: fan.set_percentage
+      target:
+        entity_id: "{{ fan_entity }}"
+      data:
+        percentage: >
+          {% if speed_level == 'low' %}
+            25
+          {% elif speed_level == 'medium' %}
+            50
+          {% else %}
+            75
+          {% endif %}
+
+govee_fan_oscillate:
+  alias: "Toggle Govee Fan Oscillation"
+  description: "Turn oscillation on or off for Govee fan"
+  mode: parallel
+  max: 5
+  fields:
+    fan_entity:
+      description: "Fan entity to control"
+      example: "fan.govee_fan_1"
+      required: true
+      selector:
+        entity:
+          domain: fan
+    oscillate:
+      description: "Enable or disable oscillation"
+      example: true
+      required: true
+      selector:
+        boolean:
+  sequence:
+    - service: fan.oscillate
+      target:
+        entity_id: "{{ fan_entity }}"
+      data:
+        oscillating: "{{ oscillate }}"
+
+govee_humidifier_quick_boost:
+  alias: "Govee Humidifier Quick Boost"
+  description: "Run humidifier at high setting for quick humidity boost"
+  mode: single
+  sequence:
+    - service: humidifier.turn_on
+      target:
+        entity_id: humidifier.govee_humidifier
+    - service: humidifier.set_humidity
+      target:
+        entity_id: humidifier.govee_humidifier
+      data:
+        humidity: 60
+    - delay:
+        hours: 1
+    - service: humidifier.set_humidity
+      target:
+        entity_id: humidifier.govee_humidifier
+      data:
+        humidity: 50
+
+govee_sleep_mode:
+  alias: "Govee Devices Sleep Mode"
+  description: "Set all Govee devices to quiet night settings"
+  mode: single
+  sequence:
+    - service: fan.set_percentage
+      target:
+        entity_id: fan.govee_fan_1
+      data:
+        percentage: 20
+    - service: humidifier.turn_on
+      target:
+        entity_id: humidifier.govee_humidifier
+    - service: humidifier.set_humidity
+      target:
+        entity_id: humidifier.govee_humidifier
+      data:
+        humidity: 50
+    - service: notify.persistent_notification
+      data:
+        title: "Sleep Mode Active"
+        message: "Govee devices set to quiet night mode"
+
+govee_all_off:
+  alias: "Turn Off All Govee Devices"
+  description: "Turn off all Govee fans and humidifier"
+  mode: single
+  sequence:
+    - service: fan.turn_off
+      target:
+        entity_id: fan.govee_fan_1
+    - service: humidifier.turn_off
+      target:
+        entity_id: humidifier.govee_humidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Govee Devices Off"
+        message: "All Govee fans and humidifier turned off"
+
+govee_summer_mode:
+  alias: "Govee Summer Cooling Mode"
+  description: "Optimize Govee devices for hot weather"
+  mode: single
+  sequence:
+    - service: fan.turn_on
+      target:
+        entity_id: fan.govee_fan_1
+    - service: fan.set_percentage
+      target:
+        entity_id: fan.govee_fan_1
+      data:
+        percentage: 75
+    - service: fan.oscillate
+      target:
+        entity_id: fan.govee_fan_1
+      data:
+        oscillating: true
+    - service: humidifier.turn_off
+      target:
+        entity_id: humidifier.govee_humidifier
+    - service: notify.persistent_notification
+      data:
+        title: "Summer Mode Active"
+        message: "Fan at high speed, humidifier off for cooling"
+
+govee_winter_mode:
+  alias: "Govee Winter Comfort Mode"
+  description: "Optimize Govee devices for cold weather"
+  mode: single
+  sequence:
+    - service: fan.turn_off
+      target:
+        entity_id: fan.govee_fan_1
+    - service: humidifier.turn_on
+      target:
+        entity_id: humidifier.govee_humidifier
+    - service: humidifier.set_humidity
+      target:
+        entity_id: humidifier.govee_humidifier
+      data:
+        humidity: 50
+    - service: notify.persistent_notification
+      data:
+        title: "Winter Mode Active"
+        message: "Humidifier on to combat dry winter air"
