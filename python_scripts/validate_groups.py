@@ -6,15 +6,35 @@ Tests group structure, entity format, and icon validity
 
 import yaml
 import sys
+import os
 
-def validate_groups():
-    """Validate groups.yaml structure and content"""
+# Valid Home Assistant entity domains
+VALID_DOMAINS = [
+    'light', 'switch', 'cover', 'media_player', 'remote',
+    'siren', 'climate', 'fan', 'humidifier', 'sensor',
+    'binary_sensor', 'lock', 'alarm_control_panel', 'vacuum',
+    'camera', 'water_heater', 'device_tracker', 'person',
+    'weather', 'calendar', 'input_boolean', 'input_number',
+    'input_text', 'input_select', 'input_datetime', 'timer',
+    'counter', 'automation', 'script', 'scene', 'zone'
+]
+
+def validate_groups(filepath='groups.yaml'):
+    """Validate groups.yaml structure and content
+    
+    Args:
+        filepath: Path to groups.yaml file (default: 'groups.yaml')
+    """
     
     errors = []
     warnings = []
     
+    if not os.path.exists(filepath):
+        print(f"❌ File not found: {filepath}")
+        return False
+    
     try:
-        with open('groups.yaml', 'r') as f:
+        with open(filepath, 'r') as f:
             groups = yaml.safe_load(f)
     except Exception as e:
         print(f"❌ Failed to load groups.yaml: {e}")
@@ -60,19 +80,13 @@ def validate_groups():
                 print(f"  ✅ Entities: {len(entities)}")
                 
                 # Validate entity format
-                valid_domains = [
-                    'light', 'switch', 'cover', 'media_player', 'remote',
-                    'siren', 'climate', 'fan', 'humidifier', 'sensor',
-                    'binary_sensor', 'lock', 'alarm_control_panel'
-                ]
-                
                 for entity in entities:
                     if isinstance(entity, str):
                         if '.' not in entity:
                             errors.append(f"    ❌ Invalid entity format: {entity}")
                         else:
                             domain = entity.split('.')[0]
-                            if domain not in valid_domains:
+                            if domain not in VALID_DOMAINS:
                                 warnings.append(f"    ⚠️  Uncommon domain: {entity}")
                     else:
                         errors.append(f"    ❌ Entity must be string: {entity}")
@@ -113,5 +127,7 @@ def validate_groups():
     return True
 
 if __name__ == "__main__":
-    success = validate_groups()
+    # Accept file path as command-line argument, default to 'groups.yaml'
+    filepath = sys.argv[1] if len(sys.argv) > 1 else 'groups.yaml'
+    success = validate_groups(filepath)
     sys.exit(0 if success else 1)

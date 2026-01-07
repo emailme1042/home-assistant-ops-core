@@ -89,5 +89,3 @@ hacontrol_05:
     # Meaco Dehumidifier
     - humidifier.meaco_dehumidifier
     - fan.meaco_dehumidifier_fan
-
-
