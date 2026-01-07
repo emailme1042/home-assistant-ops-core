@@ -106,7 +106,7 @@ views:
             title: Fan Speed Presets
             show_header_toggle: false
             entities:
-              - type: button
+              - entity: script.govee_fan_set_speed
                 name: Low Speed
                 icon: mdi:fan-speed-1
                 tap_action:
@@ -117,7 +117,7 @@ views:
                     variables:
                       fan_entity: fan.govee_fan_1
                       speed_level: low
-              - type: button
+              - entity: script.govee_fan_set_speed
                 name: Medium Speed
                 icon: mdi:fan-speed-2
                 tap_action:
@@ -128,7 +128,7 @@ views:
                     variables:
                       fan_entity: fan.govee_fan_1
                       speed_level: medium
-              - type: button
+              - entity: script.govee_fan_set_speed
                 name: High Speed
                 icon: mdi:fan-speed-3
                 tap_action:

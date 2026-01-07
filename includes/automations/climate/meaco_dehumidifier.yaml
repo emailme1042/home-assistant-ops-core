@@ -106,11 +106,12 @@
   condition:
     - condition: template
       value_template: >
-        {% set start_humidity = state_attr('sensor.meaco_dehumidifier_humidity', 'last_changed') %}
         {% set current_humidity = states('sensor.meaco_dehumidifier_humidity') | float(0) %}
         {{ current_humidity > 60 }}
   action:
     - service: notify.persistent_notification
       data:
         title: "Dehumidifier Performance"
-        message: "Dehumidifier has been running for 2 hours but humidity remains high. Consider checking the unit or emptying the water tank."
+        message: >
+          Dehumidifier has been running for 2 hours but humidity remains high at {{ states('sensor.meaco_dehumidifier_humidity') }}%.
+          Consider checking the unit or emptying the water tank.

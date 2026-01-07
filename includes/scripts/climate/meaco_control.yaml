@@ -99,6 +99,6 @@ meaco_check_status:
         message: >
           Status: {{ states('switch.meaco_dehumidifier') }}
           Humidity: {{ states('sensor.meaco_dehumidifier_humidity') }}%
-          {% if is_state('sensor.meaco_dehumidifier_power', 'on') %}
+          {% if states('sensor.meaco_dehumidifier_power') | float(0) > 0 %}
           Power: {{ states('sensor.meaco_dehumidifier_power') }}W
           {% endif %}

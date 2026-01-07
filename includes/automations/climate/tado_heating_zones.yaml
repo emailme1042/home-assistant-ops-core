@@ -155,15 +155,19 @@
 - alias: Tado Window Open Detection
   id: tado_window_open_heating
   description: "Turn off heating when windows are open to save energy"
-  initial_state: true
+  initial_state: false  # Disabled by default - enable when window sensors are added
   mode: restart
   trigger:
-    # Add your window sensor entities here if available
+    # Add your window sensor entities here if available, then enable this automation
+    # Example:
     # - platform: state
     #   entity_id: binary_sensor.hallway_window
     #   to: "on"
+    # - platform: state
+    #   entity_id: binary_sensor.bedroom_window
+    #   to: "on"
     - platform: template
-      value_template: "{{ false }}"  # Placeholder - enable when window sensors added
+      value_template: "{{ false }}"  # Placeholder
   action:
     - service: climate.set_hvac_mode
       target:
@@ -174,6 +178,12 @@
         hvac_mode: "off"
     - wait_for_trigger:
         # Wait for window to close
+        # - platform: state
+        #   entity_id: binary_sensor.hallway_window
+        #   to: "off"
+        # - platform: state
+        #   entity_id: binary_sensor.bedroom_window
+        #   to: "off"
         - platform: template
           value_template: "{{ false }}"  # Placeholder
       timeout: "01:00:00"

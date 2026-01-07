@@ -54,7 +54,7 @@
         {% if hallway > 0 and bedroom > 0 %}
           {{ ((hallway + bedroom) / 2) | round(1) }}
         {% else %}
-          unavailable
+          'unavailable'
         {% endif %}
       icon: mdi:thermometer
 

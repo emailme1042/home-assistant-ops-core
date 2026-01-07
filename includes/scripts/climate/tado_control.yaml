@@ -49,7 +49,7 @@ tado_boost_heating:
         title: "Heating Boost"
         message: "All zones boosted to 22°C for quick warmup"
     - delay:
-        hours: 2
+        minutes: "{{ states('input_number.heating_boost_duration') | int(120) }}"
     - service: climate.set_temperature
       target:
         entity_id:
