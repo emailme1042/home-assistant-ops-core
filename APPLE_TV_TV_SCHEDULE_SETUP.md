@@ -5,18 +5,20 @@
 ### 1. Updated groups.yaml for Apple TV Compatibility
 
 **Changes Made:**
-- ✅ Added climate zones to `hacontrol_01` (Lights & Climate group)
+- ✅ Removed climate zones from `hacontrol_01` (now focused on lights only)
 - ✅ Created new `hacontrol_04` (Heating Zones) group
   - Includes: `climate.lounge`, `climate.bedroom` (Tado TRVs)
 - ✅ Created new `hacontrol_05` (Fans & Ventilation) group
   - Includes: `switch.teddy_fan_2`
   - Note: `fan.bedroom_fan` is commented out - uncomment if this entity exists
-- ✅ Removed `switch.teddy_fan_2` from Security group (moved to Fans group)
+- ✅ Removed duplicate entities between groups
+- ✅ Kept `cover.blind_tilt_94a1` in Security group only (security-relevant blind)
 
 **Apple TV Benefits:**
-- Climate zones are now properly grouped and accessible via Apple TV Home app
-- Heating controls (Tado TRVs) are easily accessible
-- Fan controls are organized in a dedicated group
+- Dedicated heating zones group for easy climate control
+- Climate entities no longer mixed with lights (cleaner organization)
+- Fan controls in dedicated group
+- No duplicate entities across groups
 - All groups follow Apple TV/HomeKit best practices with proper icons
 
 ### 2. TV Schedule iCal Integration

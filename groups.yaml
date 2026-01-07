@@ -17,11 +17,6 @@ hacontrol_01:
 
     # Covers
     - cover.kitchen_blind
-    - cover.blind_tilt_94a1
-
-    # Climate Zones
-    - climate.lounge
-    - climate.bedroom
 
 hacontrol_02:
   name: Media Zone
@@ -57,7 +52,7 @@ hacontrol_03:
     - switch.garden_lights
     - switch.teddy_lamp
 
-    # Covers
+    # Covers (Security-relevant)
     - cover.blind_tilt_94a1
 
 hacontrol_04:

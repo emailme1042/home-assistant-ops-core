@@ -59,17 +59,38 @@ sections:
   - type: grid
     cards:
       # TV Schedule Calendar - from https://tvcal.app/ical/326blc
-      # Uncomment after setting up ICS Calendar integration
+      # After setting up ICS Calendar integration, use one of these options:
+      
+      # Option 1: Full Calendar View (Recommended)
+      # Uncomment when calendar.tv_schedule entity exists
       # - type: calendar
       #   entities:
       #     - calendar.tv_schedule
       #   title: "TV Schedule Calendar"
       
-      # Alternative: Simple Calendar Card
+      # Option 2: Simple List View
+      # Uncomment when calendar.tv_schedule entity exists
       # - type: entities
       #   title: "TV Schedule"
       #   entities:
       #     - entity: calendar.tv_schedule
+      
+      # Temporary placeholder card (remove after calendar setup)
+      - type: markdown
+        content: |
+          ## 📺 TV Schedule Setup Required
+          
+          **Step 1:** Install ICS Calendar via HACS
+          
+          **Step 2:** Add Integration
+          - Go to: Settings → Devices & Services
+          - Add Integration: ICS Calendar
+          - URL: `https://tvcal.app/ical/326blc`
+          - Name: TV Schedule
+          
+          **Step 3:** Uncomment calendar card above
+          
+          See `APPLE_TV_TV_SCHEDULE_SETUP.md` for details
       
       # Specific Shows - Temporarily commented out until TV integrations are configured
       # - type: custom:upcoming-media-card
