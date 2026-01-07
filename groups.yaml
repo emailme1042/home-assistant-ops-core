@@ -57,4 +57,37 @@ hacontrol_03:
     # Covers
     - cover.blind_tilt_94a1
 
+hacontrol_04:
+  name: Heating & Climate
+  icon: mdi:thermostat
+  entities:
+    # Tado Heating Zones
+    - climate.lounge
+    - climate.bedroom
+    - climate.kitchen
+    - climate.bathroom
+    
+    # Tado TRVs (Thermostatic Radiator Valves)
+    - climate.lounge_radiator
+    - climate.bedroom_radiator
+    - climate.dining_radiator
+    - climate.hallway_radiator
+
+hacontrol_05:
+  name: Environmental Controls
+  icon: mdi:air-filter
+  entities:
+    # Govee Fans
+    - fan.lounge_fan
+    - fan.bedroom_fan
+    - fan.kitchen_fan
+    
+    # Govee Humidifiers
+    - humidifier.lounge_humidifier
+    - humidifier.bedroom_humidifier
+    
+    # Meaco Dehumidifier
+    - humidifier.meaco_dehumidifier
+    - fan.meaco_dehumidifier_fan
+
 
