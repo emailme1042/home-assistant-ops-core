@@ -1,0 +1,44 @@
+# Climate Control Input Selects
+# Dropdown selections for climate system modes
+
+climate_mode:
+  name: "Climate Mode"
+  icon: mdi:home-thermometer
+  options:
+    - "Auto"
+    - "Comfort"
+    - "Eco"
+    - "Boost"
+    - "Off"
+  initial: "Auto"
+
+heating_schedule:
+  name: "Heating Schedule"
+  icon: mdi:calendar
+  options:
+    - "Weekday"
+    - "Weekend"
+    - "Custom"
+    - "Off"
+  initial: "Weekday"
+
+fan_mode:
+  name: "Fan Mode"
+  icon: mdi:fan
+  options:
+    - "Auto"
+    - "Low"
+    - "Medium"
+    - "High"
+    - "Off"
+  initial: "Auto"
+
+season_mode:
+  name: "Season Mode"
+  icon: mdi:weather-partly-cloudy
+  options:
+    - "Auto"
+    - "Summer"
+    - "Winter"
+    - "Spring/Fall"
+  initial: "Auto"

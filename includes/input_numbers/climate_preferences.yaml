@@ -1,0 +1,87 @@
+# Climate Control Input Helpers
+# Helper entities for climate system configuration and preferences
+
+# Temperature preferences
+climate_hallway_comfort_temp:
+  name: "Hallway Comfort Temperature"
+  min: 15
+  max: 25
+  step: 0.5
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+  initial: 21
+
+climate_bedroom_comfort_temp:
+  name: "Bedroom Comfort Temperature"
+  min: 15
+  max: 25
+  step: 0.5
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+  initial: 20
+
+climate_eco_temp:
+  name: "Eco Temperature"
+  min: 15
+  max: 20
+  step: 0.5
+  unit_of_measurement: "°C"
+  icon: mdi:leaf
+  initial: 17
+
+# Humidity preferences
+target_humidity_level:
+  name: "Target Humidity Level"
+  min: 40
+  max: 60
+  step: 5
+  unit_of_measurement: "%"
+  icon: mdi:water-percent
+  initial: 50
+
+dehumidifier_threshold_high:
+  name: "Dehumidifier High Threshold"
+  min: 55
+  max: 75
+  step: 5
+  unit_of_measurement: "%"
+  icon: mdi:water-percent-alert
+  initial: 65
+
+dehumidifier_threshold_low:
+  name: "Dehumidifier Low Threshold"
+  min: 40
+  max: 60
+  step: 5
+  unit_of_measurement: "%"
+  icon: mdi:water-percent
+  initial: 55
+
+# Fan preferences
+fan_auto_temp_threshold:
+  name: "Fan Auto-On Temperature"
+  min: 20
+  max: 30
+  step: 0.5
+  unit_of_measurement: "°C"
+  icon: mdi:fan-auto
+  initial: 25
+
+# Timer settings
+heating_boost_duration:
+  name: "Heating Boost Duration"
+  min: 30
+  max: 240
+  step: 30
+  unit_of_measurement: "minutes"
+  icon: mdi:timer
+  initial: 120
+
+dehumidifier_cycle_duration:
+  name: "Dehumidifier Cycle Duration"
+  min: 1
+  max: 8
+  step: 0.5
+  unit_of_measurement: "hours"
+  icon: mdi:timer
+  initial: 3

@@ -157,6 +157,12 @@ lovelace:
       icon: mdi:television
       show_in_sidebar: true
       filename: dashboards/tv_schedule.yaml
+    climate-control:
+      mode: yaml
+      title: "🌡️ Climate Control"
+      icon: mdi:home-thermometer
+      show_in_sidebar: true
+      filename: dashboards/climate_control.yaml
 
 input_boolean: !include_dir_merge_named includes/input_booleans/
 input_text: !include_dir_merge_named includes/input_texts/
@@ -266,7 +272,7 @@ matter:
 #   project_id: !secret google_assistant_project_id
 #   service_account: !secret google_assistant_service_account
 
-# Alexa integration for Matter device control  
+# Alexa integration for Matter device control
 # alexa:
 #   smart_home: {}
 

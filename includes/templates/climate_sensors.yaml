@@ -1,0 +1,183 @@
+# Climate Control Template Sensors
+# Provides enhanced monitoring and status for climate devices
+
+- sensor:
+    - name: "Tado Hallway Status"
+      unique_id: tado_hallway_status
+      state: >
+        {% if is_state('climate.tado_hallway', 'heat') %}
+          Heating to {{ state_attr('climate.tado_hallway', 'temperature') }}°C
+        {% elif is_state('climate.tado_hallway', 'off') %}
+          Off
+        {% else %}
+          {{ states('climate.tado_hallway') }}
+        {% endif %}
+      icon: >
+        {% if is_state('climate.tado_hallway', 'heat') %}
+          mdi:radiator
+        {% else %}
+          mdi:radiator-off
+        {% endif %}
+      attributes:
+        current_temp: "{{ state_attr('climate.tado_hallway', 'current_temperature') | float(0) }}"
+        target_temp: "{{ state_attr('climate.tado_hallway', 'temperature') | float(0) }}"
+        hvac_mode: "{{ state_attr('climate.tado_hallway', 'hvac_mode') }}"
+
+    - name: "Tado Bedroom Status"
+      unique_id: tado_bedroom_status
+      state: >
+        {% if is_state('climate.tado_bedroom', 'heat') %}
+          Heating to {{ state_attr('climate.tado_bedroom', 'temperature') }}°C
+        {% elif is_state('climate.tado_bedroom', 'off') %}
+          Off
+        {% else %}
+          {{ states('climate.tado_bedroom') }}
+        {% endif %}
+      icon: >
+        {% if is_state('climate.tado_bedroom', 'heat') %}
+          mdi:radiator
+        {% else %}
+          mdi:radiator-off
+        {% endif %}
+      attributes:
+        current_temp: "{{ state_attr('climate.tado_bedroom', 'current_temperature') | float(0) }}"
+        target_temp: "{{ state_attr('climate.tado_bedroom', 'temperature') | float(0) }}"
+        hvac_mode: "{{ state_attr('climate.tado_bedroom', 'hvac_mode') }}"
+
+    - name: "Home Average Temperature"
+      unique_id: home_average_temperature
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state: >
+        {% set hallway = state_attr('climate.tado_hallway', 'current_temperature') | float(0) %}
+        {% set bedroom = state_attr('climate.tado_bedroom', 'current_temperature') | float(0) %}
+        {% if hallway > 0 and bedroom > 0 %}
+          {{ ((hallway + bedroom) / 2) | round(1) }}
+        {% else %}
+          'unavailable'
+        {% endif %}
+      icon: mdi:thermometer
+
+    - name: "Heating Demand Active"
+      unique_id: heating_demand_active
+      state: >
+        {% set hallway_heating = is_state('climate.tado_hallway', 'heat') %}
+        {% set bedroom_heating = is_state('climate.tado_bedroom', 'heat') %}
+        {{ hallway_heating or bedroom_heating }}
+      icon: >
+        {% if is_state('sensor.heating_demand_active', 'True') %}
+          mdi:fire
+        {% else %}
+          mdi:fire-off
+        {% endif %}
+
+    - name: "Govee Fan Status Summary"
+      unique_id: govee_fan_status_summary
+      state: >
+        {% if is_state('fan.govee_fan_1', 'on') %}
+          On - {{ state_attr('fan.govee_fan_1', 'percentage') | default(0) }}%
+        {% else %}
+          Off
+        {% endif %}
+      icon: >
+        {% if is_state('fan.govee_fan_1', 'on') %}
+          mdi:fan
+        {% else %}
+          mdi:fan-off
+        {% endif %}
+      attributes:
+        speed_percentage: "{{ state_attr('fan.govee_fan_1', 'percentage') | default(0) }}"
+        temperature: "{{ states('sensor.govee_fan_1_temperature') | default('N/A') }}"
+
+    - name: "Govee Humidifier Status Summary"
+      unique_id: govee_humidifier_status_summary
+      state: >
+        {% if is_state('humidifier.govee_humidifier', 'on') %}
+          On - Target {{ state_attr('humidifier.govee_humidifier', 'humidity') | default(0) }}%
+        {% else %}
+          Off
+        {% endif %}
+      icon: >
+        {% if is_state('humidifier.govee_humidifier', 'on') %}
+          mdi:air-humidifier
+        {% else %}
+          mdi:air-humidifier-off
+        {% endif %}
+      attributes:
+        target_humidity: "{{ state_attr('humidifier.govee_humidifier', 'humidity') | default(0) }}"
+        current_humidity: "{{ states('sensor.govee_humidifier_humidity') | default('N/A') }}"
+
+    - name: "Meaco Dehumidifier Status Summary"
+      unique_id: meaco_dehumidifier_status_summary
+      state: >
+        {% if is_state('switch.meaco_dehumidifier', 'on') %}
+          Running - {{ states('sensor.meaco_dehumidifier_humidity') }}% humidity
+        {% else %}
+          Off
+        {% endif %}
+      icon: >
+        {% if is_state('switch.meaco_dehumidifier', 'on') %}
+          mdi:air-humidifier
+        {% else %}
+          mdi:air-humidifier-off
+        {% endif %}
+      attributes:
+        humidity: "{{ states('sensor.meaco_dehumidifier_humidity') | default('N/A') }}"
+        power: "{{ states('sensor.meaco_dehumidifier_power') | default('N/A') }}"
+
+    - name: "Climate Control Summary"
+      unique_id: climate_control_summary
+      state: >
+        {% set heating = is_state('sensor.heating_demand_active', 'True') %}
+        {% set fan = is_state('fan.govee_fan_1', 'on') %}
+        {% set humidifier = is_state('humidifier.govee_humidifier', 'on') %}
+        {% set dehumidifier = is_state('switch.meaco_dehumidifier', 'on') %}
+        {% set active_count = [heating, fan, humidifier, dehumidifier] | select('eq', true) | list | count %}
+        {{ active_count }} device(s) active
+      icon: mdi:home-thermometer
+      attributes:
+        heating_active: "{{ is_state('sensor.heating_demand_active', 'True') }}"
+        fan_active: "{{ is_state('fan.govee_fan_1', 'on') }}"
+        humidifier_active: "{{ is_state('humidifier.govee_humidifier', 'on') }}"
+        dehumidifier_active: "{{ is_state('switch.meaco_dehumidifier', 'on') }}"
+        average_temperature: "{{ states('sensor.home_average_temperature') }}"
+
+- binary_sensor:
+    - name: "Heating Required"
+      unique_id: heating_required
+      device_class: heat
+      state: >
+        {% set avg_temp = states('sensor.home_average_temperature') | float(0) %}
+        {{ avg_temp < 19 and avg_temp > 0 }}
+      icon: >
+        {% if is_state('binary_sensor.heating_required', 'on') %}
+          mdi:thermometer-low
+        {% else %}
+          mdi:thermometer-check
+        {% endif %}
+
+    - name: "Humidity Too High"
+      unique_id: humidity_too_high
+      device_class: moisture
+      state: >
+        {% set humidity = states('sensor.meaco_dehumidifier_humidity') | float(0) %}
+        {{ humidity > 65 }}
+      icon: >
+        {% if is_state('binary_sensor.humidity_too_high', 'on') %}
+          mdi:water-percent-alert
+        {% else %}
+          mdi:water-percent
+        {% endif %}
+
+    - name: "Humidity Too Low"
+      unique_id: humidity_too_low
+      device_class: moisture
+      state: >
+        {% set humidity = states('sensor.govee_humidifier_humidity') | float(100) %}
+        {{ humidity < 40 and humidity > 0 }}
+      icon: >
+        {% if is_state('binary_sensor.humidity_too_low', 'on') %}
+          mdi:water-percent-alert
+        {% else %}
+          mdi:water-percent
+        {% endif %}
