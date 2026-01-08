@@ -1,0 +1,95 @@
+template:
+  - sensor:
+      - name: "MQTT Integration Health"
+        unique_id: integration_health_mqtt
+        state: >
+          {% if is_state('binary_sensor.mqtt_broker_online', 'on') %}
+            Healthy
+          {% else %}
+            Offline
+          {% endif %}
+        icon: >
+          {% if is_state('binary_sensor.mqtt_broker_online', 'on') %}
+            mdi:check-circle
+          {% else %}
+            mdi:alert-circle
+          {% endif %}
+
+      - name: "AdGuard Integration Health"
+        unique_id: integration_health_adguard
+        state: >
+          {% if is_state('binary_sensor.adguard_running', 'on') %}
+            Healthy
+          {% else %}
+            Offline
+          {% endif %}
+        icon: >
+          {% if is_state('binary_sensor.adguard_running', 'on') %}
+            mdi:shield-check
+          {% else %}
+            mdi:shield-alert
+          {% endif %}
+
+      - name: "UniFi Integration Health"
+        unique_id: integration_health_unifi
+        state: >
+          {% if is_state('binary_sensor.unifi_controller_online', 'on') %}
+            Healthy
+          {% else %}
+            Offline
+          {% endif %}
+        icon: >
+          {% if is_state('binary_sensor.unifi_controller_online', 'on') %}
+            mdi:wifi
+          {% else %}
+            mdi:wifi-off
+          {% endif %}
+
+      - name: "HACS Integration Health"
+        unique_id: integration_health_hacs
+        state: >
+          {% if is_state('binary_sensor.hacs_update_available', 'off') %}
+            Healthy
+          {% else %}
+            Updates Available
+          {% endif %}
+        icon: >
+          {% if is_state('binary_sensor.hacs_update_available', 'off') %}
+            mdi:package-variant
+          {% else %}
+            mdi:package-up
+          {% endif %}
+
+      - name: "MQTT Broker Status"
+        unique_id: mqtt_broker_status
+        state: >
+          {% if states('sensor.mqtt_connected_devices') | int(0) > 0 %}
+            {{ states('sensor.mqtt_connected_devices') }} devices connected
+          {% else %}
+            No devices
+          {% endif %}
+        icon: mdi:message-processing
+
+      - name: "AdGuard Queries Blocked"
+        unique_id: adguard_queries_blocked
+        state: >
+          {% set blocked = states('sensor.adguard_dns_queries_blocked_ratio') | float(0) %}
+          {{ (blocked * 100) | round(1) }}% blocked
+        icon: mdi:shield
+
+      - name: "UniFi Controller Status"
+        unique_id: unifi_controller_status
+        state: >
+          {% if states('sensor.unifi_connected_devices') | int(0) > 0 %}
+            {{ states('sensor.unifi_connected_devices') }} devices
+          {% else %}
+            Offline
+          {% endif %}
+        icon: mdi:access-point-network
+
+      - name: "HACS Installed Count"
+        unique_id: hacs_installed_count
+        state: >
+          {% set total = integration_entities('hacs') | length %}
+          {{ total }} components
+        icon: mdi:package-variant-closed

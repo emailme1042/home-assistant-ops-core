@@ -28,7 +28,7 @@
   - platform: rest
     name: "VirtualRadar Feed"
     resource: http://127.0.0.1:8081/VirtualRadar/AircraftList.json
-    scan_interval: 15
+    scan_interval: 30  # Increased from 15 to 30 seconds for performance
     value_template: "{{ value_json.totalAircraft }}"
     json_attributes:
       - aircraft

@@ -28,9 +28,9 @@ automation:
                   entity_id: input_datetime.boiler_last_start
                 data:
                   datetime: "{{ now().isoformat() }}"
-              - service: logbook.log
+              - service: persistent_notification.create
                 data:
-                  name: "Boiler Monitor"
+                  title: "Boiler Monitor"
                   message: >
                     Boiler started - {{ states('sensor.boiler_usage_type') }}
                     {% if states('sensor.boiler_usage_type') == 'Hot Water' %}
@@ -40,7 +40,7 @@ automation:
                     {% else %}
                       (vibration detected)
                     {% endif %}
-                  entity_id: binary_sensor.aqara_vibration_sensor_occupancy
+                  notification_id: boiler_start_log
               
           # Boiler stopped (no vibration for 2 minutes)
           - conditions:
@@ -58,11 +58,11 @@ automation:
               - service: counter.increment
                 target:
                   entity_id: counter.boiler_cycles_today
-              - service: logbook.log
+              - service: persistent_notification.create
                 data:
-                  name: "Boiler Monitor"
+                  title: "Boiler Monitor"
                   message: "Boiler stopped - cycle complete ({{ states('sensor.boiler_current_runtime') }})"
-                  entity_id: binary_sensor.aqara_vibration_sensor_occupancy
+                  notification_id: boiler_stop_log
 
   - alias: "Boiler Logging - Daily Reset"
     id: boiler_logging_daily_reset
@@ -74,7 +74,8 @@ automation:
       - service: counter.reset
         target:
           entity_id: counter.boiler_cycles_today
-      - service: logbook.log
+      - service: persistent_notification.create
         data:
-          name: "Boiler Monitor"
+          title: "Boiler Monitor"
           message: "Daily reset - Total runtime yesterday: {{ states('sensor.boiler_runtime_today') }}"
+          notification_id: boiler_daily_reset_log

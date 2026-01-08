@@ -1,0 +1,2 @@
+matter_bulk_commission: >
+  python3 /config/AI_WORKSPACE/matter_bulk_commission.py

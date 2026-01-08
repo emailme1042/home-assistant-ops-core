@@ -1,0 +1,138 @@
+template:
+  - sensor:
+      - name: "Frontend Error Count"
+        state: "{{ states('input_number.frontend_errors') | int(0) }}"
+        icon: >
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% if errors == 0 %}mdi:check-circle{% elif errors < 5 %}mdi:alert-circle-outline{% else %}mdi:alert-circle{% endif %}
+
+  - sensor:
+      - name: "Dashboard Health Status"
+        state: >
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% if errors == 0 and complexity < 50 %}
+            Excellent
+          {% elif errors < 3 and complexity < 100 %}
+            Good
+          {% elif errors < 8 and complexity < 150 %}
+            Fair
+          {% elif errors < 15 and complexity < 200 %}
+            Poor
+          {% else %}
+            Critical
+          {% endif %}
+        icon: >
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% if errors == 0 and complexity < 50 %}
+            mdi:heart
+          {% elif errors < 3 and complexity < 100 %}
+            mdi:heart-pulse
+          {% elif errors < 8 and complexity < 150 %}
+            mdi:heart-broken-outline
+          {% else %}
+            mdi:heart-broken
+          {% endif %}
+
+  - sensor:
+      - name: "Frontend Load Impact"
+        state: >
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') | float(0) %}
+          {% set memory = states('sensor.home_assistant_core_memory_percent') | float(0) %}
+          {% set errors = states('input_number.frontend_errors') | int(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% set high_complexity_count = states('sensor.high_complexity_dashboards') | int(0) %}
+          {% if cpu > 80 or memory > 90 or errors > 10 or complexity > 150 or high_complexity_count > 3 %}
+            High Impact
+          {% elif cpu > 60 or memory > 70 or errors > 5 or complexity > 100 or high_complexity_count > 1 %}
+            Medium Impact
+          {% elif cpu > 40 or memory > 50 or errors > 2 or complexity > 50 %}
+            Low Impact
+          {% else %}
+            Minimal Impact
+          {% endif %}
+        icon: >
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') | float(0) %}
+          {% set memory = states('sensor.home_assistant_core_memory_percent') | float(0) %}
+          {% if cpu > 80 or memory > 90 %}
+            mdi:speedometer
+          {% elif cpu > 60 or memory > 70 %}
+            mdi:speedometer-medium
+          {% else %}
+            mdi:speedometer-slow
+          {% endif %}
+
+  - sensor:
+      - name: "Dashboard Optimization Recommendation"
+        state: >
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% set high_complexity_count = states('sensor.high_complexity_dashboards') | int(0) %}
+          {% set total_dashboards = states('sensor.total_dashboard_count') | int(0) %}
+          {% set trend = states('sensor.frontend_error_trend') %}
+          {% if high_complexity_count > 3 or complexity > 150 %}
+            Simplify High-Complexity Dashboards
+          {% elif total_dashboards > 20 and trend == 'Increasing' %}
+            Consolidate Similar Dashboards
+          {% elif complexity > 100 %}
+            Optimize Card Usage
+          {% elif trend == 'Increasing' %}
+            Monitor Error Sources
+          {% else %}
+            System Optimized
+          {% endif %}
+        icon: >
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% if complexity > 150 %}
+            mdi:alert-decagram
+          {% elif complexity > 100 %}
+            mdi:alert-circle
+          {% else %}
+            mdi:check-circle
+          {% endif %}
+
+  - sensor:
+      - name: "Last Dashboard Access"
+        state: "{{ as_timestamp(now()) | timestamp_custom('%H:%M:%S') }}"
+        icon: mdi:clock-outline
+
+  - sensor:
+      - name: "Dashboard Session Duration"
+        state: >
+          {% set start = states('input_datetime.session_start_time') %}
+          {% if start not in ['unknown', 'unavailable'] %}
+            {% set duration = (as_timestamp(now()) - as_timestamp(start)) / 60 %}
+            {{ duration | round(1) }} min
+          {% else %}
+            Unknown
+          {% endif %}
+        icon: mdi:timer-outline
+
+  - sensor:
+      - name: "Recovery Dashboard Readiness"
+        state: >
+          {% set uptime = states('sensor.uptime') %}
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') | float(0) %}
+          {% set memory = states('sensor.home_assistant_core_memory_percent') | float(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% set audit_status = states('sensor.dashboard_health_audit_status') %}
+          {% if uptime in ['unknown', 'unavailable'] %}
+            Unknown
+          {% elif cpu < 50 and memory < 60 and complexity < 100 and audit_status == 'Recent' %}
+            Ready
+          {% elif cpu < 80 and memory < 80 and complexity < 150 %}
+            Standby
+          {% else %}
+            Critical Needed
+          {% endif %}
+        icon: >
+          {% set cpu = states('sensor.home_assistant_core_cpu_percent') | float(0) %}
+          {% set memory = states('sensor.home_assistant_core_memory_percent') | float(0) %}
+          {% set complexity = states('sensor.dashboard_complexity_score') | float(0) %}
+          {% if cpu < 50 and memory < 60 and complexity < 100 %}
+            mdi:shield-check
+          {% elif cpu < 80 and memory < 80 and complexity < 150 %}
+            mdi:shield-outline
+          {% else %}
+            mdi:shield-alert
+          {% endif %}

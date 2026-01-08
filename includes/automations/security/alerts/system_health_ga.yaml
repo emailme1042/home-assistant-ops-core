@@ -130,14 +130,15 @@
               type: tts
 
     # Step 4: Log to Home Assistant logbook
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "System Health Monitor"
+        title: "System Health Monitor"
         message: >
           {{ trigger_reason }}: Health {{ current_health }}% 
           ({{ '+' if health_change > 0 else '' }}{{ health_change }}%), 
           {{ current_unavailable }} unavailable 
           ({{ '+' if unavailable_change > 0 else '' }}{{ unavailable_change }})
+        notification_id: system_health_log
         entity_id: sensor.ha_system_health_percentage
 
     # Step 5: Update storage for next comparison

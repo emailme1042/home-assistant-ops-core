@@ -4,7 +4,7 @@
     "version": 1,
     "source": "zigbee-herdsman@8.0.1",
     "internal": {
-      "date": "2026-01-04T18:26:15.242Z",
+      "date": "2026-01-06T23:23:23.779Z",
       "znpVersion": 1
     }
   },
@@ -25,7 +25,7 @@
   "network_key": {
     "key": "01030507090b0d0f00020406080a0c0d",
     "sequence_number": 0,
-    "frame_counter": 794528
+    "frame_counter": 823806
   },
   "devices": [
     {
@@ -40,7 +40,27 @@
       "link_key": {
         "key": "b252d942bc1b5a2b0db74404dd5c9750",
         "rx_counter": 0,
-        "tx_counter": 3084
+        "tx_counter": 3095
+      }
+    },
+    {
+      "nwk_address": "cd4a",
+      "ieee_address": "d44867fffe28b4d8",
+      "is_child": true,
+      "link_key": {
+        "key": "573fdcd005457ddd2c80394d43243a10",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    },
+    {
+      "nwk_address": "8d98",
+      "ieee_address": "e406bffffe6fed60",
+      "is_child": true,
+      "link_key": {
+        "key": "715ed3bd8d7b896f94c395dccab6f2d0",
+        "rx_counter": 0,
+        "tx_counter": 0
       }
     },
     {
@@ -50,7 +70,7 @@
       "link_key": {
         "key": "0ce07e0ad164b9f5c19bc1ef4c22d8b2",
         "rx_counter": 0,
-        "tx_counter": 104
+        "tx_counter": 120
       }
     },
     {
@@ -60,77 +80,62 @@
       "link_key": {
         "key": "21b0f609e470fee767d1b1c49fcf1b7a",
         "rx_counter": 0,
-        "tx_counter": 473
+        "tx_counter": 484
+      }
+    },
+    {
+      "nwk_address": "885e",
+      "ieee_address": "08ddebfffea32c92",
+      "is_child": true,
+      "link_key": {
+        "key": "d15e6771741ff3f2b019aa0acbfa6eb4",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    },
+    {
+      "nwk_address": "5cee",
+      "ieee_address": "0ceff6fffe1be262",
+      "is_child": true,
+      "link_key": {
+        "key": "a66d900ad10ccd396b162fef4c4aac7e",
+        "rx_counter": 0,
+        "tx_counter": 0
       }
     },
     {
       "nwk_address": "b9f4",
       "ieee_address": "a4c13804e735ffff",
-      "is_child": true,
+      "is_child": false,
       "link_key": {
         "key": "4c437695c0b74a50d10517d20dccf5b5",
         "rx_counter": 0,
-        "tx_counter": 231
+        "tx_counter": 242
       }
     },
     {
-      "nwk_address": "5535",
+      "nwk_address": "5610",
       "ieee_address": "a4c13801e95fffff",
-      "is_child": false,
-      "link_key": {
-        "key": "3b70d41d2fc2e391f60b6bf8b28482d6",
-        "rx_counter": 0,
-        "tx_counter": 55
-      }
+      "is_child": true
     },
     {
-      "nwk_address": "8aa9",
+      "nwk_address": "2c4c",
       "ieee_address": "a4c13801f84cffff",
       "is_child": false,
       "link_key": {
-        "key": "0bcb5d4bbd7bb3607074b8d6fb1af4ad",
+        "key": "cbeeff44424a052b740b6202230dc850",
         "rx_counter": 0,
-        "tx_counter": 55
+        "tx_counter": 0
       }
     },
     {
-      "nwk_address": "9590",
+      "nwk_address": "e9fe",
       "ieee_address": "a4c13801d40cffff",
       "is_child": false,
       "link_key": {
-        "key": "8d3b835ff5163b86caf6f8e0108b7de7",
+        "key": "3b7087202fc2e391f60b38c5b28482d6",
         "rx_counter": 0,
-        "tx_counter": 55
-      }
-    },
-    {
-      "nwk_address": "780",
-      "ieee_address": "d44867fffe28b4d8",
-      "is_child": true,
-      "link_key": {
-        "key": "573fdcd005457ddd2c80394d43243a10",
-        "rx_counter": 0,
-        "tx_counter": 330
-      }
-    },
-    {
-      "nwk_address": "c278",
-      "ieee_address": "0ceff6fffe1be262",
-      "is_child": true,
-      "link_key": {
-        "key": "ed69efd005d4da0596d60a4d43b59dc8",
-        "rx_counter": 0,
-        "tx_counter": 429
-      }
-    },
-    {
-      "nwk_address": "31c1",
-      "ieee_address": "08ddebfffea32c92",
-      "is_child": true,
-      "link_key": {
-        "key": "2e6fd13a70602926680e96f70bdfccbb",
-        "rx_counter": 0,
-        "tx_counter": 231
+        "tx_counter": 0
       }
     }
   ]

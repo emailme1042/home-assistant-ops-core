@@ -143,30 +143,4 @@
 #         {% endif %}
 
 # Modular AI Monitoring Sensors for Home Assistant
-- platform: template
-  sensors:
-    hacs_status:
-      friendly_name: "HACS Integration Health"
-      value_template: >
-        {{ 'ok' if is_state('sensor.hacs', 'on') else 'problem' }}
-      icon_template: mdi:package-variant-closed
-    zigbee_mesh_lqi:
-      friendly_name: "Zigbee Mesh LQI"
-      value_template: >
-        {{ states('sensor.zigbee2mqtt_networkmap_lqi') | int(0) }}
-      icon_template: mdi:router-wireless
-    mqtt_status:
-      friendly_name: "MQTT Broker Status"
-      value_template: >
-        {{ 'online' if is_state('binary_sensor.mqtt_broker', 'on') else 'offline' }}
-      icon_template: mdi:transit-connection
-    automation_health:
-      friendly_name: "Automation Health"
-      value_template: >
-        {{ states('sensor.watchman_disabled_automations') | int(0) == 0 and 'ok' or 'issues' }}
-      icon_template: mdi:robot
-    watchman_orphans:
-      friendly_name: "Orphaned Entities"
-      value_template: >
-        {{ states('sensor.watchman_orphaned_entities') | int(0) }}
-      icon_template: mdi:account-off
+# Template sensors moved to includes/templates/ai_monitoring.yaml (converted to modern format)

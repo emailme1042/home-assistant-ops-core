@@ -9,19 +9,20 @@
       entity_id: input_boolean.enable_performance_monitoring
       state: "on"
   action:
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Crash Monitor"
+        title: "Crash Monitor"
         message: "Context logged: Dashboard {{ states('sensor.last_card_loaded') }}, Errors: {{ states('input_number.frontend_errors') }}"
-    - service: logbook.log
+        notification_id: crash_monitor_log
+    - service: persistent_notification.create
       data:
-        name: "Crash Sentinel"
+        title: "Crash Sentinel"
         message: >
           Crash context logged: {{ states('sensor.crash_context_summary') }} | 
           Vertical Layout: {{ states('sensor.vertical_layout_tracker') }} | 
           Frontend Errors: {{ states('input_number.frontend_errors') }} | 
           Memory: {{ state_attr('sensor.ha_crash_sentinel', 'memory_usage') }}
-        entity_id: sensor.ha_crash_sentinel
+        notification_id: crash_sentinel_log
 
 - id: crash_risk_alert
   alias: "🚨 Crash Risk Alert"
@@ -45,9 +46,13 @@
           Vertical Layout: {{ states('sensor.vertical_layout_tracker') }}
           Recommended: {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}
         notification_id: crash_risk_alert
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Crash Risk Monitor"
+        title: "Crash Risk Monitor"
+        message: >
+          ⚠️ CRASH RISK ELEVATED: {{ states('sensor.crash_context_summary') }} - 
+          {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}
+        notification_id: crash_risk_log
         message: >
           ⚠️ CRASH RISK ELEVATED: {{ states('sensor.crash_context_summary') }} - 
           {{ state_attr('sensor.crash_context_summary', 'recommended_action') }}
@@ -76,9 +81,13 @@
           This may indicate an imminent crash. Check browser console immediately.
           Last card: {{ states('sensor.last_card_loaded') }}
         notification_id: frontend_error_spike
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Frontend Error Monitor"
+        title: "Frontend Error Monitor"
+        message: >
+          ⚡ ERROR SPIKE DETECTED: {{ states('input_number.frontend_errors') }} errors - 
+          potential crash imminent. Card: {{ states('sensor.last_card_loaded') }}
+        notification_id: frontend_error_log
         message: >
           ⚡ ERROR SPIKE DETECTED: {{ states('input_number.frontend_errors') }} errors - 
           potential crash imminent. Card: {{ states('sensor.last_card_loaded') }}
@@ -103,9 +112,12 @@
           This was the root cause of previous crashes.
           Check that layout-card.js is properly loaded in resources.
         notification_id: vertical_layout_failure
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Vertical Layout Monitor"
+        title: "Vertical Layout Monitor"
+        message: >
+          🔧 VERTICAL LAYOUT FAILURE: Card failed to load - this was the previous crash cause!
+        notification_id: vertical_layout_log
         message: >
           🔧 VERTICAL LAYOUT FAILURE: Card failed to load - this was the previous crash cause!
         entity_id: sensor.vertical_layout_tracker

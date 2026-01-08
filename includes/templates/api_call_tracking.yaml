@@ -1,0 +1,54 @@
+template:
+  - sensor:
+      - name: "Recent Automation Activity"
+        state: >
+          {% set automation_entities = states | selectattr('entity_id', 'match', '^automation\.') | list %}
+          {% if automation_entities %}
+            {% set valid_triggers = automation_entities | selectattr('attributes.last_triggered', 'defined') |
+               selectattr('attributes.last_triggered', '!=', None) |
+               selectattr('attributes.last_triggered', '!=', 'unknown') %}
+            {% if valid_triggers %}
+              {% set triggered = valid_triggers | sort(attribute='attributes.last_triggered', reverse=true) | first %}
+              {{ triggered.attributes.friendly_name or triggered.entity_id }}: {{ relative_time(triggered.attributes.last_triggered) }} ago
+            {% else %}
+              No recent automation triggers
+            {% endif %}
+          {% else %}
+            No automations found
+          {% endif %}
+        icon: mdi:robot
+
+      - name: "Recent Entity Changes"
+        state: >
+          {% set recent = states | selectattr('last_changed') |
+             sort(attribute='last_changed', reverse=true) | first %}
+          {% if recent %}
+            {{ recent.entity_id }}: {{ relative_time(recent.last_changed) }} ago
+          {% else %}
+            No recent changes
+          {% endif %}
+        icon: mdi:update
+
+      - name: "System Restarts Today"
+        state: >
+          {% if states('input_datetime.system_last_restart') %}
+            {% set restart_time = states('input_datetime.system_last_restart') | as_timestamp %}
+            {% set today_start = now().replace(hour=0, minute=0, second=0, microsecond=0) | as_timestamp %}
+            {% if restart_time >= today_start %}
+              1
+            {% else %}
+              0
+            {% endif %}
+          {% else %}
+            0
+          {% endif %}
+        icon: mdi:restart
+
+      - name: "Last Config Validation"
+        state: >
+          {% if states('input_datetime.last_api_validation') %}
+            {{ relative_time(states('input_datetime.last_api_validation')) }} ago
+          {% else %}
+            Never
+          {% endif %}
+        icon: mdi:check-circle

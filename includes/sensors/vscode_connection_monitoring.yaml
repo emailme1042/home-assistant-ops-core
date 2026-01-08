@@ -1,12 +1,16 @@
-# VSCode HA Extension Connection Monitoring
-# Tracks connection status, uptime, and disconnection events
+# ================================================
+# VSCODE CONNECTION MONITORING SENSORS
+# ================================================
+# Purpose: Monitor VSCode HA extension connection status and uptime
+# Created: 2025-11-04 for development environment monitoring
+# Dependencies: sensor.last_api_call_vscode, input_datetime.vscode_last_connect, input_datetime.vscode_last_disconnect, counter.vscode_disconnects_today
 
-- platform: template
-  sensors:
-    vscode_ha_connection_status:
-      friendly_name: "VSCode HA Extension Status"
-      value_template: >
-        {% if states('sensor.last_api_call_vscode') %}
+template:
+  - sensor:
+      name: "VSCode HA Extension Status"
+      unique_id: vscode_ha_connection_status
+      state: >
+        {% if states('sensor.last_api_call_vscode') and states('sensor.last_api_call_vscode') != 'unknown' %}
           {% set last_call = states('sensor.last_api_call_vscode') | as_timestamp %}
           {% set now_time = now() | as_timestamp %}
           {% if (now_time - last_call) < 300 %}
@@ -24,17 +28,18 @@
         {% if status == 'Connected' %}mdi:microsoft-visual-studio-code
         {% elif status == 'Intermittent' %}mdi:connection
         {% else %}mdi:close-circle{% endif %}
-      attribute_templates:
+      attributes:
         last_seen: >
-          {% if states('sensor.last_api_call_vscode') %}
+          {% if states('sensor.last_api_call_vscode') and states('sensor.last_api_call_vscode') != 'unknown' %}
             {{ states('sensor.last_api_call_vscode') | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S') }}
           {% else %}
             Never
           {% endif %}
 
-    vscode_connection_uptime:
-      friendly_name: "VSCode Connection Uptime"
-      value_template: >
+  - sensor:
+      name: "VSCode Connection Uptime"
+      unique_id: vscode_connection_uptime
+      state: >
         {% if states('input_datetime.vscode_last_connect') %}
           {% set connect_time = states('input_datetime.vscode_last_connect') | as_timestamp %}
           {% set now_time = now() | as_timestamp %}
@@ -49,52 +54,52 @@
         {% else %}
           Unknown
         {% endif %}
-      icon_template: mdi:clock-outline
+      icon_template: "mdi:clock-outline"
 
-    last_vscode_disconnect:
-      friendly_name: "Last VSCode Disconnect"
-      value_template: >
+  - sensor:
+      name: "Last VSCode Disconnect"
+      unique_id: last_vscode_disconnect
+      state: >
         {% if states('input_datetime.vscode_last_disconnect') %}
           {{ relative_time(states('input_datetime.vscode_last_disconnect') | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S')) }} ago
         {% else %}
           Never recorded
         {% endif %}
-      icon_template: mdi:connection
+      icon_template: "mdi:connection"
 
-    vscode_daily_disconnects:
-      friendly_name: "VSCode Disconnects Today"
-      value_template: >
-        {{ states('counter.vscode_disconnects_today') | int(0) }}
-      icon_template: mdi:counter
+  - sensor:
+      name: "VSCode Disconnects Today"
+      unique_id: vscode_daily_disconnects
+      state: "{{ states('counter.vscode_disconnects_today') | int(0) }}"
+      icon_template: "mdi:counter"
       unit_of_measurement: "disconnects"
 
-- platform: template
-  sensors:
-    # Dashboard Summary Sensors
-    admin_dashboard_summary:
-      friendly_name: "Admin Dashboard Summary"
-      value_template: >
-        {{ states('sensor.ha_include_dashboards_count') | int(0) }} dashboards
-      icon_template: mdi:cog
+  # Dashboard Summary Sensors
+  - sensor:
+      name: "Admin Dashboard Summary"
+      unique_id: admin_dashboard_summary
+      state: "{{ states('sensor.ha_include_dashboards_count') | int(0) }} dashboards"
+      icon_template: "mdi:cog"
 
-    ops_dashboard_summary:
-      friendly_name: "Ops Dashboard Summary" 
-      value_template: >
-        {{ states('sensor.ha_system_unavailable_entities') | int(0) }} issues
-      icon_template: mdi:chart-line
+  - sensor:
+      name: "Ops Dashboard Summary"
+      unique_id: ops_dashboard_summary
+      state: "{{ states('sensor.ha_system_unavailable_entities') | int(0) }} issues"
+      icon_template: "mdi:chart-line"
 
-    ai_workspace_summary:
-      friendly_name: "AI Workspace Summary"
-      value_template: >
+  - sensor:
+      name: "AI Workspace Summary"
+      unique_id: ai_workspace_summary
+      state: >
         {% if states('sensor.ai_routine_next_run') %}
           Next: {{ states('sensor.ai_routine_next_run') }}
         {% else %}
           Ready
         {% endif %}
-      icon_template: mdi:robot
+      icon_template: "mdi:robot"
 
-    home_dashboard_summary:
-      friendly_name: "Home Dashboard Summary"
-      value_template: >
-        {{ states.light | selectattr('state', 'eq', 'on') | list | count }} lights on
-      icon_template: mdi:home
+  - sensor:
+      name: "Home Dashboard Summary"
+      unique_id: home_dashboard_summary
+      state: "{{ states.light | selectattr('state', 'eq', 'on') | list | count }} lights on"
+      icon_template: "mdi:home"

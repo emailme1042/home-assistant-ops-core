@@ -1,31 +1,43 @@
-- platform: template
-  sensors:
-    yaml_validation_status:
-      friendly_name: "YAML Validation Status"
-      value_template: "✅ Valid"
+# ================================================
+# VALIDATION STATUS SENSORS
+# ================================================
+# Purpose: Monitor YAML validation status and system checks
+# Created: 2025-11-04 for validation monitoring
+# Dependencies: None (static values)
+
+template:
+  - sensor:
+      name: "YAML Validation Status"
+      unique_id: yaml_validation_status
+      state: "✅ Valid"
       icon_template: "mdi:check-circle"
 
-    includes_validation_status:
-      friendly_name: "Includes Validation Status"
-      value_template: "✅ Valid"
+  - sensor:
+      name: "Includes Validation Status"
+      unique_id: includes_validation_status
+      state: "✅ Valid"
       icon_template: "mdi:check-circle"
 
-    automation_validation_status:
-      friendly_name: "Automation Validation Status"
-      value_template: "✅ Valid"
+  - sensor:
+      name: "Automation Validation Status"
+      unique_id: automation_validation_status
+      state: "✅ Valid"
       icon_template: "mdi:check-circle"
 
-    last_validation_check:
-      friendly_name: "Last Validation Check"
-      value_template: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
+  - sensor:
+      name: "Last Validation Check"
+      unique_id: last_validation_check
+      state: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
       icon_template: "mdi:clock-check"
 
-    ai_exec_log:
-      friendly_name: "AI Execution Log"
-      value_template: "📋 Active"
+  - sensor:
+      name: "AI Execution Log"
+      unique_id: ai_exec_log
+      state: "📋 Active"
       icon_template: "mdi:script-text"
 
-    validation_summary:
-      friendly_name: "Validation Summary" 
-      value_template: "All systems: ✅ Valid"
+  - sensor:
+      name: "Validation Summary"
+      unique_id: validation_summary
+      state: "All systems: ✅ Valid"
       icon_template: "mdi:clipboard-check"

@@ -12,18 +12,10 @@
 #     scan_interval: 60
 #     value_template: "{{ 'online' if value == 'Reply from' or 'bytes=' in value else 'offline' }}"
 
-# Option B: template binary_sensor that checks for the MQTT integration entity
-# If you added MQTT via the UI, you may have integration-specific entities; adjust to your environment.
-#
-binary_sensor:
-  - platform: template
-    sensors:
-      mqtt_integration_present:
-        friendly_name: "MQTT Integration Present"
-        value_template: >-
-          {% set has_mqtt_entity = states | selectattr('entity_id','search','^sensor\.|^binary_sensor\.|^switch\.|^light\.') | selectattr('entity_id','search','mqtt') | list | length > 0 %}
-          {{ has_mqtt_entity }}
-        device_class: connectivity
+# MQTT Health Sensors - CONVERTED TO MODERN TEMPLATE FORMAT
+# Template sensors moved to includes/templates/mqtt_health.yaml
+# Converted: 1 binary sensor (mqtt_integration_present)
+# Conversion completed: 2026-01-06
 
 # Option C: If you run a broker that exposes $SYS topics, you can create an mqtt sensor
 # (requires MQTT in YAML or an MQTT integration that exposes topics). Example (commented):

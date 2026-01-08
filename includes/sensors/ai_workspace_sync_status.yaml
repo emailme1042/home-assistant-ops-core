@@ -1,4 +1,2 @@
-- platform: template
-  sensors:
-    ai_workspace_sync_status:
-      value_template: "{{ states('sensor.ai_workspace_sync_status_raw') }}"
+# Template sensors moved to includes/templates/ai_workspace_sync_status.yaml
+# Converted to modern template: sensor format to resolve HA repairs deprecation warnings

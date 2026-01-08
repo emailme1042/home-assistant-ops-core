@@ -1,0 +1,25 @@
+template:
+  - sensor:
+      - name: "Entity Registry Summary"
+        unique_id: ha_entity_registry_summary
+        state: >-
+          {% set domain_list = [] %}
+          {% for state in states %}
+            {% set domain_list = domain_list + [state.entity_id.split('.')[0]] %}
+          {% endfor %}
+          {{ domain_list | unique | list | join(', ') }}
+        icon: mdi:database-outline
+        attributes:
+          by_domain: >
+            {% set domains = {} %}
+            {% for state in states %}
+              {% set domain = state.entity_id.split('.')[0] %}
+              {% set domains = dict(domains, **{domain: domains.get(domain, 0) + 1}) %}
+            {% endfor %}
+            {{ domains }}
+          top_domains: >
+            {% set domain_list = [] %}
+            {% for state in states %}
+              {% set domain_list = domain_list + [state.entity_id.split('.')[0]] %}
+            {% endfor %}
+            {{ (domain_list | unique | list)[:10] | join(', ') }}

@@ -66,11 +66,11 @@ action:
               message: "Router ping failing but HA system responsive. Checking external connectivity."
               notification_id: ipv6_warning
   # Always log connectivity status
-  - service: logbook.log
+  - service: persistent_notification.create
     data:
-      name: "IPv6 Monitor"
+      title: "IPv6 Monitor"
       message: "Router: {{ states('binary_sensor.192_168_1_1') }}, HA System: {{ states('binary_sensor.192_168_1_217') }}"
-      entity_id: binary_sensor.192_168_1_1
+      notification_id: ipv6_monitor_log
 
 mode: single
 max_exceeded: silent

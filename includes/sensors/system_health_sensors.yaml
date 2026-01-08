@@ -1,34 +1,4 @@
----
-# Modern template sensor format - restart-safe and schema-compliant
-- platform: template
-  sensors:
-# Temporarily disabled - causing template loops and performance issues
-# Can be re-enabled if unknown entity monitoring is needed
-#    ha_unknown_entities:
-#      friendly_name: "HA Unknown Entities"
-#      value_template: >
-#        {{ states | selectattr('state','eq','unknown') | rejectattr('entity_id', 'eq', 'sensor.ha_unknown_entities') | list | length | int(0) }}
-#      icon_template: mdi:help-circle-outline
-#      attribute_templates:
-#        unknown_entities: >
-#          {{ states | selectattr('state','eq','unknown') | rejectattr('entity_id', 'eq', 'sensor.ha_unknown_entities') | map(attribute='entity_id') | list }}
-          
-    ha_system_uptime:
-      friendly_name: "HA System Uptime"
-      value_template: >
-        {% if states('sensor.uptime') != 'unavailable' %}
-          {{ states('sensor.uptime') }}
-        {% else %}
-          Unknown
-        {% endif %}
-      icon_template: mdi:clock-outline
-      
-    ha_last_restart_time:
-      friendly_name: "HA Last Restart Time"
-      value_template: >
-        {% if states('sensor.uptime') != 'unavailable' %}
-          {{ (now() - timedelta(seconds=states('sensor.uptime')|int(0)*3600)) | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S') }}
-        {% else %}
-          Unknown
-        {% endif %}
-      icon_template: mdi:restart
+# Template sensors converted to modern format in includes/templates/system_health_sensors.yaml
+# Converted on 2026-01-06: 2 template sensors moved to modern template: format
+# - ha_system_uptime
+# - ha_last_restart_time

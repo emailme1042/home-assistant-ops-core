@@ -1,5 +1,2 @@
-- platform: template
-  sensors:
-    ai_workspace_sync_status_raw:
-      friendly_name: "AI Workspace Sync Status (Raw)"
-      value_template: "{{ 'idle' }}"
+# Template sensors moved to includes/templates/ai_workspace_sync_status_raw.yaml
+# Converted to modern template: sensor format to resolve HA repairs deprecation warnings

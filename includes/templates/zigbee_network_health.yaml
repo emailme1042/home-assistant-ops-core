@@ -1,0 +1,81 @@
+template:
+  - sensor:
+      - name: "Zigbee Mesh Efficiency"
+        unique_id: zigbee_mesh_efficiency
+        state: >
+          {% set total = states('sensor.zigbee_end_devices') | int(0) + states('sensor.zigbee_active_routers') | int(0) %}
+          {% set misrouted = states('sensor.zigbee_misrouted_devices') | int(0) %}
+          {% if total > 0 %}
+            {{ ((total - misrouted) / total * 100) | round(1) }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+        icon: >
+          {% set efficiency = states('sensor.zigbee_mesh_efficiency') | float(0) %}
+          {% if efficiency >= 90 %}mdi:check-circle
+          {% elif efficiency >= 80 %}mdi:check
+          {% elif efficiency >= 70 %}mdi:alert
+          {% elif efficiency >= 60 %}mdi:alert-circle
+          {% else %}mdi:close-circle
+          {% endif %}
+
+      - name: "Last Zigbee Rebalance"
+        unique_id: zigbee_last_rebalance
+        state: >
+          {% set files = states.sensor | selectattr('entity_id', 'match', 'sensor\.zigbee_.*_rebalance_timestamp') | list %}
+          {% if files | length > 0 %}
+            {% set timestamps = files | map(attribute='state') | reject('equalto', 'unknown') | list %}
+            {% if timestamps | length > 0 %}
+              {{ timestamps | max }}
+            {% else %}
+              Never
+            {% endif %}
+          {% else %}
+            Never
+          {% endif %}
+        icon: mdi:clock-outline
+
+      - name: "Zigbee Rebalance Status"
+        unique_id: zigbee_rebalance_status
+        state: >
+          {% if is_state('automation.zigbee_mesh_rebalance_bathroom_motion', 'on') or
+                is_state('automation.zigbee_mesh_rebalance_office_temp', 'on') or
+                is_state('automation.zigbee_mesh_rebalance_water_valve', 'on') or
+                is_state('automation.zigbee_mesh_rebalance_button_tyler', 'on') or
+                is_state('automation.zigbee_mesh_rebalance_bathroom_switch', 'on') %}
+            Ready
+          {% else %}
+            Disabled
+          {% endif %}
+        icon: >
+          {% if is_state('sensor.zigbee_rebalance_status', 'Ready') %}
+            mdi:check-circle
+          {% else %}
+            mdi:stop-circle
+          {% endif %}
+
+      - name: "Z2 Router Load"
+        unique_id: zigbee_z2_router_load
+        state: >
+          {% set devices = [
+            'sensor.bathroom_motion',
+            'sensor.office_temp_humidity',
+            'binary_sensor.button_tyler'
+          ] %}
+          {% set active_count = devices | select('is_state', 'on') | list | length %}
+          {{ active_count }}
+        unit_of_measurement: "devices"
+        icon: mdi:router-wireless
+
+      - name: "Z3 Router Load"
+        unique_id: zigbee_z3_router_load
+        state: >
+          {% set devices = [
+            'switch.water_control_valve_irrigation',
+            'sensor.garden_sensor_data'
+          ] %}
+          {% set active_count = devices | select('is_state', 'on') | list | length %}
+          {{ active_count }}
+        unit_of_measurement: "devices"
+        icon: mdi:router-wireless

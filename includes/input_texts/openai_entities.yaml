@@ -8,6 +8,11 @@ openai_response:
   initial: "Ready for query"
   max: 255
 
+openai_ha_insight_response:
+  name: OpenAI HA Insight Response
+  initial: "System analysis ready"
+  max: 255
+
 tts_message:
   name: TTS Message
   initial: "Hello from Home Assistant"

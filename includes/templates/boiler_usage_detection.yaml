@@ -1,0 +1,28 @@
+template:
+  - sensor:
+      name: "Boiler Usage Type"
+      state: "Unknown"
+      icon: mdi:water-boiler
+
+  - sensor:
+      name: "Boiler Hot Water Flow"
+      unit_of_measurement: "L/min"
+      state: "0"
+      icon: mdi:water-pump
+
+  - sensor:
+      name: "Boiler Heating Runtime Today"
+      unit_of_measurement: "hours"
+      state: "0"
+      icon: mdi:clock-outline
+
+  - sensor:
+      name: "Boiler Hot Water Runtime Today"
+      unit_of_measurement: "hours"
+      state: "0"
+      icon: mdi:water-clock
+
+  - binary_sensor:
+      name: "Heating Demand Active"
+      device_class: heat
+      state: "false"

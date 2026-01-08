@@ -134,9 +134,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -177,7 +177,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -204,8 +204,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -2017,9 +2017,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -2060,7 +2060,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -2087,8 +2087,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -3486,9 +3486,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -3529,7 +3529,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -3556,8 +3556,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -4962,9 +4962,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -5005,7 +5005,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -5032,8 +5032,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -7069,9 +7069,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -7112,7 +7112,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -7139,8 +7139,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -8952,9 +8952,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -8995,7 +8995,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -9022,8 +9022,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -10248,7 +10248,7 @@ views:
                                 autoplay: true
                               - type: custom:gap-card
                       - type: custom:alarmo-card
-                        entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
                         button_scale_keypad: 1.5
                         use_clear_icon: true
                         name: Alarm
@@ -10821,9 +10821,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -10864,7 +10864,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -10891,8 +10891,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -12267,9 +12267,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -12310,7 +12310,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -12337,8 +12337,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -13741,9 +13741,9 @@ views:
                             state: unknown
                           - entity: sensor.browser_mod_installed
                             state_not: 'True'
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unavailable
-                          - entity: alarm_control_panel.alarmo
+# # #                           - entity: alarm_control_panel.alarmo
                             state: unknown
                           - entity: weather.forecast_home
                             state: unavailable
@@ -13784,7 +13784,7 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: alarm_control_panel.alarmo
+# # #                       - entity: alarm_control_panel.alarmo
                         state_not: unavailable
                     card:
                       type: custom:button-card
@@ -13811,8 +13811,8 @@ views:
                           - font-weight: bold
                       tap_action:
                         action: more-info
-                        entity: alarm_control_panel.alarmo
-                      entity: alarm_control_panel.alarmo
+# # #                         entity: alarm_control_panel.alarmo
+# # #                       entity: alarm_control_panel.alarmo
                       card_mod:
                         style: |
                           ha-card {
@@ -15074,14 +15074,7 @@ views:
                   }
             - type: markdown
               content: >
-                {% if not is_state('alarm_control_panel.alarmo', 'unavailable')
-                and states('alarm_control_panel.alarmo') != 'unknown' %}
-
-                ✅ **Alarmo is Installed and Available!**
-
-                {% else %}
-
-                ⚠️ **Important:** Alarmo is NOT installed or not available!  
+                ⚠️ **Important:** Alarmo is NOT installed or not available!
 
                 Alarm-related features such as arming/disarming and alarm status
                 indicators will not work until Alarmo is correctly installed.
@@ -15105,18 +15098,11 @@ views:
 
                 👉 [Click here to open the Alarmo GitHub
                 page](https://github.com/nielsfaber/alarmo)
-
-                {% endif %}
               card_mod:
                 style: |
                   ha-card {
-                    {% if not is_state('alarm_control_panel.alarmo', 'unavailable') and states('alarm_control_panel.alarmo') != 'unknown' %}
-                    background-color: rgba(0, 255, 0, 0.2);
-                    color: green;
-                    {% else %}
                     background-color: rgba(255, 0, 0, 0.2);
                     color: red;
-                    {% endif %}
                     font-weight: bold;
                     padding: 16px;
                   }          

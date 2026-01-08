@@ -1,0 +1,8 @@
+template:
+  - binary_sensor:
+      - name: "MQTT Integration Present"
+        unique_id: mqtt_integration_present
+        device_class: connectivity
+        state: >-
+          {% set has_mqtt_entity = states | selectattr('entity_id','search','^sensor\.|^binary_sensor\.|^switch\.|^light\.') | selectattr('entity_id','search','mqtt') | list | length > 0 %}
+          {{ has_mqtt_entity }}

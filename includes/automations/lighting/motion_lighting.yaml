@@ -25,11 +25,11 @@
         brightness_pct: 80
     
     # Optional: Log the action
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Office Motion Automation"
+        title: "Office Motion Automation"
         message: "Office light turned on - motion detected"
-        entity_id: binary_sensor.office_motion
+        notification_id: office_motion_on_log
 
 - id: office_light_off_no_motion
   alias: "💡 Office Light - Turn Off After No Motion"
@@ -57,8 +57,8 @@
         entity_id: light.office
     
     # Log the action
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Office Motion Automation"
+        title: "Office Motion Automation"
         message: "Office light turned off - no motion for 10 minutes"
-        entity_id: binary_sensor.office_motion
+        notification_id: office_motion_off_log

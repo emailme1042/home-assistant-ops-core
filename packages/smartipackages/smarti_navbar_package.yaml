@@ -7,7 +7,7 @@ sensor:
           {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'motion') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_motion_sensors') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_motion_sensors')|int > 0 %}
+            {% if states('sensor.smarti_active_motion_sensors')|int(0) > 0 %}
               mdi:motion-sensor
             {% else %}
               mdi:motion-sensor-off
@@ -22,7 +22,7 @@ sensor:
           {{ states.light | selectattr('state','eq','on') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_lights') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_lights')|int > 0 %}
+            {% if states('sensor.smarti_active_lights')|int(0) > 0 %}
               mdi:lightbulb-on
             {% else %}
               mdi:lightbulb-off
@@ -37,7 +37,7 @@ sensor:
           {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'door') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_doors') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_doors')|int > 0 %}
+            {% if states('sensor.smarti_active_doors')|int(0) > 0 %}
               mdi:door-open
             {% else %}
               mdi:door-closed
@@ -52,7 +52,7 @@ sensor:
           {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'window') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_windows') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_windows')|int > 0 %}
+            {% if states('sensor.smarti_active_windows')|int(0) > 0 %}
               mdi:window-open
             {% else %}
               mdi:window-closed
@@ -78,10 +78,14 @@ sensor:
 
           {{ locks_count.count }}
         icon_template: >
-          {% if states('sensor.smarti_active_locks')|int > 0 %}
-            mdi:lock-open
+          {% if states('sensor.smarti_active_locks') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_locks')|int(0) > 0 %}
+              mdi:lock-open
+            {% else %}
+              mdi:lock
+            {% endif %}
           {% else %}
-            mdi:lock
+            mdi:alert-circle-outline
           {% endif %}              
 
       smarti_active_water_sensors:
@@ -90,7 +94,7 @@ sensor:
           {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'moisture') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_water_sensors') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_water_sensors')|int > 0 %}
+            {% if states('sensor.smarti_active_water_sensors')|int(0) > 0 %}
               mdi:water-alert
             {% else %}
               mdi:water-off
@@ -105,7 +109,7 @@ sensor:
           {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'gas') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_gas_sensors') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_gas_sensors')|int > 0 %}
+            {% if states('sensor.smarti_active_gas_sensors')|int(0) > 0 %}
               mdi:smoke-detector-variant-alert
             {% else %}
               mdi:smoke-detector-variant-off
@@ -120,7 +124,7 @@ sensor:
           {{ states.binary_sensor | selectattr('state','eq','on') | selectattr('attributes.device_class', 'eq', 'smoke') | list | count }}
         icon_template: >
           {% if states('sensor.smarti_active_smoke_detectors') not in ['unknown', None] %}
-            {% if states('sensor.smarti_active_smoke_detectors')|int > 0 %}
+            {% if states('sensor.smarti_active_smoke_detectors')|int(0) > 0 %}
               mdi:fire-alert
             {% else %}
               mdi:fire-off
@@ -163,10 +167,14 @@ sensor:
 
           {{ low_battery_devices_count.count }}
         icon_template: >
-          {% if states('sensor.smarti_active_low_battery_devices_count')|int > 0 %}
-            mdi:battery-alert
+          {% if states('sensor.smarti_active_low_battery_devices_count') not in ['unknown', None] %}
+            {% if states('sensor.smarti_active_low_battery_devices_count')|int(0) > 0 %}
+              mdi:battery-alert
+            {% else %}
+              mdi:battery
+            {% endif %}
           {% else %}
-            mdi:battery
+            mdi:alert-circle-outline
           {% endif %}
 
 input_text:

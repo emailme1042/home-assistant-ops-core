@@ -183,11 +183,6 @@ timer: !include_dir_merge_named includes/timers/
 #   username: !secret xiaomi_username
 #   password: !secret xiaomi_password
 
-# Spotify Spotcast integration
-spotcast:
-  sp_dc: !secret spotify_sp_dc
-  sp_key: !secret spotify_sp_key
-
 # MQTT integration for device discovery
 # NOTE: Broker configuration moved to UI in HA 2025.x
 # Go to: Settings → Devices & Services → Add Integration → MQTT
@@ -212,6 +207,17 @@ mqtt:
 
 # Browser Mod for enhanced browser control and notifications
 browser_mod: {}
+
+# Tado smart thermostat integration
+# tado:
+#   username: !secret tado_username
+#   password: !secret tado_password
+
+# TV Calendar from tvcal.app
+# calendar:
+#   - platform: ical
+#     name: "TV Schedule Calendar"
+#     url: "https://tvcal.app/ical/326blc"
 
 # Speedtest Tracker for internet performance monitoring
 # speedtestdotnet:

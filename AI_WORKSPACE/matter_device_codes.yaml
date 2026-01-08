@@ -1,0 +1,56 @@
+# Matter Device Setup Codes Collection Guide
+# Update the codes below with your actual device codes
+
+MATTER_DEVICES = {
+    # Tapo Smart Plugs
+    "Tapo_Plug_Node5": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",  # Check device label/sticker
+        "discriminator": "0x0000"  # Usually 0x0000 for most devices
+    },
+    "Tapo_Plug_Node18": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+    "Tapo_Plug_Node19": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+    "Tapo_Plug_Node20": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+
+    # Aqara Devices
+    "Aqara_Hub_Node10": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+    "Aqara_Doorbell_Node17": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+    "Aqara_Temp_Node24": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+    "Aqara_Motion_Node37": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+    "Aqara_Contact_Node44": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    },
+
+    # Tado Thermostat
+    "Tado_Thermostat_Node45": {
+        "code": "REPLACE_WITH_ACTUAL_CODE",
+        "discriminator": "0x0000"
+    }
+}
+
+# How to find setup codes:
+# 1. Device label/sticker (usually on the device itself)
+# 2. QR code on device/manual
+# 3. Device app (if it has Matter pairing info)
+# 4. Manufacturer website/support for your specific model

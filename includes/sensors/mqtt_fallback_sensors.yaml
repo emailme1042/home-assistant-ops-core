@@ -2,39 +2,40 @@
 # These prefer an MQTT-sourced entity if present, otherwise fall back to a local sensor.
 # Edit the entity names below to match your environment.
 
-  - platform: template
-    sensors:
-      living_room_temp_effective:
-        friendly_name: "Living Room Temperature (preferred MQTT)"
-        value_template: >-
-          {% set mqtt = states('sensor.mqtt_living_room_temperature') %}
-          {% if mqtt not in ['unknown','unavailable',''] %}
-            {{ mqtt }}
-          {% else %}
-            {{ states('sensor.local_living_room_temperature') }}
-          {% endif %}
-        unit_of_measurement: "°C"
+# CONVERTED TO MODERN FORMAT - See includes/templates/mqtt_fallback_sensors.yaml
+#  - platform: template
+#    sensors:
+#      living_room_temp_effective:
+#        friendly_name: "Living Room Temperature (preferred MQTT)"
+#        value_template: >-
+#          {% set mqtt = states('sensor.mqtt_living_room_temperature') %}
+#          {% if mqtt not in ['unknown','unavailable',''] %}
+#            {{ mqtt }}
+#          {% else %}
+#            {{ states('sensor.local_living_room_temperature') }}
+#          {% endif %}
+#        unit_of_measurement: "°C"
 
-      front_door_battery:
-        friendly_name: "Front Door Battery (preferred MQTT)"
-        value_template: >-
-          {% set m = states('sensor.mqtt_front_door_battery') %}
-          {% if m not in ['unknown','unavailable',''] %}
-            {{ m }}
-          {% else %}
-            {{ states('sensor.front_door_battery_local') }}
-          {% endif %}
-        unit_of_measurement: "%"
+#      front_door_battery:
+#        friendly_name: "Front Door Battery (preferred MQTT)"
+#        value_template: >-
+#          {% set m = states('sensor.mqtt_front_door_battery') %}
+#          {% if m not in ['unknown','unavailable',''] %}
+#            {{ m }}
+#          {% else %}
+#            {{ states('sensor.front_door_battery_local') }}
+#          {% endif %}
+#        unit_of_measurement: "%"
 
-      ambient_light_level:
-        friendly_name: "Ambient Light Level (preferred MQTT)"
-        value_template: >-
-          {% set m = states('sensor.mqtt_ambient_light') %}
-          {% if m not in ['unknown','unavailable',''] %}
-            {{ m }}
-          {% else %}
-            {{ states('sensor.lightsensor_local') }}
-          {% endif %}
-        unit_of_measurement: lux
+#      ambient_light_level:
+#        friendly_name: "Ambient Light Level (preferred MQTT)"
+#        value_template: >-
+#          {% set m = states('sensor.mqtt_ambient_light') %}
+#          {% if m not in ['unknown','unavailable',''] %}
+#            {{ m }}
+#          {% else %}
+#            {{ states('sensor.lightsensor_local') }}
+#          {% endif %}
+#        unit_of_measurement: lux
 
 # Usage: edit the entity IDs above to names used by your MQTT devices and local sensors.

@@ -95,16 +95,16 @@ template:
       - name: "Smarti Shell Protection"
         unique_id: "smarti_shell_protection"
         state: >-
-          {% set doors = states('sensor.smarti_active_doors')|int %}
-          {% set windows = states('sensor.smarti_active_windows')|int %}
+          {% set doors = states('sensor.smarti_active_doors')|int(0) %}
+          {% set windows = states('sensor.smarti_active_windows')|int(0) %}
           {% if doors == 0 and windows == 0 %}
             on
           {% else %}
             off
           {% endif %}
         icon: >-
-          {% set doors = states('sensor.smarti_active_doors')|int %}
-          {% set windows = states('sensor.smarti_active_windows')|int %}
+          {% set doors = states('sensor.smarti_active_doors')|int(0) %}
+          {% set windows = states('sensor.smarti_active_windows')|int(0) %}
           {% if doors == 0 and windows == 0 %}
             mdi:shield-check
           {% else %}

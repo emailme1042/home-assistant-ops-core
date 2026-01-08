@@ -1,0 +1,174 @@
+template:
+  - sensor:
+      - name: "Aircraft Proximity Alert"
+        state: >
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% if flights %}
+            {% for f in flights %}
+              {% if f.distance and f.distance < 5 %}
+                on
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          off
+        icon: >
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% set has_close = false %}
+          {% if flights %}
+            {% for f in flights %}
+              {% if f.distance and f.distance < 5 %}
+                {% set has_close = true %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% if has_close %}
+            mdi:airplane-alert
+          {% else %}
+            mdi:airplane
+          {% endif %}
+
+      - name: "ADS-B Signal Strength"
+        unit_of_measurement: "dBm"
+        state: >
+          {% set aircraft_count = states('sensor.flightradar24_current_in_area') | int(0) %}
+          {% if aircraft_count > 10 %}
+            -45
+          {% elif aircraft_count > 5 %}
+            -55
+          {% elif aircraft_count > 0 %}
+            -65
+          {% else %}
+            -85
+          {% endif %}
+        icon: mdi:signal
+
+      - name: "Aircraft Vertical Rate"
+        unit_of_measurement: "ft/min"
+        state: >
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% if flights %}
+            {% set rates = [] %}
+            {% for f in flights %}
+              {% if f.get('vertical_rate') is not none %}
+                {% set rates = rates + [f.get('vertical_rate')] %}
+              {% endif %}
+            {% endfor %}
+            {% if rates %}
+              {{ rates | max }}
+            {% else %}
+              0
+            {% endif %}
+          {% else %}
+            0
+          {% endif %}
+        icon: >
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% set max_rate = 0 %}
+          {% if flights %}
+            {% for f in flights %}
+              {% if f.get('vertical_rate') is not none and f.get('vertical_rate') > max_rate %}
+                {% set max_rate = f.get('vertical_rate') %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% if max_rate > 1000 %}
+            mdi:airplane-takeoff
+          {% elif max_rate < -1000 %}
+            mdi:airplane-landing
+          {% else %}
+            mdi:airplane-clock
+          {% endif %}
+
+      - name: "ADS-B Receiver Status"
+        state: >
+          {% set signal = states('sensor.adsb_signal_strength') | int(-100) %}
+          {% set aircraft = states('sensor.flightradar24_current_in_area') | int(0) %}
+          {% if signal > -60 and aircraft > 0 %}
+            Excellent
+          {% elif signal > -70 and aircraft > 0 %}
+            Good
+          {% elif signal > -80 %}
+            Fair
+          {% elif signal > -90 %}
+            Poor
+          {% else %}
+            No Signal
+          {% endif %}
+        icon: >
+          {% set signal = states('sensor.adsb_signal_strength') | int(-100) %}
+          {% set aircraft = states('sensor.flightradar24_current_in_area') | int(0) %}
+          {% if signal > -60 and aircraft > 0 %}
+            mdi:signal-cellular-3
+          {% elif signal > -70 and aircraft > 0 %}
+            mdi:signal-cellular-2
+          {% elif signal > -80 %}
+            mdi:signal-cellular-1
+          {% else %}
+            mdi:signal-cellular-outline
+          {% endif %}
+
+      - name: "Closest Aircraft Distance"
+        unit_of_measurement: "km"
+        state: >
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% if flights %}
+            {% set distances = [] %}
+            {% for f in flights %}
+              {% if f.distance %}
+                {% set distances = distances + [f.distance] %}
+              {% endif %}
+            {% endfor %}
+            {% if distances %}
+              {{ distances | min | round(1) }}
+            {% else %}
+              999
+            {% endif %}
+          {% else %}
+            999
+          {% endif %}
+        icon: mdi:map-marker-distance
+
+      - name: "Aircraft Average Speed"
+        unit_of_measurement: "kts"
+        state: >
+          {% set flights = state_attr('sensor.flightradar24_current_in_area', 'flights') %}
+          {% if flights %}
+            {% set speeds = [] %}
+            {% for f in flights %}
+              {% if f.get('velocity') is not none %}
+                {% set speeds = speeds + [f.get('velocity')] %}
+              {% endif %}
+            {% endfor %}
+            {% if speeds %}
+              {{ (speeds | sum / speeds | length) | round(0) }}
+            {% else %}
+              0
+            {% endif %}
+          {% else %}
+            0
+          {% endif %}
+        icon: mdi:speedometer
+
+      - name: "Flight Activity Trend"
+        state: >
+          {% set current = states('sensor.flightradar24_current_in_area') | int(0) %}
+          {% set entered = states('sensor.flightradar24_entered_area') | int(0) %}
+          {% set exited = states('sensor.flightradar24_exited_area') | int(0) %}
+          {% if entered > exited %}
+            Increasing
+          {% elif exited > entered %}
+            Decreasing
+          {% else %}
+            Stable
+          {% endif %}
+        icon: >
+          {% set current = states('sensor.flightradar24_current_in_area') | int(0) %}
+          {% set entered = states('sensor.flightradar24_entered_area') | int(0) %}
+          {% set exited = states('sensor.flightradar24_exited_area') | int(0) %}
+          {% if entered > exited %}
+            mdi:trending-up
+          {% elif exited > entered %}
+            mdi:trending-down
+          {% else %}
+            mdi:trending-neutral
+          {% endif %}

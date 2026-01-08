@@ -2,13 +2,13 @@
 # Purpose: Track age of MQTT messages to detect stale sensors
 # Features: Last message age calculation for critical MQTT sensors
 
-- platform: template
-  sensors:
-    mqtt_last_message_age_temperature_hall:
-      friendly_name: "MQTT Temperature Hall Message Age"
+template:
+  - sensor:
+      name: "MQTT Temperature Hall Message Age"
+      unique_id: mqtt_last_message_age_temperature_hall
       unit_of_measurement: "minutes"
       icon_template: mdi:clock-outline
-      value_template: >
+      state: >
         {% if states('sensor.hall_sensor_temperature') not in ['unavailable', 'unknown', 'none'] %}
           {% set last_changed = states.sensor.hall_sensor_temperature.last_changed %}
           {% if last_changed %}
@@ -19,13 +19,14 @@
         {% else %}
           999
         {% endif %}
-      availability_template: "{{ states('sensor.hall_sensor_temperature') not in ['unavailable', 'unknown'] }}"
+      availability: "{{ states('sensor.hall_sensor_temperature') not in ['unavailable', 'unknown'] }}"
 
-    mqtt_last_message_age_door_front:
-      friendly_name: "MQTT Door Front Message Age"
-      unit_of_measurement: "minutes"  
+  - sensor:
+      name: "MQTT Door Front Message Age"
+      unique_id: mqtt_last_message_age_door_front
+      unit_of_measurement: "minutes"
       icon_template: mdi:clock-outline
-      value_template: >
+      state: >
         {% if states('binary_sensor.front_door_motion_3') not in ['unavailable', 'unknown', 'none'] %}
           {% set last_changed = states.binary_sensor.front_door_motion_3.last_changed %}
           {% if last_changed %}
@@ -36,13 +37,14 @@
         {% else %}
           999
         {% endif %}
-      availability_template: "{{ states('binary_sensor.front_door_motion_3') not in ['unavailable', 'unknown'] }}"
+      availability: "{{ states('binary_sensor.front_door_motion_3') not in ['unavailable', 'unknown'] }}"
 
-    mqtt_last_message_age_motion_lounge:
-      friendly_name: "MQTT Motion Lounge Message Age"
+  - sensor:
+      name: "MQTT Motion Lounge Message Age"
+      unique_id: mqtt_last_message_age_motion_lounge
       unit_of_measurement: "minutes"
       icon_template: mdi:clock-outline
-      value_template: >
+      state: >
         {% if states('binary_sensor.magic_areas_presence_tracking_lounge_area_state') not in ['unavailable', 'unknown', 'none'] %}
           {% set last_changed = states.binary_sensor.magic_areas_presence_tracking_lounge_area_state.last_changed %}
           {% if last_changed %}
@@ -53,13 +55,11 @@
         {% else %}
           999
         {% endif %}
-      availability_template: "{{ states('binary_sensor.motion_lounge') not in ['unavailable', 'unknown'] }}"
+      availability: "{{ states('binary_sensor.motion_lounge') not in ['unavailable', 'unknown'] }}"
 
-# MQTT Connection Health Monitor
-- platform: template
-  sensors:
-    mqtt_connection_health:
-      friendly_name: "MQTT Connection Health"
+  - sensor:
+      name: "MQTT Connection Health"
+      unique_id: mqtt_connection_health
       icon_template: >
         {% set temp_age = states('sensor.mqtt_last_message_age_temperature_hall')|int(999) %}
         {% set door_age = states('sensor.mqtt_last_message_age_door_front')|int(999) %}
@@ -71,7 +71,7 @@
         {% else %}
           mdi:network-off
         {% endif %}
-      value_template: >
+      state: >
         {% set temp_age = states('sensor.mqtt_last_message_age_temperature_hall')|int(999) %}
         {% set door_age = states('sensor.mqtt_last_message_age_door_front')|int(999) %}
         {% set motion_age = states('sensor.mqtt_last_message_age_motion_lounge')|int(999) %}
@@ -83,7 +83,7 @@
         {% else %}
           Stale
         {% endif %}
-      attribute_templates:
+      attributes:
         temperature_hall_age: "{{ states('sensor.mqtt_last_message_age_temperature_hall')|int(999) }}"
         door_front_age: "{{ states('sensor.mqtt_last_message_age_door_front')|int(999) }}"
         motion_lounge_age: "{{ states('sensor.mqtt_last_message_age_motion_lounge')|int(999) }}"
@@ -93,13 +93,14 @@
           {% set motion_age = states('sensor.mqtt_last_message_age_motion_lounge')|int(999) %}
           {{ [temp_age, door_age, motion_age] | max }} minutes
 
-    mqtt_sensors_by_age:
-      friendly_name: "MQTT Sensors by Age"
-      value_template: >
+  - sensor:
+      name: "MQTT Sensors by Age"
+      unique_id: mqtt_sensors_by_age
+      state: >
         {% set sensors = expand('sensor.mqtt_last_message_age_*') | selectattr('state', '!=', 'unavailable') | list %}
         {% set sorted = sensors | sort(attribute='state', reverse=true) %}
         {{ sorted | map(attribute='entity_id') | list | to_json }}
-      attribute_templates:
+      attributes:
         details: >
           {% set sensors = expand('sensor.mqtt_last_message_age_*') | selectattr('state', '!=', 'unavailable') | list %}
           {% set sorted = sensors | sort(attribute='state', reverse=true) %}

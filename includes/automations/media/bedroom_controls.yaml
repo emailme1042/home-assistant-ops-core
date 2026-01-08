@@ -161,8 +161,8 @@
                 message: "Teddy's bedroom light set to white."
 
     # Log which button was pressed
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Aqara Cube Color Control"
+        title: "Aqara Cube Color Control"
         message: "Button {{ trigger.id }} pressed - {{ trigger.entity_id }}"
-        entity_id: light.teddys_bedroom
+        notification_id: aqara_cube_log

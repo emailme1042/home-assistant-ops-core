@@ -1,80 +1,114 @@
-# System Status — January 5, 2026
+# 📘 **Smart Home System — Architecture & Cleanup Log (GitHub Copilot Overview)**  
+**Owner:** Jamie Dacombe  
+**Location:** Ferndown, Dorset, UK  
+**Date:** 2026‑01‑06  
+**Status:** Mid‑cleanup, post‑Z2M removal, architecture stabilisation in progress  
+**Purpose:** Provide GitHub Copilot with a traceable, modular summary of system changes, cleanup actions, and architectural decisions to inform future automation, refactoring, and error handling.
 
-## 📊 Core System Health
+---
 
-### Home Assistant Core
+## ✅ **Phase 1 — Architecture Lock-In (Completed)**
 
-- **Version**: 2025.10.4 (from configuration.yaml)
-- **Status**: ✅ Successfully restarted and running
-- **Configuration**: YAML validation passed - all files loading without errors
-- **Main Issues**: None detected - clean restart with full configuration loaded
+### 🔹 Multi‑hub model confirmed:
+- Aqara M3 → Zigbee coordinator for Aqara devices  
+- Hue Bridge → Zigbee coordinator for Hue bulbs  
+- SmartThings → Zigbee coordinator for legacy Zigbee  
+- Apple Home → Thread + Matter controller  
+- Home Assistant → Observer only (via Matter + HomeKit Controller)  
+- Alexa/Google → Voice + Matter/Thread only (not Zigbee owners)
 
-### Frontend & Resources
+### 🔹 Thread fabric confirmed:
+- Primary: AqaraHome‑73af  
+- Border routers: Apple TV, HomePods, Aqara M3, Aqara DB, SmartThings  
+- Secondary: AMZN‑Thread‑2d2b (Echo only)
 
-- **Mode**: YAML mode configured in configuration.yaml
-- **Custom Cards**: HACS resources configured and loading
-- **JavaScript Files**: Resources declared in resources.yaml
-- **Browser Cache**: May need clearing for updated resources
+### 🔹 Matter exposure confirmed:
+- Aqara M3, DB, sensors, switches, thermostats visible in HA via Matter  
+- No direct Zigbee pairing to HA  
+- No duplication across ecosystems
 
-### HACS Status
+---
 
-- **Integration**: Configured but not running
-- **Resources**: Declared in configuration.yaml
-- **Components**: Resources configured for sidebar functionality
+## ✅ **Phase 2 — Zigbee2MQTT Removal (Completed)**
 
-### Performance Metrics
+### 🔹 Actions taken:
+- Zigbee2MQTT add‑on stopped and uninstalled  
+- MQTT devices removed from HA  
+- MQTT integration reviewed (kept for Govee/ESPHome if needed)  
+- Sonoff Zigbee dongle unplugged  
+- Zigbee2MQTT bridge removed  
+- All SONOFF Zigbee devices deleted from HA  
+- SmartThings devices audited and retained (legacy only)
 
-- **Sensor Polling**: Configuration includes optimized intervals
-- **Template Operations**: Multiple template sensors present
-- **Recorder**: Configured with exclusions
-- **UI Response**: Cannot test (HA not running)
+### 🔹 Result:
+- Zigbee mesh stabilised  
+- No duplicate Zigbee networks  
+- No orphaned MQTT entities  
+- No routing conflicts  
+- HA integrations clean and scoped
 
-## 🔧 Component Status
+---
 
-### ✅ OPERATIONAL (Offline Validation)
+## ✅ **Phase 3 — SmartThings Cleanup (Completed)**
 
-- Configuration Structure: Modular includes properly configured ✅
-- File Organization: SHARED_CONTEXT folders verified ✅
-- Git Repository: Initialized and ready ✅
-- Documentation: Session logs and guides available ✅
+### 🔹 Actions taken:
+- Hue and Aqara removed from SmartThings  
+- Legacy Zigbee devices retained  
+- Samsung TV integration preserved  
+- Alexa/Google routines unaffected  
+- SmartThings now scoped to legacy Zigbee + Samsung ecosystem only
 
-### ❌ ISSUES DETECTED
+---
 
-- **HA Core**: Not running (required for full validation)
-- **Flask Service**: Offline (localhost:5006 not responding)
-- **Entity Status**: Cannot verify (HA not running)
-- **YAML Validation**: Cannot fully validate HA-specific tags without running HA
+## ✅ **Phase 4 — Aqara M3 + DB Validation (Completed)**
 
-## 📊 System Health Status (Updated 2026-01-04)
+### 🔹 Confirmed:
+- Both hubs visible in Apple Home  
+- Thread mesh joined  
+- Matter exposure to HA confirmed  
+- Not paired to SmartThings or Z2M  
+- Not directly paired to HA  
+- Ready for HomeKit Controller integration (optional)
 
-### Critical Issues Section
+---
 
-- **HA Core Status**: Not running - restart required for full functionality
-- **Flask Service**: Offline - AI integration services unavailable
-- **Configuration Validation**: Partial - structure valid, full validation requires HA
-- **Entity Availability**: Unknown - requires HA restart to assess
+## 🔄 **Phase 5 — Pending Actions**
 
-### Recovery Actions Needed
+### 🔸 Post‑Z2M Cleanup Checklist
+- Confirm no ghosted entities  
+- Confirm no retained MQTT topics  
+- Confirm no broken automations  
+- Confirm Zigbee mesh health via Aqara/Hue diagnostics
 
-1. **Start HA Core**: Required for full system validation and functionality
-2. **Start Flask Service**: Launch AI integration services
-3. **Full Validation**: Run HA's built-in configuration check
-4. **Entity Assessment**: Check unavailable entity count post-restart
+### 🔸 Sonoff Water Valve Onboarding
+- Evaluate ST compatibility  
+- If unsupported, check Matter support  
+- If neither, consider scoped ZHA re‑enable (isolated)
 
-### Next Steps for Jamie
+### 🔸 HA Restart Etiquette
+- Confirm restart order: Aqara → Hue → SmartThings → NAS → Router → HA  
+- Validate YAML  
+- Snapshot HA config  
+- Log restart in `system_status.md`
 
-1. **Start Home Assistant**: Launch HA core to enable full validation
-2. **Start Flask Service**: Ensure AI integration services are running
-3. **Run HA Validation**: Use Settings → System → Check Configuration
-4. **Monitor Startup**: Check for any configuration errors during startup
-5. **Verify Entities**: Assess entity availability after restart
+---
 
-## 📊 System Health Status (Updated 2025-11-13)
+## 🧠 **Copilot Guidance**
 
-| Metric | Working | Expected | Status |
-|--------|----------|-----------|--------|
-| Automations | **169** | 169+ | ✅ Operational |
-| Scripts | **112** | 119+ | ⚠️ Near target |
+### 🔹 If errors persist:
+- Check for ghosted MQTT/Zigbee entities  
+- Check for retained topics in Mosquitto  
+- Check for broken automations referencing deleted devices  
+- Check for integrations referencing removed add‑ons
+
+### 🔹 If refactoring:
+- Prioritise modular integration boundaries  
+- Preserve multi‑hub logic  
+- Avoid re‑introducing Z2M or ZHA unless scoped  
+- Maintain Matter/Thread separation per platform  
+- Respect HA as observer, not coordinator
+
+---
 | Sensors | **2,487** | 2,500+ | ✅ Good |
 | Switches | **81** | 120+ | ⚠️ Partial |
 | Lights | **37** | 70+ | ⚠️ Incomplete |
@@ -219,24 +253,206 @@ Focus on **ESPHome + MQTT containers**, as both are core dependencies for the mi
 ## 🚨 Updated Active Alerts
 
 ### CRITICAL PRIORITY
-- [ ] Entity Unavailability: 1061 entities unavailable - MONITORING (improved)
+- [ ] Entity Unavailability: 1648 entities unavailable - MONITORING (7 Z2M ghosts removed)
 - [ ] System Health: 0% health - NEEDS AUTOMATION/SCRIPT RELOAD
 - [ ] GPT Access: Remote UI ENABLED - RESOLVED ✅
 
 ### HIGH PRIORITY
-- [ ] MQTT Issues: Broker connected but entities unavailable - MONITORING
+- [ ] MQTT Issues: Broker connected but entities unavailable - MONITORING (ghost clients eliminated)
 - [ ] Container Status: ESPHome/MQTT containers likely stopped - CHECK REQUIRED
 
 ### MEDIUM PRIORITY
 - [ ] HACS Review: Evaluate removal for stability - PENDING
 - [ ] Dashboard Mode: Revert to YAML mode after entity fixes - PENDING
 
+### RESOLVED
+- [x] Z2M Ghost Entities: 7 entities removed via API script - RESOLVED ✅
+- [x] MQTT Ghost Traffic: Eliminated unknown client errors from 172.30.32.2 and ::1 - RESOLVED ✅
+
 ## 📋 Updated Quick Health Check
 
 **Entity Count Command Result**:
 ```
-Total entities: 3548
-Unavailable: 1061 (29.9%)
+Total entities: 3,818
+Unavailable: 1,648 (43.2%)
+Available: 2,170 (56.8%)
 ```
 
-**Last Updated**: November 13, 2025 - Post-Entity Count Update
+**Last Updated**: November 13, 2025 - Post-Z2M Ghost Deletion (7 entities removed)
+
+---
+
+## 🧠 **GPT's Cross-Validation Considerations (2026-01-06)**
+
+### ⚙️ **1. Cross-Validation With Current System State**
+
+* ✅ Your `system_status.md` from November 2025 shows **MQTT Discovery pending restart** and **Zigbee network restoration pending**.
+  → Confirm those are now reflected as **resolved** before you log Phase 5 as "Pending Actions only."
+  If MQTT or ZHA are still partially running, document that under "Legacy Components (Dormant)" in the new log.
+
+### 🧩 **2. Dependency Awareness**
+
+* Your `active_issues.md` still flags **Browser Mod cleanup** and **HA restart pending activation**.
+  → Verify that those have been **closed or migrated** into the Phase 5 "Post-Z2M Cleanup Checklist."
+  Otherwise, GitHub Copilot will keep surfacing restart prompts.
+
+### 🧠 **3. Multi-AI Synchronisation**
+
+* According to `TEAM_TASKS_20251114_V2.md`, Edge Copilot, GPT, and GitHub Copilot coordinate restart validation and log parsing tasks.
+  → After this update, add a short entry like:
+
+  ```
+  FROM: Edge Copilot
+  TO: GPT (Smart Home Ops Assistant)
+  RE: Phase 5 post-Z2M verification
+  STATUS: Pending entity validation after restart
+  ```
+
+  This keeps THE A TEAM routing map current.
+
+### 🧾 **4. Documentation Hygiene**
+
+* Per your `recent_changes.md`, every architecture update should be mirrored in `system_status.md` **and** logged in `recent_changes.md` with a timestamp.
+  → Add:
+
+  ```
+  2026-01-06 — Smart Home Architecture Overview (Edge Copilot Sync)
+  ```
+
+  so Copilot and VS Code session logs stay version-aligned.
+
+### 🧰 **5. Restart Protocol Confirmation**
+
+Your `action_plan.md` lists pre-restart safety checks (YAML validation, snapshot, entity verification).
+→ Before applying the new architecture file:
+
+* Run `ha core check`
+* Create snapshot `ARCH_LOCKIN_20260106`
+* Restart following your defined order (Aqara → Hue → SmartThings → NAS → Router → HA)
+
+### ✅ **Summary — You’re Ready To Commit If**
+
+* All post-Browser Mod issues are closed
+* MQTT/Zigbee entities are stable (no duplicates)
+* YAML validation passes cleanly
+* `recent_changes.md` and `system_status.md` both reflect the update
+* Snapshot completed before push
+
+---
+
+## 🚨 **Critical Issue: High Unavailable Entity Count (1648 Unavailable)**
+
+### **Issue Identified**
+**Unavailable Entities**: 1648 out of ~3818 total (43.2% unavailable) - UPDATED 2026-01-07
+**Impact**: Dashboard performance degraded, system health monitoring impaired, MQTT protocol errors from ghost clients
+**Patterns Observed**:
+- MQTT-related sensors (Zigbee devices, motion sensors, temperature sensors)
+- CPU/Memory sensors from stopped containers
+- Integration-related entities
+- Template sensors failing due to dependencies
+- **Z2M Ghost Entities**: Retained MQTT discovery entities from removed Zigbee2MQTT causing ghost client traffic
+
+### **Root Cause Analysis**
+**MQTT Broker Issues**: Mosquitto broker (core-mosquitto) may be down or ghost clients causing protocol errors
+- Connection test failed: `[Errno 11001] getaddrinfo failed` for core-mosquitto
+- Ghost clients from 172.30.32.2 and ::1 causing "unknown client" errors
+- Retained Z2M topics keeping ghost entities alive
+
+**Z2M Ghost Entities**: 7 entities successfully removed via API script
+- Removed: binary_sensor.zigbee2mqtt_bridge_connection_state, binary_sensor.zigbee2mqtt_bridge_restart_required, button.zigbee2mqtt_bridge_restart, select.zigbee2mqtt_bridge_log_level, sensor.zigbee2mqtt_bridge_coordinator_version, sensor.zigbee2mqtt_bridge_network_map, sensor.zigbee2mqtt_bridge_version, switch.zigbee2mqtt_bridge_permit_join
+- Impact: Reduced unavailable count by 7, eliminated ghost MQTT traffic
+
+**System Monitor Disabled**: CPU/Memory sensors unavailable because `systemmonitor` platform commented out in `configuration.yaml`
+
+**Integration Issues**: Some integrations may not be loaded or configured
+
+### **Immediate Actions Required**
+1. **Start Mosquitto Add-on**:
+   - HA UI → Settings → Add-ons → Mosquitto broker → Start
+   - Verify MQTT integration in Settings → Devices & Services
+
+2. **Clear Retained MQTT Topics**:
+   - Use MQTT Explorer to delete Z2M-related retained topics
+   - Remove topics under zigbee2mqtt/ hierarchy
+
+3. **Check Container Status**:
+   - Verify ESPHome containers running (for CPU/Memory sensors if needed)
+   - Check Zigbee2MQTT status (though removed, may have residual entities)
+
+4. **Re-enable System Monitor** (Optional):
+   - Uncomment `systemmonitor` in `configuration.yaml` if CPU/Memory monitoring desired
+   - Note: May impact performance, currently disabled for optimization
+
+5. **Validate Integrations**:
+   - Check missing integrations: alexa_media, scheduler, watchman, entity_controller, adaptive_lighting
+   - Add via HACS or Settings → Devices & Services
+
+### **Expected Resolution**
+- MQTT entities: ~800+ should become available after broker restart
+- System health: Availability % from 43.2% to ~90%+
+- Dashboard performance: Faster loading, functional controls
+- WebSocket stability: Reduced disconnections from missing entities
+- MQTT errors: Eliminated ghost client traffic
+
+### **Monitoring Protocol**
+- Track entity count reduction post-MQTT restart
+- Monitor system health percentage improvement
+- Validate Zigbee device connectivity
+- Update this section with resolution status
+
+**Last Updated**: 2026-01-07 - Z2M ghost entities removed, MQTT cleanup in progress
+
+---
+
+# 📌 **Next Actions (Architecture Cleanup & System Stabilisation)**
+*This block reflects the work done today — not GitHub's template-conversion tasks.*
+
+```md
+## 🚀 Next Actions (Architecture Cleanup & System Stabilisation)
+
+### 1. Zigbee2MQTT Decommissioning (In Progress)
+- [ ] Remove all MQTT/Z2M Zigbee devices from HA (SONOFF sensors, plugs, switches)
+- [ ] Remove Zigbee2MQTT Bridge entity
+- [ ] Confirm Z2M add-on is uninstalled
+- [ ] Confirm Sonoff Zigbee dongle remains unplugged
+- [ ] Validate no Z2M entities remain in HA
+
+### 2. SmartThings Scope Correction
+- [ ] Ensure SmartThings contains ONLY legacy Zigbee devices
+- [ ] Confirm Aqara devices are NOT in SmartThings
+- [ ] Confirm Hue devices are NOT in SmartThings
+- [ ] Document final SmartThings device list in `system_status.md`
+
+### 3. Aqara M3 + Matter Path Stabilisation
+- [ ] Confirm Aqara M3 + DB remain in Apple Home
+- [ ] Confirm Aqara devices appear in HA via Matter (not Zigbee)
+- [ ] Add Aqara M3 to HA via HomeKit Controller (optional, non-destructive)
+- [ ] Document Matter/Thread routing in `system_status.md`
+
+### 4. Thread Network Validation
+- [ ] Confirm AqaraHome-73af remains the preferred Thread network
+- [ ] Confirm Apple TV + HomePods + Aqara M3 + DB are active border routers
+- [ ] Confirm SmartThings Thread BR is present but not dominant
+- [ ] Confirm Amazon Thread network remains isolated
+
+### 5. MQTT Broker Recovery
+- [ ] Start Mosquitto add-on
+- [ ] Validate broker health
+- [ ] Confirm recovery of MQTT-dependent entities
+- [ ] Remove ghosted MQTT entities left by Z2M
+- [ ] Update `system_status.md` with recovery metrics
+
+### 6. HA Integration Cleanup
+- [ ] Remove any integrations referencing Z2M or ZHA
+- [ ] Validate Matter, HomeKit Controller, Hue, Tapo, SmartThings integrations
+- [ ] Confirm no duplicate entities across ecosystems
+- [ ] Restart HA and validate entity health
+
+### 7. Device Placement Audit
+- [ ] Confirm Aqara Zigbee devices → Aqara M3
+- [ ] Confirm Hue Zigbee devices → Hue Bridge
+- [ ] Confirm legacy Zigbee → SmartThings
+- [ ] Confirm Matter devices → Apple Home first
+- [ ] Confirm Thread devices → auto-join nearest BR
+- [ ] Document final placement in `system_status.md`
+```

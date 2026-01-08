@@ -1,0 +1,102 @@
+template:
+  - sensor:
+      - name: "Total HA Entities"
+        unique_id: ha_system_entities_total
+        state: "{{ states | count }}"
+        icon: mdi:database
+
+      - name: "Working Automations"
+        unique_id: ha_system_automations_working
+        state: >
+          {% set total = states.automation | count %}
+          {% set unavailable = states.automation | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {{ total - unavailable }}
+        icon: mdi:robot
+
+      - name: "Working Scripts"
+        unique_id: ha_system_scripts_working
+        state: >
+          {% set total = states.script | count %}
+          {% set unavailable = states.script | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {{ total - unavailable }}
+        icon: mdi:script-text
+
+      - name: "Total Automations"
+        unique_id: ha_total_automations
+        state: "{{ states.automation | count }}"
+        icon: mdi:robot
+
+      - name: "Total Scripts"
+        unique_id: ha_total_scripts
+        state: "{{ states.script | count }}"
+        icon: mdi:script-text
+
+      - name: "Working Sensors"
+        unique_id: ha_system_sensors_working
+        state: >
+          {% set total = states.sensor | count %}
+          {% set unavailable = states.sensor | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {{ total - unavailable }}
+        icon: mdi:eye
+
+      - name: "Working Lights"
+        unique_id: ha_system_lights_working
+        state: >
+          {% set total = states.light | count %}
+          {% set unavailable = states.light | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {{ total - unavailable }}
+        icon: mdi:lightbulb
+
+      - name: "Working Switches"
+        unique_id: ha_system_switches_working
+        state: >
+          {% set total = states.switch | count %}
+          {% set unavailable = states.switch | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {{ total - unavailable }}
+        icon: mdi:toggle-switch
+
+      - name: "Automation Include Files"
+        unique_id: ha_include_automations_count
+        state: "{{ states('sensor.automation_files_count') | int(0) }}"
+        icon: mdi:file-code
+
+      - name: "Script Include Files"
+        unique_id: ha_include_scripts_count
+        state: "{{ states('sensor.script_files_count') | int(0) }}"
+        icon: mdi:file-document
+
+      - name: "Sensor Include Files"
+        unique_id: ha_include_sensors_count
+        state: "{{ states('sensor.sensor_files_count') | int(0) }}"
+        icon: mdi:file-chart
+
+      - name: "Template Include Files"
+        unique_id: ha_include_templates_count
+        state: "{{ states('sensor.template_files_count') | int(0) }}"
+        icon: mdi:file-settings
+
+      - name: "Dashboard Files"
+        unique_id: ha_include_dashboards_count
+        state: "{{ states('sensor.dashboard_files_count') | int(0) }}"
+        icon: mdi:view-dashboard
+
+      - name: "Top 10 Entity Domains"
+        unique_id: ha_domain_summary
+        state: >
+          {% set domains = states | groupby('domain') | list %}
+          {% set sorted_domains = domains | sort(attribute='1') | reverse %}
+          {% set top_10 = sorted_domains[:10] %}
+          {{ top_10 | map(attribute='0') | join(', ') }}
+        icon: mdi:format-list-group
+
+      - name: "Last System Change"
+        unique_id: ha_system_last_change
+        state: >
+          {% set recent_changes = states | selectattr('last_changed') |
+             sort(attribute='last_changed', reverse=true) | first %}
+          {% if recent_changes %}
+            {{ recent_changes.entity_id }}: {{ relative_time(recent_changes.last_changed) }} ago
+          {% else %}
+            No recent changes
+          {% endif %}
+        icon: mdi:clock-time-four

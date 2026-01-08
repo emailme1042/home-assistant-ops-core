@@ -10,27 +10,21 @@ max_columns: 3
 sections:
   - type: grid
     cards:
-      # Tonight's Schedule
-      - type: custom:upcoming-media-card
-        entity: sensor.tonight_tv_schedule
-        title: "Tonight's TV"
-        image_style: fanart
-        line1: $title
-        line2: $episode
-        line3: $day - $time
-        line4: $rating
-        max: 5
+      # Tonight's Schedule - Temporarily using entities until TV integrations are available
+      - type: entities
+        title: "Tonight's TV Schedule"
+        entities:
+          - entity: sensor.tonight_tv_schedule
+          - entity: sensor.upcoming_episodes
+          - entity: binary_sensor.new_episode_available
+        show_header_toggle: false
 
-      # Upcoming Episodes
-      - type: custom:upcoming-media-card
-        entity: sensor.upcoming_episodes
+      # Upcoming Episodes - Temporarily using entities
+      - type: entities
         title: "Upcoming Episodes"
-        image_style: poster
-        line1: $title
-        line2: $episode
-        line3: $day - $time
-        line4: $number - $rating
-        max: 10
+        entities:
+          - entity: sensor.upcoming_episodes
+        show_header_toggle: false
 
       # Show Status
       - type: entities
@@ -51,6 +45,12 @@ sections:
 
   - type: grid
     cards:
+      # TV Calendar - Requires iCal integration from HACS
+      # - type: calendar
+      #   entities:
+      #     - calendar.tv_schedule_calendar
+      #   initial_view: list
+
       # Specific Shows - Temporarily commented out until TV integrations are configured
       # - type: custom:upcoming-media-card
       #   entity: calendar.the_traitors

@@ -12,3 +12,9 @@ system_health_log:
   max: 255
   initial: "System health monitoring initialized"
   icon: mdi:chart-line
+
+mqtt_dashboard_status:
+  name: "MQTT Dashboard Status"
+  max: 255
+  initial: "MQTT dashboard initialized - waiting for sync"
+  icon: mdi:mqtt

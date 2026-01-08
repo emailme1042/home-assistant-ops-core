@@ -1,0 +1,40 @@
+## Modern template sensors for MQTT fallback functionality
+# Converted from deprecated platform: template format
+# These prefer an MQTT-sourced entity if present, otherwise fall back to a local sensor.
+
+template:
+  - sensor:
+      - name: "Living Room Temperature (preferred MQTT)"
+        unique_id: living_room_temp_effective
+        state: >-
+          {% set mqtt = states('sensor.mqtt_living_room_temperature') %}
+          {% if mqtt not in ['unknown','unavailable',''] %}
+            {{ mqtt }}
+          {% else %}
+            {{ states('sensor.local_living_room_temperature') }}
+          {% endif %}
+        unit_of_measurement: "°C"
+
+      - name: "Front Door Battery (preferred MQTT)"
+        unique_id: front_door_battery
+        state: >-
+          {% set m = states('sensor.mqtt_front_door_battery') %}
+          {% if m not in ['unknown','unavailable',''] %}
+            {{ m }}
+          {% else %}
+            {{ states('sensor.front_door_battery_local') }}
+          {% endif %}
+        unit_of_measurement: "%"
+
+      - name: "Ambient Light Level (preferred MQTT)"
+        unique_id: ambient_light_level
+        state: >-
+          {% set m = states('sensor.mqtt_ambient_light') %}
+          {% if m not in ['unknown','unavailable',''] %}
+            {{ m }}
+          {% else %}
+            {{ states('sensor.lightsensor_local') }}
+          {% endif %}
+        unit_of_measurement: lux
+
+# Usage: edit the entity IDs above to names used by your MQTT devices and local sensors.

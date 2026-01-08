@@ -5,12 +5,11 @@
 # Created: 2025-11-04 for comprehensive stability monitoring
 # Dependencies: Template sensors, HA core logging, automation triggers
 
-# Crash Frequency Counter - Tracks recent crashes and stability trends
-- platform: template
-  sensors:
-    recent_crash_count:
-      friendly_name: "Recent Crash Count (24h)"
-      value_template: >
+template:
+  - sensor:
+      name: "Recent Crash Count (24h)"
+      unique_id: recent_crash_count
+      state: >
         {{ states('input_number.crash_counter_24h') | int(0) }}
       unit_of_measurement: "crashes"
       icon_template: >
@@ -24,7 +23,7 @@
         {% else %}
           mdi:shield-off
         {% endif %}
-      attribute_templates:
+      attributes:
         crash_level: >
           {% set count = states('input_number.crash_counter_24h') | int(0) %}
           {% if count == 0 %}
@@ -49,10 +48,10 @@
             Stable
           {% endif %}
 
-    # VSCode Action Tracker - Correlates crashes with VSCode configuration changes
-    vscode_action_tracker:
-      friendly_name: "VSCode Action Tracker"
-      value_template: >
+  - sensor:
+      name: "VSCode Action Tracker"
+      unique_id: vscode_action_tracker
+      state: >
         {% set last_vscode = states('input_datetime.last_vscode_action') %}
         {% set last_crash = states('input_datetime.last_crash_timestamp') %}
         {% if last_vscode not in ['unknown', 'unavailable', None] and last_crash not in ['unknown', 'unavailable', None] %}
@@ -76,7 +75,7 @@
         {% else %}
           mdi:help-circle
         {% endif %}
-      attribute_templates:
+      attributes:
         last_vscode_action: >
           {{ states('input_text.last_vscode_action_description') }}
         time_since_vscode_action: >
@@ -104,10 +103,10 @@
             None
           {% endif %}
 
-    # Stability Score - Overall system stability assessment
-    system_stability_score:
-      friendly_name: "System Stability Score"
-      value_template: >
+  - sensor:
+      name: "System Stability Score"
+      unique_id: system_stability_score
+      state: >
         {% set crash_count = states('input_number.crash_counter_24h') | int(0) %}
         {% set uptime_hours = (as_timestamp(now()) - as_timestamp(states('sensor.uptime'))) / 3600 %}
         {% set base_score = 100 %}
@@ -126,7 +125,7 @@
         {% else %}
           mdi:chart-bell-curve-cumulative
         {% endif %}
-      attribute_templates:
+      attributes:
         stability_grade: >
           {% set score = states('sensor.system_stability_score') | float(0) %}
           {% if score >= 95 %}
@@ -159,10 +158,10 @@
             Unknown
           {% endif %}
 
-    # Crash Cause Detection - Analyzes patterns and potential causes
-    crash_cause_detector:
-      friendly_name: "Crash Cause Detector"
-      value_template: >
+  - sensor:
+      name: "Crash Cause Detector"
+      unique_id: crash_cause_detector
+      state: >
         {{ states('input_select.last_crash_cause') }}
       icon_template: >
         {% set cause = states('input_select.last_crash_cause') %}
@@ -181,7 +180,7 @@
         {% else %}
           mdi:help-circle
         {% endif %}
-      attribute_templates:
+      attributes:
         detection_method: >
           {{ states('input_text.crash_detection_method') }}
         confidence_level: >
@@ -204,10 +203,10 @@
             Monitor logs, check system health
           {% endif %}
 
-    # Timeline Event Counter - Tracks event frequency over time
-    timeline_event_counter:
-      friendly_name: "Timeline Event Counter"
-      value_template: >
+  - sensor:
+      name: "Timeline Event Counter"
+      unique_id: timeline_event_counter
+      state: >
         {{ states('input_number.timeline_event_count') | int(0) }}
       unit_of_measurement: "events"
       icon_template: >
@@ -219,7 +218,7 @@
         {% else %}
           mdi:timeline-alert
         {% endif %}
-      attribute_templates:
+      attributes:
         events_today: >
           {{ states('input_number.events_today_count') | int(0) }}
         events_this_week: >

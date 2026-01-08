@@ -4,64 +4,17 @@
 - platform: command_line
   name: last_api_call_vscode
   command: 'date +%s'  # Returns current timestamp
-  scan_interval: 30  # Update every 30 seconds
+  scan_interval: 60  # Increased from 30 to 60 seconds for performance
   value_template: "{{ value | int(0) }}"
   
-- platform: template
-  sensors:
-    recent_automation_triggers:
-      friendly_name: "Recent Automation Activity"
-      value_template: >
-        {% set automation_entities = states | selectattr('entity_id', 'match', '^automation\.') | list %}
-        {% if automation_entities %}
-          {% set valid_triggers = automation_entities | selectattr('attributes.last_triggered', 'defined') | 
-             selectattr('attributes.last_triggered', '!=', None) | 
-             selectattr('attributes.last_triggered', '!=', 'unknown') %}
-          {% if valid_triggers %}
-            {% set triggered = valid_triggers | sort(attribute='attributes.last_triggered', reverse=true) | first %}
-            {{ triggered.attributes.friendly_name or triggered.entity_id }}: {{ relative_time(triggered.attributes.last_triggered) }} ago
-          {% else %}
-            No recent automation triggers
-          {% endif %}
-        {% else %}
-          No automations found
-        {% endif %}
-      icon_template: mdi:robot
+# API Call Tracking Command Line Sensor
+# Simulates VSCode extension API activity
 
-    recent_entity_changes:
-      friendly_name: "Recent Entity Changes"
-      value_template: >
-        {% set recent = states | selectattr('last_changed') | 
-           sort(attribute='last_changed', reverse=true) | first %}
-        {% if recent %}
-          {{ recent.entity_id }}: {{ relative_time(recent.last_changed) }} ago
-        {% else %}
-          No recent changes
-        {% endif %}
-      icon_template: mdi:update
+- platform: command_line
+  name: last_api_call_vscode
+  command: 'date +%s'  # Returns current timestamp
+  scan_interval: 60  # Increased from 30 to 60 seconds for performance
+  value_template: "{{ value | int(0) }}"
 
-    system_restart_count_today:
-      friendly_name: "System Restarts Today"
-      value_template: >
-        {% if states('input_datetime.system_last_restart') %}
-          {% set restart_time = states('input_datetime.system_last_restart') | as_timestamp %}
-          {% set today_start = now().replace(hour=0, minute=0, second=0, microsecond=0) | as_timestamp %}
-          {% if restart_time >= today_start %}
-            1
-          {% else %}
-            0
-          {% endif %}
-        {% else %}
-          0
-        {% endif %}
-      icon_template: mdi:restart
-
-    last_config_validation:
-      friendly_name: "Last Config Validation"
-      value_template: >
-        {% if states('input_datetime.last_api_validation') %}
-          {{ relative_time(states('input_datetime.last_api_validation')) }} ago
-        {% else %}
-          Never
-        {% endif %}
-      icon_template: mdi:check-circle
+# Template sensors moved to includes/templates/api_call_tracking.yaml
+# Converted to modern template: sensor format to resolve HA repairs deprecation warnings

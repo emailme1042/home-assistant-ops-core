@@ -38,10 +38,11 @@
         message: >
           Dashboard health alert: {{ states('sensor.dashboard_optimization_tip') }}
     # Log the alert
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Dashboard Health Monitor"
+        title: "Dashboard Health Monitor"
         message: "Alert sent: {{ states('sensor.dashboard_optimization_tip') }}"
+        notification_id: dashboard_health_log
 
 # Weekly AI audit digest
 - id: weekly_ai_audit_digest
@@ -68,12 +69,13 @@
           Performance grade: {{ states('sensor.dashboard_performance_grade') }}.
           {{ state_attr('sensor.weekly_audit_summary', 'recommendation_count') }} recommendations available.
     # Log weekly audit
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Weekly AI Audit"
+        title: "Weekly AI Audit"
         message: >
           Weekly audit completed. Grade: {{ states('sensor.dashboard_performance_grade') }}
           Status: {{ states('sensor.weekly_audit_summary') }}
+        notification_id: weekly_audit_log
 
 # Critical error threshold alert
 - id: dashboard_critical_error_alert
@@ -98,11 +100,11 @@
     # Run emergency audit
     - service: shell_command.dashboard_complexity_audit
     # Log critical event
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Critical Dashboard Alert"
+        title: "Critical Dashboard Alert"
         message: "CRITICAL: {{ states('input_number.frontend_errors') }} frontend errors require immediate attention"
-        level: error
+        notification_id: critical_dashboard_log
 
 # Performance grade improvement celebration
 - id: dashboard_performance_improvement
@@ -125,10 +127,11 @@
     - service: notify.mobile_app_plop
       data:
         message: "Excellent news! Dashboard performance has improved to A+ grade. System is now optimally configured with minimal complexity."
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Dashboard Performance"
+        title: "Dashboard Performance"
         message: "Performance grade improved to A+ - celebrating achievement! Dashboard performance improved to A+ grade - excellent optimization!"
+        notification_id: performance_improvement_log
 
 # Audit freshness monitor
 - id: audit_freshness_monitor
@@ -159,10 +162,11 @@
         message: >
           Dashboard audit system appears stale. Manual intervention may be required.
           Check AI Workspace Scripts directory.
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Audit System Health"
+        title: "Audit System Health"
         message: "Dashboard audit system requires attention - logs are stale"
+        notification_id: audit_stale_log
 
 # Smart optimization reminder (Fixed)
 - id: dashboard_optimization_reminder
@@ -198,7 +202,8 @@
           Friendly optimization reminder: {{ states('sensor.dashboard_optimization_tip') }}
           Current grade: {{ states('sensor.dashboard_performance_grade') }}.
           Consider reviewing the Recovery Dashboard Analytics.
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Optimization Reminder"
+        title: "Optimization Reminder"
         message: "Weekly optimization reminder sent based on persistent performance issues"
+        notification_id: optimization_reminder_log

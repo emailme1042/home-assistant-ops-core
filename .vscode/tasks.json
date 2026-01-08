@@ -1,31 +1,91 @@
 {
-  "label": "Post-Merge Smart Summary Log + Cleanup",
-  "type": "shell",
-  "command": "powershell",
-  "args": [
-    "-Command",
-    "$timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss';",
-    "$warningsFile = 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log';",
-    "$mergeMap = Get-Content 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/merge_map.yaml';",
-    "$targets = ($mergeMap | Select-String '^[ ]{2}[^ ]+\\.md:' -AllMatches).Matches.Count;",
-    "$sources = ($mergeMap | Select-String '^- ' -AllMatches).Matches.Count;",
-    "if (Test-Path $warningsFile) {",
-    "  $warnings = (Get-Content $warningsFile | Select-String '⚠️').Count;",
-    "} else {",
-    "  $warnings = 0;",
-    "}",
-    "$logLine = \"🧠 Merge Summary: $timestamp — $targets targets, $sources sources, $warnings warnings.\";",
-    "Add-Content 'S:/AI_WORKSPACE/copilot_session_notes_merge.md' $logLine;",
-    "Write-Host ('✅ Merge summary logged: ' + $logLine);",
-    "if (Test-Path $warningsFile) { Clear-Content $warningsFile; Write-Host '🧹 Cleared _merge_warnings.log after logging.'; }",
-    "[System.Windows.Forms.MessageBox]::Show($logLine, 'AI Workspace Merge Summary', 'OK', 'Information');"
-  ],
-  "presentation": {
-    "reveal": "always",
-    "panel": "shared"
-  },
-  "dependsOn": [
-    "Run Copilot Merge (Manual Prompt)"
-  ],
-  "problemMatcher": []
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate HA Configuration",
+      "type": "shell",
+      "command": "python3",
+      "args": ["/config/scripts/validate_yaml.py", "/config"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Quick YAML Syntax Check",
+      "type": "shell",
+      "command": "python3",
+      "args": ["-c", "import yaml; yaml.safe_load(open('configuration.yaml')); print('✅ YAML Syntax Valid')"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "terminal",
+        "focus": false
+      }
+    },
+    {
+      "label": "Validate Template Conversions",
+      "type": "shell",
+      "command": "python3",
+      "args": ["/config/scripts/validate_yaml.py", "/config/includes/templates"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "terminal",
+        "focus": false
+      }
+    },
+    {
+      "label": "Check HA Repairs Status",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": ["-Command", "Write-Host 'Current Template Conversion Progress:'; Get-Content 'AI_WORKSPACE\\copilot_session_notes.md' | Select-String 'Completed.*template deprecations' | Select-Object -Last 1"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "terminal",
+        "focus": false
+      }
+    },
+    {
+      "label": "Post-Merge Smart Summary Log + Cleanup",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "$timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss';",
+        "$warningsFile = 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/_merge_warnings.log';",
+        "$mergeMap = Get-Content 'S:/AI_WORKSPACE/SHARED_CONTEXT/SESSION_ESSENTIALS/merge_map.yaml';",
+        "$targets = ($mergeMap | Select-String '^[ ]{2}[^ ]+\\.md:' -AllMatches).Matches.Count;",
+        "$sources = ($mergeMap | Select-String '^- ' -AllMatches).Matches.Count;",
+        "if (Test-Path $warningsFile) {",
+        "  $warnings = (Get-Content $warningsFile | Select-String '⚠️').Count;",
+        "} else {",
+        "  $warnings = 0;",
+        "}",
+        "$logLine = \"🧠 Merge Summary: $timestamp — $targets targets, $sources sources, $warnings warnings.\";",
+        "Add-Content 'S:/AI_WORKSPACE/copilot_session_notes_merge.md' $logLine;",
+        "Write-Host ('✅ Merge summary logged: ' + $logLine);",
+        "if (Test-Path $warningsFile) { Clear-Content $warningsFile; Write-Host '🧹 Cleared _merge_warnings.log after logging.'; }",
+        "[System.Windows.Forms.MessageBox]::Show($logLine, 'AI Workspace Merge Summary', 'OK', 'Information');"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "dependsOn": [
+        "Run Copilot Merge (Manual Prompt)"
+      ],
+      "problemMatcher": []
+    }
+  ]
 }

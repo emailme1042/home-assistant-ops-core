@@ -1,13 +1,37 @@
-- platform: template
-  sensors:
-    last_restart_time:
-      friendly_name: "Last HA Restart"
-      value_template: "{{ as_timestamp(states('sensor.uptime')) | timestamp_custom('%Y-%m-%d %H:%M:%S') }}"
+# ================================================
+# SYSTEM HEALTH MONITORING SENSORS
+# ================================================
+# Purpose: Monitor HA system health, restart times, and configuration status
+# Created: 2025-11-04 for comprehensive system monitoring
+# Dependencies: HA core sensors, input_datetime entities
+
+template:
+  - sensor:
+      name: "Last HA Restart"
+      unique_id: last_restart_time
+      state: >
+        {{ as_timestamp(states('sensor.uptime')) | timestamp_custom('%Y-%m-%d %H:%M:%S') }}
       icon_template: "mdi:restart"
-      
-    reload_status:
-      friendly_name: "YAML Reload Status"
-      value_template: >
+      attributes:
+        uptime_seconds: >
+          {{ as_timestamp(now()) - as_timestamp(states('sensor.uptime')) }}
+        uptime_formatted: >
+          {% set uptime = as_timestamp(now()) - as_timestamp(states('sensor.uptime')) %}
+          {% set days = (uptime / 86400) | int %}
+          {% set hours = ((uptime % 86400) / 3600) | int %}
+          {% set minutes = ((uptime % 3600) / 60) | int %}
+          {% if days > 0 %}
+            {{ days }}d {{ hours }}h {{ minutes }}m
+          {% elif hours > 0 %}
+            {{ hours }}h {{ minutes }}m
+          {% else %}
+            {{ minutes }}m
+          {% endif %}
+
+  - sensor:
+      name: "YAML Reload Status"
+      unique_id: reload_status
+      state: >
         {% set last_reload = states('input_datetime.last_yaml_reload') %}
         {% if last_reload == 'unknown' %}
           Ready
@@ -15,12 +39,55 @@
           Success {{ last_reload }}
         {% endif %}
       icon_template: "mdi:file-sync"
-      
-    system_health_summary:
-      friendly_name: "System Health Summary"
-      value_template: >
+      attributes:
+        last_reload_time: >
+          {{ states('input_datetime.last_yaml_reload') }}
+        reload_success: >
+          {% set last_reload = states('input_datetime.last_yaml_reload') %}
+          {% if last_reload != 'unknown' %}
+            True
+          {% else %}
+            False
+          {% endif %}
+        time_since_reload: >
+          {% set last_reload = states('input_datetime.last_yaml_reload') %}
+          {% if last_reload != 'unknown' %}
+            {% set reload_time = strptime(last_reload, '%Y-%m-%d %H:%M:%S') %}
+            {% set diff = (now() - reload_time).total_seconds() %}
+            {% if diff < 60 %}
+              {{ (diff) | round(0) }} seconds ago
+            {% elif diff < 3600 %}
+              {{ (diff / 60) | round(0) }} minutes ago
+            {% else %}
+              {{ (diff / 3600) | round(1) }} hours ago
+            {% endif %}
+          {% else %}
+            Never
+          {% endif %}
+
+  - sensor:
+      name: "System Health Summary"
+      unique_id: system_health_summary
+      state: >
         {% set entities = states | count %}
         {% set automations = expand('automation.*') | count %}
         {% set scripts = states.script | count %}
         {{ entities }} entities, {{ automations }} automations, {{ scripts }} scripts
       icon_template: "mdi:heart-pulse"
+      attributes:
+        total_entities: >
+          {{ states | count }}
+        active_automations: >
+          {{ expand('automation.*') | count }}
+        available_scripts: >
+          {{ states.script | count }}
+        health_percentage: >
+          {% set total = states | count %}
+          {% set unavailable = states | selectattr('state', 'eq', 'unavailable') | list | count %}
+          {% if total > 0 %}
+            {{ ((total - unavailable) / total * 100) | round(1) }}
+          {% else %}
+            0
+          {% endif %}
+        unavailable_entities: >
+          {{ states | selectattr('state', 'eq', 'unavailable') | list | count }}

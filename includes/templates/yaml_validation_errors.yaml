@@ -1,0 +1,30 @@
+template:
+  - sensor:
+      - name: "YAML Validation Errors"
+        unique_id: yaml_validation_errors
+        state: >
+          {% set status = states('sensor.validation_status') %}
+          {% if status in ['unknown', 'unavailable', None, ''] %}
+            1
+          {% elif status == 'valid' %}
+            0
+          {% else %}
+            {{ state_attr('sensor.validation_status', 'error_count') | int(1) }}
+          {% endif %}
+        icon: >
+          {% if states('sensor.yaml_validation_errors') | int(0) == 0 %}mdi:check-circle
+          {% else %}mdi:alert-circle
+          {% endif %}
+        attributes:
+          last_validation: >
+            {% if states.sensor.validation_status.last_changed is defined %}
+              {{ states.sensor.validation_status.last_changed }}
+            {% else %}
+              None
+            {% endif %}
+          validation_status: >
+            {% set status = states('sensor.validation_status') %}
+            {{ status if status not in ['unknown', 'unavailable', None, ''] else 'None' }}
+          error_details: >
+            {% set errors = state_attr('sensor.validation_status', 'errors') %}
+            {{ errors if errors is defined and errors else 'None' }}

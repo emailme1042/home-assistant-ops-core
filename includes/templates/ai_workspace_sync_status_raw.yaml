@@ -1,0 +1,4 @@
+template:
+  - sensor:
+      - name: "AI Workspace Sync Status (Raw)"
+        state: "{{ 'idle' }}"

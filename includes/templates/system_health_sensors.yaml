@@ -1,0 +1,21 @@
+template:
+  - sensor:
+      - name: "HA System Uptime"
+        unique_id: ha_system_uptime
+        state: >
+          {% if states('sensor.uptime') != 'unavailable' %}
+            {{ states('sensor.uptime') }}
+          {% else %}
+            Unknown
+          {% endif %}
+        icon: mdi:clock-outline
+
+      - name: "HA Last Restart Time"
+        unique_id: ha_last_restart_time
+        state: >
+          {% if states('sensor.uptime') != 'unavailable' %}
+            {{ (now() - timedelta(seconds=states('sensor.uptime')|int(0)*3600)) | as_timestamp | timestamp_custom('%Y-%m-%d %H:%M:%S') }}
+          {% else %}
+            Unknown
+          {% endif %}
+        icon: mdi:restart

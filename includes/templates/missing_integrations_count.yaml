@@ -1,0 +1,21 @@
+template:
+  - sensor:
+      - name: "Missing Integrations Count"
+        unique_id: missing_integrations_count
+        state: >
+          {% set missing = ['alexa_media', 'scheduler', 'watchman', 'entity_controller', 'adaptive_lighting'] %}
+          {% set active_integrations = integration_entities('homeassistant') | map('device_id') | list %}
+          {{ missing | reject('in', active_integrations) | list | length | int(0) }}
+        icon: "mdi:puzzle"
+        attributes:
+          missing_integrations: >
+            {% set missing = ['alexa_media', 'scheduler', 'watchman', 'entity_controller', 'adaptive_lighting'] %}
+            {% set active_integrations = integration_entities('homeassistant') | map('device_id') | list %}
+            {{ missing | reject('in', active_integrations) | list }}
+          total_expected: 5
+          status: >
+            {% set count = states('sensor.missing_integrations_count') | int(0) %}
+            {% if count == 0 %}✅ All integrations loaded
+            {% elif count <= 2 %}⚠️ Minor missing integrations
+            {% else %}🔴 Multiple missing integrations
+            {% endif %}

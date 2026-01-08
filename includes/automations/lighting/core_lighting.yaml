@@ -77,7 +77,7 @@
     - condition: time
       after: "06:30:00"
       before: "20:30:00"
-  actions:
+  action:
     - choose:
         - conditions:
             - condition: trigger

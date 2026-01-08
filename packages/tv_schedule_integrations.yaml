@@ -36,7 +36,7 @@ sensor:
         friendly_name: "Upcoming Episodes"
         value_template: >
           {% set cards = states | selectattr('entity_id', 'search', 'upcoming_media') | list %}
-          {{ cards | count }} upcoming items
+          {{ cards | count }}
 
 # Calendar integration for TV shows
 # NOTE: Requires TVMaze integration to be installed via HACS

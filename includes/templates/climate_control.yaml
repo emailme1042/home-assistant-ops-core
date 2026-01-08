@@ -1,0 +1,83 @@
+template:
+  - sensor:
+      - name: "Boiler Current Runtime"
+        icon: mdi:timer
+        state: >
+          {% if is_state('input_boolean.boiler_running_status', 'on') %}
+            {% set start_time = states('input_datetime.boiler_last_start') %}
+            {% if start_time not in ['unknown', 'unavailable', ''] %}
+              {% set start = strptime(start_time, '%Y-%m-%d %H:%M:%S') %}
+              {% set duration = (now() - start).total_seconds() %}
+              {% set hours = (duration // 3600) | int %}
+              {% set minutes = ((duration % 3600) // 60) | int %}
+              {% if hours > 0 %}
+                {{ hours }}h {{ minutes }}m
+              {% else %}
+                {{ minutes }}m
+              {% endif %}
+            {% else %}
+              Running
+            {% endif %}
+          {% else %}
+            Off
+          {% endif %}
+
+      - name: "Boiler Status Summary"
+        icon: mdi:information
+        state: >
+          {% if is_state('input_boolean.boiler_running_status', 'on') %}
+            Running ({{ states('sensor.boiler_current_runtime') }})
+          {% else %}
+            Off - Cycles today: {{ states('counter.boiler_cycles_today') | int(0) }}
+          {% endif %}
+
+      - name: "Boiler Usage Type"
+        icon: >
+          {% if is_state('input_boolean.boiler_running_status', 'on') %}
+            {% if states('sensor.boiler_hot_water_flow') | float(0) > 0 %}
+              mdi:water-pump
+            {% elif states('binary_sensor.heating_demand_active') == 'on' %}
+              mdi:radiator
+            {% else %}
+              mdi:help-circle
+            {% endif %}
+          {% else %}
+            mdi:water-boiler-off
+          {% endif %}
+        state: >
+          {% if is_state('input_boolean.boiler_running_status', 'on') %}
+            {% if states('sensor.boiler_hot_water_flow') | float(0) > 0 %}
+              Hot Water
+            {% elif states('binary_sensor.heating_demand_active') == 'on' %}
+              Heating
+            {% else %}
+              Unknown
+            {% endif %}
+          {% else %}
+            Off
+          {% endif %}
+
+      - name: "Boiler Heating Runtime Today"
+        icon: mdi:radiator
+        unit_of_measurement: 'h'
+        state: >
+          {% set total_runtime = states('sensor.boiler_runtime_today') | float(0) %}
+          {% set hot_water_runtime = states('sensor.boiler_hot_water_runtime_today') | float(0) %}
+          {{ (total_runtime - hot_water_runtime) | round(2) }}
+
+      - name: "Boiler Hot Water Runtime Today"
+        icon: mdi:water-pump
+        unit_of_measurement: 'h'
+        state: >
+          {% if is_state('input_boolean.boiler_running_status', 'on') and states('sensor.boiler_usage_type') == 'Hot Water' %}
+            {% set start_time = states('input_datetime.boiler_last_start') %}
+            {% if start_time not in ['unknown', 'unavailable', ''] %}
+              {% set start = strptime(start_time, '%Y-%m-%d %H:%M:%S') %}
+              {% set duration = (now() - start).total_seconds() / 3600 %}
+              {{ (states('sensor.boiler_hot_water_runtime_today') | float(0) + duration) | round(2) }}
+            {% else %}
+              {{ states('sensor.boiler_hot_water_runtime_today') | float(0) }}
+            {% endif %}
+          {% else %}
+            {{ states('sensor.boiler_hot_water_runtime_today') | float(0) }}
+          {% endif %}

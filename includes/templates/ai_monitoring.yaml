@@ -1,0 +1,22 @@
+template:
+  - sensor:
+      - name: "HACS Integration Health"
+        state: >
+          {{ 'ok' if is_state('sensor.hacs', 'on') else 'problem' }}
+        icon: mdi:package-variant-closed
+      - name: "Zigbee Mesh LQI"
+        state: >
+          {{ states('sensor.zigbee2mqtt_networkmap_lqi') | int(0) }}
+        icon: mdi:router-wireless
+      - name: "MQTT Broker Status"
+        state: >
+          {{ 'online' if is_state('binary_sensor.mqtt_broker', 'on') else 'offline' }}
+        icon: mdi:transit-connection
+      - name: "Automation Health"
+        state: >
+          {{ states('sensor.watchman_disabled_automations') | int(0) == 0 and 'ok' or 'issues' }}
+        icon: mdi:robot
+      - name: "Orphaned Entities"
+        state: >
+          {{ states('sensor.watchman_orphaned_entities') | int(0) }}
+        icon: mdi:account-off

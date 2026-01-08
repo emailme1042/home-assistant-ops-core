@@ -1,42 +1,49 @@
-# NEXT STEPS FOR JAMIE — November 13, 2025
+# NEXT STEPS FOR JAMIE — January 6, 2026
 
 ## 🎯 **IMMEDIATE ACTIONS (Do These First)**
 
 ### 1. **Execute HA Restart** (5 minutes)
-**Why**: Activate MQTT integration fixes and restore ~1,000 unavailable entities
+**Why**: Activate OpenAI HA insight system and Matter device fixes
 **How**:
 - Go to Home Assistant → Settings → System
 - Click "Restart Home Assistant"
 - Wait 2-3 minutes for restart completion
-- Check entity count improvement (target: ~90% available)
+- Test OpenAI HA insight script functionality
 
-### 2. **Verify Entity Restoration** (5 minutes)
-**Why**: Confirm MQTT devices are now connected and available
+### 2. **Collect Matter Setup Codes** (15-30 minutes)
+**Why**: Enable bulk commissioning of 10 offline Matter devices
 **How**:
-- Navigate to Developer Tools → States
-- Check total entities (should be ~3,548)
-- Verify unavailable count reduced from 1,061 to ~300-500
-- Test a few Zigbee devices (lights, sensors, switches)
+- Use iOS device with Apple Home app (fastest method)
+- Scan QR codes on Matter devices or use manufacturer apps
+- Update `AI_WORKSPACE/matter_device_codes.yaml` with collected codes
+- Reference `AI_WORKSPACE/ios_matter_apps_guide.md` for detailed instructions
 
-### 3. **Test Dashboard Performance** (5 minutes)
-**Why**: Confirm faster loading with restored entities
+### 3. **Run Bulk Matter Commissioning** (5 minutes)
+**Why**: Restore connectivity to 10 offline Matter devices (Nodes 5,10,17,18,19,20,24,37,44,45)
 **How**:
-- Open main dashboard
-- Check load time (should be <5 seconds vs previous 48 seconds)
-- Verify device controls work
-- Test automation triggers
+- Execute `shell_command.matter_bulk_commission` in HA
+- Or run `python3 AI_WORKSPACE/matter_bulk_commission.py` directly
+- Monitor HA logs for commissioning progress
+- Verify devices appear in HA after completion
 
 ## 📋 **SHORT-TERM TASKS (Next 24 Hours)**
 
-### 4. **Container Health Check** (10 minutes)
-**Why**: Ensure ESPHome/MQTT containers are running for full functionality
+### 4. **Test OpenAI HA Insight** (10 minutes)
+**Why**: Verify intelligent HA diagnosis with real-time system context
 **How**:
-- Check Supervisor → Add-ons for ESPHome status
-- Verify MQTT broker (Mosquitto) is running
-- Restart any stopped containers
-- Monitor entity availability improvement
+- Call script: `script.openai_ha_insight`
+- Provide prompt: "What's wrong with my system and how to fix it?"
+- Check response in `input_text.openai_ha_insight_response`
+- Verify TTS speaks the analysis
 
-### 5. **Share Session Essentials** (15 minutes)
+### 5. **Monitor Entity Health** (5 minutes)
+**Why**: Track unavailable entity reduction after Matter device restoration
+**How**:
+- Check Developer Tools → States for total/unavailable counts
+- Verify Matter devices are now available
+- Monitor system health improvement
+
+### 6. **Share Session Essentials** (15 minutes)
 **Why**: Keep multi-AI agents synchronized with current status
 **How**:
 - Drag `SESSION_ESSENTIALS/` files to Edge Copilot and GPT chats
@@ -44,7 +51,17 @@
 - Update agents on post-restart results
 - Confirm all agents have latest context
 
-### 6. **Compliance Review** (10 minutes)
+## 📋 **SHORT-TERM TASKS (Next 24 Hours)**
+
+### 7. **Container Health Check** (10 minutes)
+**Why**: Ensure ESPHome/MQTT containers are running for full functionality
+**How**:
+- Check Supervisor → Add-ons for ESPHome status
+- Verify MQTT broker (Mosquitto) is running
+- Restart any stopped containers
+- Monitor entity availability improvement
+
+### 8. **Compliance Review** (10 minutes)
 **Why**: Ensure system meets HA 2025.x standards
 **How**:
 - Review `ha_compliance_checklist.md`

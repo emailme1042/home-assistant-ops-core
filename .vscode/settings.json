@@ -25,6 +25,16 @@
     "**/dashboards/**/*.yaml": "home-assistant"
   },
 
+  "yaml.customTags": [
+    "!include scalar",
+    "!include_dir_merge_named scalar",
+    "!include_dir_merge_list scalar",
+    "!include_dir_list scalar",
+    "!include_dir_named scalar",
+    "!secret scalar",
+    "!input scalar"
+  ],
+
   "terminal.integrated.confirmOnExit": "never",
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "terminal.integrated.shellArgs.windows": [],

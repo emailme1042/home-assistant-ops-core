@@ -1,0 +1,75 @@
+template:
+  - sensor:
+      - name: "Cloud Connection Status"
+        state: >
+          {% if is_state('cloud.cloud', 'connected') %}
+            Connected
+          {% elif is_state('cloud.cloud', 'connecting') %}
+            Connecting
+          {% elif is_state('cloud.cloud', 'disconnected') %}
+            Disconnected
+          {% else %}
+            Unknown
+          {% endif %}
+        icon: >
+          {% if is_state('cloud.cloud', 'connected') %}
+            mdi:cloud-check
+          {% elif is_state('cloud.cloud', 'connecting') %}
+            mdi:cloud-sync
+          {% elif is_state('cloud.cloud', 'disconnected') %}
+            mdi:cloud-off
+          {% else %}
+            mdi:cloud-question
+          {% endif %}
+
+  - sensor:
+      - name: "GPT Access Health Score"
+        state: >
+          {% set score = 0 %}
+          {% if is_state('binary_sensor.remote_ui', 'on') %}
+            {% set score = score + 25 %}
+          {% endif %}
+          {% if is_state('cloud.cloud', 'connected') %}
+            {% set score = score + 25 %}
+          {% endif %}
+          {% if is_state('binary_sensor.cloud_logged_in', 'on') %}
+            {% set score = score + 25 %}
+          {% endif %}
+          {% if is_state('binary_sensor.192_168_1_1', 'on') %}
+            {% set score = score + 25 %}
+          {% endif %}
+          {{ score }}
+        unit_of_measurement: "%"
+        icon: >
+          {% set score = states('sensor.gpt_access_health_score') | int(0) %}
+          {% if score >= 75 %}
+            mdi:check-circle
+          {% elif score >= 50 %}
+            mdi:alert-circle
+          {% else %}
+            mdi:close-circle
+          {% endif %}
+
+  - sensor:
+      - name: "Nabu Casa URL Status"
+        state: >
+          {% if is_state('binary_sensor.remote_ui', 'on') and is_state('cloud.cloud', 'connected') %}
+            Available
+          {% elif is_state('cloud.cloud', 'connected') %}
+            Partial
+          {% else %}
+            Unavailable
+          {% endif %}
+        icon: >
+          {% if is_state('binary_sensor.remote_ui', 'on') and is_state('cloud.cloud', 'connected') %}
+            mdi:link
+          {% elif is_state('cloud.cloud', 'connected') %}
+            mdi:link-variant
+          {% else %}
+            mdi:link-off
+          {% endif %}
+
+  - binary_sensor:
+      - name: "Cloud Logged In"
+        state: >
+          {{ is_state_attr('cloud.cloud', 'logged_in', true) }}

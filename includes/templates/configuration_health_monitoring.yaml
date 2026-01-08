@@ -1,0 +1,59 @@
+template:
+  - sensor:
+      - name: "Configuration Include Files"
+        unique_id: configuration_include_count
+        state: >
+          {% set config_sensor = states('sensor.configuration_health_check') %}
+          {{ config_sensor if config_sensor != 'unknown' else 0 }}
+        unit_of_measurement: "files"
+        icon: mdi:file-tree
+
+      - name: "Configuration Health Status"
+        unique_id: configuration_health_status
+        state: >
+          {% set errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+          {% if errors == 0 %}
+            Healthy
+          {% elif errors == 1 %}
+            Warning
+          {% else %}
+            Critical
+          {% endif %}
+        icon: >
+          {% set errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+          {% if errors == 0 %}
+            mdi:check-circle
+          {% elif errors == 1 %}
+            mdi:alert-circle
+          {% else %}
+            mdi:alert-octagon
+          {% endif %}
+
+      - name: "Lovelace Resource Count"
+        unique_id: lovelace_resource_count
+        state: >
+          {% set config = states('sensor.configuration_health_check') %}
+          {% if config != 'unknown' %}
+            6
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "resources"
+        icon: mdi:view-dashboard
+
+      - name: "Restart Safety Score"
+        unique_id: restart_safety_score
+        state: >
+          {% set errors = state_attr('sensor.configuration_health_check', 'errors') | int(0) %}
+          {% set includes = state_attr('sensor.configuration_health_check', 'includes') | int(0) %}
+          {% if errors == 0 and includes > 0 %}
+            100
+          {% elif errors == 0 %}
+            80
+          {% elif errors == 1 %}
+            60
+          {% else %}
+            20
+          {% endif %}
+        unit_of_measurement: "%"
+        icon: mdi:restart

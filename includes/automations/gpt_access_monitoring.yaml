@@ -18,17 +18,17 @@
         - 'on'
         - 'off'
     - platform: state
-      entity_id: sensor.gpt_access_health
+      entity_id: sensor.gpt_access_health_score
   condition: []
   action:
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "GPT Access Monitor"
+        title: "GPT Access Monitor"
         message: >
           Cloud: {{ states('cloud.cloud') }}, 
           Remote UI: {{ states('binary_sensor.remote_ui') }}, 
-          Health Score: {{ states('sensor.gpt_access_health') }}%
-        entity_id: cloud.cloud
+          Health Score: {{ states('sensor.gpt_access_health_score') }}%
+        notification_id: "gpt_access_monitor"
 
 - id: nabu_casa_connection_alert
   alias: "Nabu Casa Connection Alert"

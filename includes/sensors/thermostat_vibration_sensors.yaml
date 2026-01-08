@@ -1,12 +1,11 @@
 # Thermostat Vibration Sensors for Heating Demand Detection
 # Add these to includes/sensors/boiler_usage_detection.yaml
 
-# Upstairs Thermostat Vibration Sensor
-- platform: template
-  sensors:
-    thermostat_upstairs_vibration:
-      friendly_name: "Upstairs Thermostat Vibration"
-      value_template: >
+template:
+  - sensor:
+      name: "Upstairs Thermostat Vibration"
+      unique_id: thermostat_upstairs_vibration
+      state: >
         {% if states('binary_sensor.aqara_vibration_sensor_occupancy') == 'on' %}
           {# Check if vibration is near upstairs thermostat location #}
           {# This would need location-based filtering or separate sensors #}
@@ -14,13 +13,12 @@
         {% else %}
           off
         {% endif %}
+      device_class: vibration
 
-# Downstairs Thermostat Vibration Sensor
-- platform: template
-  sensors:
-    thermostat_downstairs_vibration:
-      friendly_name: "Downstairs Thermostat Vibration"
-      value_template: >
+  - sensor:
+      name: "Downstairs Thermostat Vibration"
+      unique_id: thermostat_downstairs_vibration
+      state: >
         {% if states('binary_sensor.aqara_vibration_sensor_occupancy') == 'on' %}
           {# Check if vibration is near downstairs thermostat location #}
           {# This would need location-based filtering or separate sensors #}
@@ -28,6 +26,7 @@
         {% else %}
           off
         {% endif %}
+      device_class: vibration
 
 # Alternative: If you add separate Aqara vibration sensors to thermostats
 # Uncomment and modify these when sensors are installed:

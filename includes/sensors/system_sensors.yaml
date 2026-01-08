@@ -1,36 +1,42 @@
-- platform: template
-  sensors:
-    last_successful_backup:
-      friendly_name: "Last Successful Backup"
-      value_template: "{{ now().strftime('%Y-%m-%d') }}"
-      icon_template: "mdi:backup-restore"
+template:
+  - sensor:
+      name: "Last Successful Backup"
+      unique_id: last_successful_backup
+      state: "{{ now().strftime('%Y-%m-%d') }}"
+      icon: mdi:backup-restore
 
-    recent_push_to_git:
-      friendly_name: "Recent Git Push"
-      value_template: "2025-10-26"
-      icon_template: "mdi:git"
+  - sensor:
+      name: "Recent Git Push"
+      unique_id: recent_push_to_git
+      state: "2025-10-26"
+      icon: mdi:git
 
-    todos_last_sync:
-      friendly_name: "Todos Last Sync"
-      value_template: "{{ now().strftime('%H:%M') }}"
-      icon_template: "mdi:sync"
+  - sensor:
+      name: "Todos Last Sync"
+      unique_id: todos_last_sync
+      state: "{{ now().strftime('%H:%M') }}"
+      icon: mdi:sync
 
-    fix_sheet_last_updated:
-      friendly_name: "Fix Sheet Last Updated"
-      value_template: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
-      icon_template: "mdi:file-document"
+  - sensor:
+      name: "Fix Sheet Last Updated"
+      unique_id: fix_sheet_last_updated
+      state: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
+      icon: mdi:file-document
 
-    config_file_count:
-      friendly_name: "Config File Count"
-      value_template: "{{ states('sensor.time') | length * 50 }}"
-      icon_template: "mdi:file-multiple"
+  - sensor:
+      name: "Config File Count"
+      unique_id: config_file_count
+      state: "{{ states('sensor.time') | length * 50 }}"
+      icon: mdi:file-multiple
 
-    mount_point_health:
-      friendly_name: "Mount Point Health"
-      value_template: "✅ Healthy"
-      icon_template: "mdi:harddisk"
+  - sensor:
+      name: "Mount Point Health"
+      unique_id: mount_point_health
+      state: "✅ Healthy"
+      icon: mdi:harddisk
 
-    fix_sheet_summary:
-      friendly_name: "Fix Sheet Summary"
-      value_template: "No issues found"
-      icon_template: "mdi:clipboard-text"
+  - sensor:
+      name: "Fix Sheet Summary"
+      unique_id: fix_sheet_summary
+      state: "No issues found"
+      icon: mdi:clipboard-text

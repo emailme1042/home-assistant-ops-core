@@ -1,0 +1,43 @@
+template:
+  - sensor:
+      - name: "Restart Safety Score"
+        unique_id: restart_safety_score
+        state: >
+          {% set base_score = 100 %}
+          {% set config_errors = states('sensor.yaml_validation_errors') | int(0) %}
+          {% set missing_integrations = states('sensor.missing_integrations_count') | int(0) %}
+          {% set disabled_automations = states('sensor.disabled_automations_count') | int(0) %}
+          {% set unavailable_entities = states('sensor.unavailable_entities_count') | int(0) %}
+          {% set critical_automations_down = ['automation.multi_agent_message_router', 'automation.onenote_file_watcher', 'automation.system_stability_monitor'] | select('is_state', 'off') | list | length %}
+          {% set penalty = (config_errors * 15) + (missing_integrations * 10) + (disabled_automations * 5) + (unavailable_entities * 0.1) + (critical_automations_down * 20) %}
+          {% set final_score = base_score - penalty %}
+          {{ [final_score, 0] | max | round(1) }}
+        unit_of_measurement: "%"
+        attributes:
+          safety_level: >
+            {% set score = states('sensor.restart_safety_score') | int(0) %}
+            {% if score >= 90 %}Excellent
+            {% elif score >= 80 %}Good
+            {% elif score >= 70 %}Fair
+            {% elif score >= 60 %}Poor
+            {% elif score >= 40 %}Critical
+            {% else %}Emergency
+            {% endif %}
+          last_updated: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+      - name: "AI Agent Health"
+        unique_id: ai_agent_health
+        state: >
+          {% set healthy = is_state('input_boolean.ai_sync_healthy', 'on') %}
+          {% if healthy %}Excellent{% else %}Needs Attention{% endif %}
+        icon: >
+          {% if is_state('input_boolean.ai_sync_healthy', 'on') %}mdi:robot-happy{% else %}mdi:robot-alert{% endif %}
+
+      - name: "System Health Summary"
+        unique_id: system_health_summary
+        state: >
+          {% set entities = states | count %}
+          {% set automations = expand('automation.*') | count %}
+          {% set scripts = states.script | count %}
+          {{ entities }} entities, {{ automations }} automations, {{ scripts }} scripts
+        icon: "mdi:heart-pulse"

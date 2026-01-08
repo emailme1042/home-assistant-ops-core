@@ -1,0 +1,16 @@
+openai_ha_insight:
+  alias: "OpenAI HA System Insight"
+  description: "Get OpenAI analysis of HA system status with real-time context"
+  fields:
+    prompt:
+      name: "Prompt"
+      description: "Question or request for OpenAI analysis"
+      required: true
+      example: "What's wrong with my system?"
+  sequence:
+    - service: python_script.openai_ha_insight
+      data:
+        prompt: "{{ prompt }}"
+    - event: speak_ai_response
+      event_data:
+        message: "{{ states('input_text.openai_ha_insight_response') | default('Analysis complete') }}"

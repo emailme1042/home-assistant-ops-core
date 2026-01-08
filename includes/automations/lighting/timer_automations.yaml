@@ -22,8 +22,8 @@
         entity_id: light.loo_5
     
     # Optional: Log the action
-    - service: logbook.log
+    - service: persistent_notification.create
       data:
-        name: "Loo Light Timer"
+        title: "Loo Light Timer"
         message: "Loo light turned off after 5 minutes"
-        entity_id: light.loo_5
+        notification_id: loo_light_timer_log
